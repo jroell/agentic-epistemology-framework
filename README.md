@@ -128,17 +128,9 @@ if (conflicts.length > 0) {
 }
 ```
 
-## Documentation
-
-Comprehensive documentation is available at [https://aef-docs.example.com](https://aef-docs.example.com).
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Citation
 
