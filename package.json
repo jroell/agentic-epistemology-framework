@@ -1,0 +1,52 @@
+{
+  "name": "agentic-epistemology-framework",
+  "version": "1.0.0",
+  "description": "A TypeScript reference implementation of the Agentic Epistemology Framework (AEF)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "docs": "typedoc --out docs src",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "agent",
+    "epistemology",
+    "ai",
+    "reasoning",
+    "belief",
+    "multi-agent",
+    "frame"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.37.0",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.7",
+    "rimraf": "^4.4.1",
+    "ts-jest": "^29.1.0",
+    "typedoc": "^0.24.4",
+    "typescript": "^5.0.4"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/agentic-epistemology-framework.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
