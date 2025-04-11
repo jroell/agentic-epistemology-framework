@@ -586,7 +586,8 @@ export class Agent {
    * Recompute confidence levels for all beliefs when frame changes
    */
   private recomputeBeliefConfidences(): void {
-    for (const [proposition, belief] of this.beliefs.entries()) {
+    // Convert Map iterator to array before iterating
+    for (const [proposition, belief] of Array.from(this.beliefs.entries())) { 
       // Frame-dependent confidence recalculation
       const newConfidence = this.frame.recomputeConfidence(
         belief.justification,
@@ -614,7 +615,8 @@ export class Agent {
    * @returns Array of beliefs above the threshold
    */
   getBeliefs(confidenceThreshold: number = 0): Belief[] {
-    return Array.from(this.beliefs.values())
+    // Convert Map values iterator to array before filtering
+    return Array.from(this.beliefs.values()) 
       .filter(belief => belief.confidence >= confidenceThreshold);
   }
 

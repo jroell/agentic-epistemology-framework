@@ -217,7 +217,8 @@ export class BaseObserver implements Observer {
    * Notify all listeners of an event
    */
   protected notifyListeners(event: AnyEvent): void {
-    for (const listener of this.listeners) {
+    // Convert Set iterator to array before iterating
+    for (const listener of Array.from(this.listeners)) { 
       try {
         listener(event);
       } catch (error: any) { // Catch as any to access error properties safely

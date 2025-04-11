@@ -4,33 +4,22 @@
  * This example demonstrates how multiple agents with different frames
  * can negotiate and resolve conflicts using the AEF.
  */
-
-import {
-  Agent,
-  Registry,
-  DefaultMemory,
-  DefaultObserver,
-  LogLevel,
-  EfficiencyFrame,
-  ThoroughnessFrame,
-  SecurityFrame,
-  Belief,
-  Justification,
-  ToolResultJustificationElement,
-  TestimonyJustificationElement,
-  MessagePerception,
-  Tool,
-  FunctionTool,
-  Capability,
-  ActionFactory,
-  Goal,
-  CommunicationGoal,
-  MessageFactory,
-  Message,
-  EpistemicConflict,
-  JustificationExchangeStrategy,
-  Context
-} from '../src';
+import { Agent } from '../src/core/agent'; // Correct import path
+import { Registry } from '../src/core/registry';
+import { DefaultMemory } from '../src/core/memory';
+import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
+import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame } from '../src/epistemic/frame'; // Correct import path
+import { Belief } from '../src/epistemic/belief'; // Correct import path
+import { Justification, ToolResultJustificationElement, TestimonyJustificationElement } from '../src/epistemic/justification'; // Correct import path
+import { MessagePerception } from '../src/core/perception'; // Correct import path
+import { Tool, FunctionTool } from '../src/action/tool'; // Correct import path
+import { Capability } from '../src/action/capability'; // Correct import path
+// ActionFactory might not be needed if MessageFactory is used
+import { Goal, CommunicationGoal } from '../src/action/goal'; // Correct import path
+import { MessageFactory, Message } from '../src/action/message'; // Correct import path
+import { EpistemicConflict } from '../src/epistemic/conflict'; // Correct import path
+import { JustificationExchangeStrategy } from '../src/epistemic/conflict'; // Assuming strategy is here or needs separate import
+import { Context, ContextElement } from '../src/core/context'; // Correct import path for Context and ContextElement
 
 // Create the shared registry
 const registry = new Registry();
@@ -400,38 +389,42 @@ function displayFinalBeliefs(): void {
   
   console.log('\nAgent A beliefs:');
   const beliefsA = agentA.getBeliefs();
-  beliefsA.forEach(belief => {
+  beliefsA.forEach((belief: Belief) => { // Add Belief type annotation
     console.log(`- ${belief.toString()}`);
   });
   
   console.log('\nAgent B beliefs:');
   const beliefsB = agentB.getBeliefs();
-  beliefsB.forEach(belief => {
+  beliefsB.forEach((belief: Belief) => { // Add Belief type annotation
     console.log(`- ${belief.toString()}`);
   });
   
   console.log('\nAgent C beliefs:');
   const beliefsC = agentC.getBeliefs();
-  beliefsC.forEach(belief => {
+  beliefsC.forEach((belief: Belief) => { // Add Belief type annotation
     console.log(`- ${belief.toString()}`);
   });
   
   // Display event statistics
   console.log('\n--- Event statistics ---');
   
-  const eventStatsA = agentA['observer'].getEventCountByType(agentA.id);
+  // Cast observer to DefaultObserver to access getEventCountByType
+  const observerA = agentA['observer'] as DefaultObserver; 
+  const eventStatsA = observerA.getEventCountByType(agentA.id);
   console.log('\nAgent A events:');
   for (const [type, count] of Object.entries(eventStatsA)) {
     console.log(`- ${type}: ${count}`);
   }
   
-  const eventStatsB = agentB['observer'].getEventCountByType(agentB.id);
+  const observerB = agentB['observer'] as DefaultObserver;
+  const eventStatsB = observerB.getEventCountByType(agentB.id);
   console.log('\nAgent B events:');
   for (const [type, count] of Object.entries(eventStatsB)) {
     console.log(`- ${type}: ${count}`);
   }
   
-  const eventStatsC = agentC['observer'].getEventCountByType(agentC.id);
+  const observerC = agentC['observer'] as DefaultObserver;
+  const eventStatsC = observerC.getEventCountByType(agentC.id);
   console.log('\nAgent C events:');
   for (const [type, count] of Object.entries(eventStatsC)) {
     console.log(`- ${type}: ${count}`);

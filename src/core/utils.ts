@@ -24,7 +24,7 @@ export function debounce<T extends (...args: any[]) => any>(
   fn: T, 
   delay: number
 ): (...args: Parameters<T>) => void {
-  let timeout: number | null = null; // Use number for timeout ID
+  let timeout: NodeJS.Timeout | null = null; // Use NodeJS.Timeout type
   
   return (...args: Parameters<T>) => {
     if (timeout) {

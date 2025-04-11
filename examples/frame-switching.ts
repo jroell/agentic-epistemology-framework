@@ -4,35 +4,19 @@
  * This example demonstrates how an agent can switch frames to adapt
  * to different situations, affecting its belief formation and decision-making.
  */
-
-import {
-  Agent,
-  Registry,
-  DefaultMemory,
-  DefaultObserver,
-  LogLevel,
-  EfficiencyFrame,
-  ThoroughnessFrame,
-  SecurityFrame,
-  Belief,
-  Justification,
-  ToolResultJustificationElement,
-  ObservationJustificationElement,
-  Perception,
-  ToolResultPerception,
-  ObservationPerception,
-  Frame,
-  FrameFactory,
-  Capability,
-  ActionFactory,
-  Goal,
-  TaskGoal,
-  FrameAdaptationGoal,
-  Plan,
-  PlanStatus,
-  Context,
-  ContextElement
-} from '../src';
+import { Agent } from '../src/core/agent'; // Correct import path
+import { Registry } from '../src/core/registry';
+import { DefaultMemory } from '../src/core/memory';
+import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
+import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame, FrameFactory } from '../src/epistemic/frame'; // Correct import path
+import { Belief } from '../src/epistemic/belief'; // Correct import path
+import { Justification, ToolResultJustificationElement, ObservationJustificationElement } from '../src/epistemic/justification'; // Correct import path
+import { Perception, ToolResultPerception, ObservationPerception } from '../src/core/perception'; // Correct import path
+import { Capability } from '../src/action/capability'; // Correct import path
+// ActionFactory might not be exported or needed directly, assuming Goal subclasses are sufficient
+import { Goal, TaskGoal, FrameAdaptationGoal } from '../src/action/goal'; // Correct import path
+import { Plan, PlanStatus } from '../src/action/plan'; // Correct import path
+import { Context, ContextElement } from '../src/core/context'; // Correct import path
 
 // Create a registry
 const registry = new Registry();
@@ -111,7 +95,7 @@ async function operateWithEfficiencyFrame() {
   // Show current beliefs
   console.log('\nBeliefs formed under Efficiency frame:');
   const beliefs = agent.getBeliefs();
-  beliefs.forEach(belief => {
+  beliefs.forEach((belief: Belief) => { // Add Belief type annotation
     console.log(`- ${belief.toString()}`);
   });
   
@@ -179,7 +163,7 @@ async function switchToThoroughnessFrame() {
   // Show current beliefs
   console.log('\nBeliefs formed or updated under Thoroughness frame:');
   const beliefs = agent.getBeliefs();
-  beliefs.forEach(belief => {
+  beliefs.forEach((belief: Belief) => { // Add Belief type annotation
     console.log(`- ${belief.toString()}`);
   });
   
@@ -249,7 +233,7 @@ async function switchToSecurityFrame() {
   // Show current beliefs
   console.log('\nBeliefs formed or updated under Security frame:');
   const beliefs = agent.getBeliefs();
-  beliefs.forEach(belief => {
+  beliefs.forEach((belief: Belief) => { // Add Belief type annotation
     console.log(`- ${belief.toString()}`);
   });
   

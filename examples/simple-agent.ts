@@ -4,28 +4,20 @@
  * This example creates a simple agent with beliefs, perceptions, and actions
  * and demonstrates how they interact in the AEF.
  */
-
-import {
-  Agent,
-  Registry,
-  DefaultMemory,
-  DefaultObserver,
-  LogLevel,
-  EfficiencyFrame,
-  Belief,
-  Justification,
-  ObservationJustificationElement,
-  ObservationPerception,
-  ToolResultPerception,
-  Tool,
-  FunctionTool,
-  Capability,
-  ActionFactory,
-  Goal,
-  TaskGoal,
-  ContextElement,
-  MessageFactory
-} from '../src';
+import { Agent } from '../src/core/agent'; // Correct import path
+import { Registry } from '../src/core/registry';
+import { DefaultMemory } from '../src/core/memory';
+import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
+import { EfficiencyFrame, ThoroughnessFrame } from '../src/epistemic/frame'; // Correct import path
+import { Belief } from '../src/epistemic/belief'; // Correct import path
+import { Justification, ObservationJustificationElement } from '../src/epistemic/justification'; // Correct import path
+import { ObservationPerception, ToolResultPerception } from '../src/core/perception'; // Correct import path
+import { Tool, FunctionTool } from '../src/action/tool'; // Correct import path
+import { Capability } from '../src/action/capability'; // Correct import path
+// ActionFactory might not be needed
+import { Goal, TaskGoal } from '../src/action/goal'; // Correct import path
+import { ContextElement } from '../src/core/context'; // Correct import path
+import { MessageFactory } from '../src/action/message'; // Correct import path
 
 // Create the registry
 const registry = new Registry();
@@ -133,7 +125,7 @@ agent.perceive(new ObservationPerception(
 
 // Change the agent's frame
 console.log(`\n--- Changing agent's frame to ThoroughnessFrame ---`);
-import { ThoroughnessFrame } from '../src';
+// import { ThoroughnessFrame } from '../src'; // Remove duplicate import
 const thoroughnessFrame = new ThoroughnessFrame();
 agent.setFrame(thoroughnessFrame);
 
@@ -146,24 +138,26 @@ agent.perceive(new ToolResultPerception(
 // Get all beliefs with confidence above 0.5
 console.log(`\n--- Agent's beliefs (confidence > 0.5) ---`);
 const beliefs = agent.getBeliefs(0.5);
-beliefs.forEach(belief => {
+beliefs.forEach((belief: Belief) => { // Add Belief type annotation
   console.log(`- ${belief.toString()}`);
 });
 
 // Get event statistics
 console.log(`\n--- Event statistics ---`);
-const eventStats = observer.getEventCountByType('agent_1');
+// Cast observer to DefaultObserver to access getEventCountByType
+const defaultObserver = observer as DefaultObserver; 
+const eventStats = defaultObserver.getEventCountByType('agent_1'); 
 for (const [type, count] of Object.entries(eventStats)) {
   console.log(`- ${type}: ${count}`);
 }
 
 // Export observer data to JSON
-const observerData = observer.exportToJson();
+const observerData = defaultObserver.exportToJson(); // Use casted observer
 console.log(`\n--- Observer data exported (${observerData.length} bytes) ---`);
 
 // Display a timeline of events
 console.log(`\n--- Timeline of recent events ---`);
-const timeline = observer.getTimeline();
+const timeline = defaultObserver.getTimeline(); // Use casted observer
 const recentEvents = timeline.slice(-5); // Last 5 events
 recentEvents.forEach(event => {
   const time = new Date(event.timestamp).toISOString();

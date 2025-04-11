@@ -606,12 +606,12 @@ export class ThoroughnessFrame extends Frame {
     const totalElements = elements.length;
     
     // Diversity of justification types
-    const uniqueTypes = new Set(elements.map(el => el.type)).size;
-    const diversityFactor = uniqueTypes / 5; // Normalize by maximum possible types
+    const uniqueTypes = new Set(elements.map(el => el.type));
+    const diversityFactor = uniqueTypes.size / 5; // Normalize by maximum possible types
     
     // Source diversity - thoroughness frame values diverse sources
-    const uniqueSources = new Set(elements.map(el => el.source)).size;
-    const sourceDiversityFactor = Math.min(uniqueSources / 3, 1); // Cap at 3 unique sources
+    const uniqueSources = new Set(elements.map(el => el.source));
+    const sourceDiversityFactor = Math.min(uniqueSources.size / 3, 1); // Cap at 3 unique sources
     
     // Sample size factor - thoroughness frame requires more evidence
     const sampleSizeFactor = Math.min(

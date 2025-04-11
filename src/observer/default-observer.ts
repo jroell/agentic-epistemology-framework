@@ -186,11 +186,12 @@ export class DefaultObserver extends BaseObserver implements Observer {
   /**
    * Set the maximum number of events to store per entity
    */
-  setMaxEventsPerEntity(max: number): void {
+    setMaxEventsPerEntity(max: number): void {
     this.maxEventsPerEntity = max;
     
     // Enforce new limit on existing events
-    for (const [entityId, entityEvents] of this.events.entries()) {
+    // Convert Map iterator to array before iterating
+    for (const [entityId, entityEvents] of Array.from(this.events.entries())) { 
       if (entityEvents.length > this.maxEventsPerEntity) {
         this.events.set(
           entityId,
@@ -327,7 +328,8 @@ export class DefaultObserver extends BaseObserver implements Observer {
   getTimeline(): AnyEvent[] {
     const allEvents: AnyEvent[] = [];
     
-    for (const entityEvents of this.events.values()) {
+    // Convert Map values iterator to array before iterating
+    for (const entityEvents of Array.from(this.events.values())) { 
       allEvents.push(...entityEvents);
     }
     
@@ -341,7 +343,8 @@ export class DefaultObserver extends BaseObserver implements Observer {
   exportToJson(): string {
     const data: Record<string, AnyEvent[]> = {};
     
-    for (const [entityId, entityEvents] of this.events.entries()) {
+    // Convert Map iterator to array before iterating
+    for (const [entityId, entityEvents] of Array.from(this.events.entries())) { 
       data[entityId] = entityEvents;
     }
     

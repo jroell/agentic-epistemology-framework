@@ -283,7 +283,8 @@ export class SemanticMemory implements Memory {
     // Compute similarity scores with all stored entities
     const results: [any, number][] = [];
     
-    for (const [id, vector] of this.vectors.entries()) {
+    // Convert Map iterator to array before iterating
+    for (const [id, vector] of Array.from(this.vectors.entries())) { 
       const similarity = this.cosineSimilarity(queryVector, vector);
       
       if (similarity >= threshold) {
