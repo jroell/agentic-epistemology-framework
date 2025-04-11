@@ -220,8 +220,10 @@ export class BaseObserver implements Observer {
     for (const listener of this.listeners) {
       try {
         listener(event);
-      } catch (error) {
-        console.error('Error in event listener:', error);
+      } catch (error: any) { // Catch as any to access error properties safely
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        // Use console.error safely, assuming DOM lib is included
+        console.error(`Error in event listener: ${errorMessage}`); 
       }
     }
   }
@@ -246,13 +248,7 @@ export class BaseObserver implements Observer {
    * Log a belief rejection event
    */
   logBeliefRejection(entityId: EntityId, belief: Belief, reason: string): void {
-    const event = {
-      type: EventType.BeliefRejection,
-      timestamp: Date.now(),
-      entityId,
-      belief,
-      reason
-    };
+    const event = EventFactory.createBeliefRejectionEvent(entityId, belief, reason);
     this.processEvent(event);
   }
 
@@ -280,13 +276,7 @@ export class BaseObserver implements Observer {
     otherAgentId: EntityId, 
     conflict: EpistemicConflict
   ): void {
-    const event = {
-      type: EventType.JustificationExchange,
-      timestamp: Date.now(),
-      entityId,
-      otherAgentId,
-      conflict
-    };
+    const event = EventFactory.createJustificationExchangeEvent(entityId, otherAgentId, conflict);
     this.processEvent(event);
   }
 
@@ -299,14 +289,7 @@ export class BaseObserver implements Observer {
     resolutionType: string,
     reason: string
   ): void {
-    const event = {
-      type: EventType.ConflictResolution,
-      timestamp: Date.now(),
-      entityId,
-      conflict,
-      resolutionType,
-      reason
-    };
+    const event = EventFactory.createConflictResolutionEvent(entityId, conflict, resolutionType, reason);
     this.processEvent(event);
   }
 
@@ -322,12 +305,7 @@ export class BaseObserver implements Observer {
    * Log a goal adoption event
    */
   logGoalAdoption(entityId: EntityId, goal: Goal): void {
-    const event = {
-      type: EventType.GoalAdoption,
-      timestamp: Date.now(),
-      entityId,
-      goal
-    };
+    const event = EventFactory.createGoalAdoptionEvent(entityId, goal);
     this.processEvent(event);
   }
 
@@ -335,12 +313,7 @@ export class BaseObserver implements Observer {
    * Log a goal completion event
    */
   logGoalCompletion(entityId: EntityId, goal: Goal): void {
-    const event = {
-      type: EventType.GoalCompletion,
-      timestamp: Date.now(),
-      entityId,
-      goal
-    };
+    const event = EventFactory.createGoalCompletionEvent(entityId, goal);
     this.processEvent(event);
   }
 
@@ -348,13 +321,7 @@ export class BaseObserver implements Observer {
    * Log a goal failure event
    */
   logGoalFailure(entityId: EntityId, goal: Goal, reason: string): void {
-    const event = {
-      type: EventType.GoalFailure,
-      timestamp: Date.now(),
-      entityId,
-      goal,
-      reason
-    };
+    const event = EventFactory.createGoalFailureEvent(entityId, goal, reason);
     this.processEvent(event);
   }
 
@@ -362,13 +329,7 @@ export class BaseObserver implements Observer {
    * Log a goal abandonment event
    */
   logGoalAbandonment(entityId: EntityId, goal: Goal, reason: string): void {
-    const event = {
-      type: EventType.GoalAbandonment,
-      timestamp: Date.now(),
-      entityId,
-      goal,
-      reason
-    };
+    const event = EventFactory.createGoalAbandonmentEvent(entityId, goal, reason);
     this.processEvent(event);
   }
 
@@ -376,12 +337,7 @@ export class BaseObserver implements Observer {
    * Log a planning start event
    */
   logPlanningStart(entityId: EntityId, goal: Goal): void {
-    const event = {
-      type: EventType.PlanningStart,
-      timestamp: Date.now(),
-      entityId,
-      goal
-    };
+    const event = EventFactory.createPlanningStartEvent(entityId, goal);
     this.processEvent(event);
   }
 
@@ -389,12 +345,7 @@ export class BaseObserver implements Observer {
    * Log a plan creation event
    */
   logPlanCreation(entityId: EntityId, plan: Plan): void {
-    const event = {
-      type: EventType.PlanCreation,
-      timestamp: Date.now(),
-      entityId,
-      plan
-    };
+    const event = EventFactory.createPlanCreationEvent(entityId, plan);
     this.processEvent(event);
   }
 
@@ -410,12 +361,7 @@ export class BaseObserver implements Observer {
    * Log a plan completion event
    */
   logPlanCompletion(entityId: EntityId, plan: Plan): void {
-    const event = {
-      type: EventType.PlanCompletion,
-      timestamp: Date.now(),
-      entityId,
-      plan
-    };
+    const event = EventFactory.createPlanCompletionEvent(entityId, plan);
     this.processEvent(event);
   }
 
@@ -423,13 +369,7 @@ export class BaseObserver implements Observer {
    * Log a plan failure event
    */
   logPlanFailure(entityId: EntityId, plan: Plan, reason: string): void {
-    const event = {
-      type: EventType.PlanFailure,
-      timestamp: Date.now(),
-      entityId,
-      plan,
-      reason
-    };
+    const event = EventFactory.createPlanFailureEvent(entityId, plan, reason);
     this.processEvent(event);
   }
 
@@ -437,13 +377,7 @@ export class BaseObserver implements Observer {
    * Log a plan abort event
    */
   logPlanAbort(entityId: EntityId, plan: Plan, reason: string): void {
-    const event = {
-      type: EventType.PlanAbort,
-      timestamp: Date.now(),
-      entityId,
-      plan,
-      reason
-    };
+    const event = EventFactory.createPlanAbortEvent(entityId, plan, reason);
     this.processEvent(event);
   }
 
@@ -459,27 +393,15 @@ export class BaseObserver implements Observer {
    * Log an action success event
    */
   logActionSuccess(entityId: EntityId, action: Action, result: any): void {
-    const event = {
-      type: EventType.ActionSuccess,
-      timestamp: Date.now(),
-      entityId,
-      action,
-      result
-    };
+    const event = EventFactory.createActionSuccessEvent(entityId, action, result);
     this.processEvent(event);
   }
 
   /**
    * Log an action failure event
    */
-  logActionFailure(entityId: EntityId, action: Action): void {
-    const event = {
-      type: EventType.ActionFailure,
-      timestamp: Date.now(),
-      entityId,
-      action,
-      reason: 'Action failed'
-    };
+  logActionFailure(entityId: EntityId, action: Action, reason: string = 'Action failed'): void { // Added default reason
+    const event = EventFactory.createActionFailureEvent(entityId, action, reason);
     this.processEvent(event);
   }
 
@@ -487,13 +409,7 @@ export class BaseObserver implements Observer {
    * Log an action error event
    */
   logActionError(entityId: EntityId, action: Action, error: Error | string): void {
-    const event = {
-      type: EventType.ActionError,
-      timestamp: Date.now(),
-      entityId,
-      action,
-      error
-    };
+    const event = EventFactory.createActionErrorEvent(entityId, action, error);
     this.processEvent(event);
   }
 
@@ -509,13 +425,7 @@ export class BaseObserver implements Observer {
    * Log a message received event
    */
   logMessageReceived(entityId: EntityId, senderId: EntityId, message: Message): void {
-    const event = {
-      type: EventType.MessageReceived,
-      timestamp: Date.now(),
-      entityId,
-      senderId,
-      message
-    };
+    const event = EventFactory.createMessageReceivedEvent(entityId, senderId, message);
     this.processEvent(event);
   }
 
@@ -525,16 +435,17 @@ export class BaseObserver implements Observer {
   logInsufficientConfidence(
     entityId: EntityId, 
     belief: Belief, 
-    goal: Goal
+    goal: Goal,
+    requiredConfidence: number = 0.7, // Use default from thresholds if possible, or keep default here
+    reason: string = 'Insufficient confidence' // Provide a default reason
   ): void {
-    const event = {
-      type: EventType.InsufficientConfidence,
-      timestamp: Date.now(),
-      entityId,
-      belief,
-      goal,
-      requiredConfidence: 0.7 // Default value
-    };
+    const event = EventFactory.createInsufficientConfidenceEvent(
+      entityId, 
+      belief, 
+      goal, 
+      requiredConfidence, 
+      reason
+    );
     this.processEvent(event);
   }
 

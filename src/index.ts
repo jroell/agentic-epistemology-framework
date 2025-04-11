@@ -8,9 +8,10 @@
  * 
  * @version 1.0.0
  */
+/// <reference lib="dom" />
 
 // Re-export all components from their respective modules
-export * from './types';
+// export * from './types'; // Remove this line to avoid duplicate export of deepCopy
 export * from './core';
 export * from './epistemic';
 export * from './action';

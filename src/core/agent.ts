@@ -3,7 +3,8 @@ import { Belief } from '../epistemic/belief';
 import { Frame } from '../epistemic/frame';
 import { Capability } from '../action/capability';
 import { Memory, DefaultMemory } from './memory';
-import { Observer, DefaultObserver } from '../observer/observer';
+import { Observer } from '../observer/observer'; // Import Observer interface
+import { DefaultObserver } from '../observer/default-observer'; // Import DefaultObserver implementation
 import { Registry } from './registry';
 import { Context, ContextElement } from './context';
 import { Perception, ToolResultPerception } from './perception';
@@ -68,7 +69,6 @@ export class Agent {
   /**
    * Agent's current frame/perspective
    */
-  private frame: Frame;
   
   /**
    * Agent's current working context
@@ -125,8 +125,9 @@ export class Agent {
     this.capabilities = capabilities;
     this.registry = registry;
     this.memory = memory || new DefaultMemory();
-    this.observer = observer || new DefaultObserver();
+    this.observer = observer || new DefaultObserver(); // Note: DefaultObserver import might still be an issue
     this.confidenceThresholds = confidenceThresholds;
+    this._frame = initialFrame; // Assign directly to _frame
     this.context = new Context([]);
 
     // Initialize beliefs
@@ -348,7 +349,8 @@ export class Agent {
         
         if (!currentBelief || currentBelief.confidence < this.confidenceThresholds.action) {
           // Belief confidence has changed, abort plan execution
-          this.observer.logPlanAbort(this.id, plan, action);
+          // Pass action description or ID instead of the object
+          this.observer.logPlanAbort(this.id, plan, `Action failed pre-check: ${action.toString()}`); 
           return false;
         }
       }
@@ -357,11 +359,13 @@ export class Agent {
       try {
         const result = this.executeAction(action);
         if (!result) {
-          this.observer.logActionFailure(this.id, action);
+          // Call logActionFailure with correct arguments (entityId, action)
+          this.observer.logActionFailure(this.id, action); 
           return false;
         }
       } catch (error) {
-        this.observer.logActionError(this.id, action, error);
+        const errorMessage = error instanceof Error ? error : String(error);
+        this.observer.logActionError(this.id, action, errorMessage);
         return false;
       }
     }

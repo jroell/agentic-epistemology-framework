@@ -1,3 +1,112 @@
+import { EntityId, generateId, clampConfidence } from '../types/common';
+import { Perception } from '../core/perception';
+import { Goal } from '../action/goal';
+import { Justification, JustificationElement } from './justification';
+
+/**
+ * A cognitive lens/perspective that influences interpretation and reasoning
+ * 
+ * Frames represent different cognitive perspectives that influence how
+ * agents interpret perceptions, form beliefs, and make decisions
+ */
+export abstract class Frame {
+  /**
+   * Unique identifier for the frame
+   */
+  id: string;
+  
+  /**
+   * Human-readable name of the frame
+   */
+  name: string;
+  
+  /**
+   * Description of the frame's characteristics
+   */
+  description: string;
+  
+  /**
+   * Parameters that influence the frame's behavior
+   */
+  parameters: FrameParameters;
+
+  /**
+   * Create a new frame
+   * 
+   * @param id Unique identifier for the frame
+   * @param name Human-readable name
+   * @param description Description of the frame
+   * @param parameters Parameters influencing behavior
+   */
+  constructor(
+    id: string, 
+    name: string, 
+    description: string,
+    parameters: Partial<FrameParameters> = {}
+  ) {
+    this.id = id || generateId('frame');
+    this.name = name;
+    this.description = description;
+    this.parameters = {
+      ...DEFAULT_FRAME_PARAMETERS,
+      ...parameters
+    };
+  }
+
+  /**
+   * Interpret a perception through this frame's lens
+   * 
+   * @param perception Perception to interpret
+   * @returns The interpreted perception (may be modified)
+   */
+  abstract interpretPerception(perception: Perception): Perception;
+
+  /**
+   * Get propositions relevant to a perception or goal in this frame
+   * 
+   * @param source Perception or goal to extract propositions from
+   * @returns Array of relevant propositions
+   */
+  abstract getRelevantPropositions(source: Perception | Goal): string[];
+
+  /**
+   * Compute initial confidence for a new belief based on justification
+   * 
+   * @param proposition Proposition being considered
+   * @param justificationElements Justification elements supporting the belief
+   * @returns Initial confidence level
+   */
+  abstract computeInitialConfidence(
+    proposition: string, 
+    justificationElements: JustificationElement[]
+  ): number;
+
+  /**
+   * Update confidence based on existing belief and new evidence
+   * 
+   * @param currentConfidence Current confidence level
+   * @param currentJustification Current justification
+   * @param newElements New justification elements
+   * @returns Updated confidence level
+   */
+  abstract updateConfidence(
+    currentConfidence: number, 
+    currentJustification: Justification,
+    newElements: JustificationElement[]
+  ): number;
+
+  /**
+   * Recompute confidence for a belief when the frame changes
+   * 
+   * @param justification Justification supporting the belief
+   * @param currentConfidence Current confidence level
+   * @returns Recomputed confidence level
+   */
+  abstract recomputeConfidence(
+    justification: Justification,
+    currentConfidence: number
+  ): number;
+
   /**
    * Evaluate justification from an external source considering frame differences
    * 
@@ -898,117 +1007,4 @@ export class FrameFactory {
   static getAvailableFrameTypes(): string[] {
     return ['efficiency', 'thoroughness', 'security'];
   }
-}import { EntityId, generateId, clampConfidence } from '../types/common';
-import { Perception } from '../core/perception';
-import { Goal } from '../action/goal';
-import { Justification, JustificationElement } from './justification';
-
-/**
- * A cognitive lens/perspective that influences interpretation and reasoning
- * 
- * Frames represent different cognitive perspectives that influence how
- * agents interpret perceptions, form beliefs, and make decisions
- */
-export abstract class Frame {
-  /**
-   * Unique identifier for the frame
-   */
-  id: string;
-  
-  /**
-   * Human-readable name of the frame
-   */
-  name: string;
-  
-  /**
-   * Description of the frame's characteristics
-   */
-  description: string;
-  
-  /**
-   * Parameters that influence the frame's behavior
-   */
-  parameters: FrameParameters;
-
-  /**
-   * Create a new frame
-   * 
-   * @param id Unique identifier for the frame
-   * @param name Human-readable name
-   * @param description Description of the frame
-   * @param parameters Parameters influencing behavior
-   */
-  constructor(
-    id: string, 
-    name: string, 
-    description: string,
-    parameters: Partial<FrameParameters> = {}
-  ) {
-    this.id = id || generateId('frame');
-    this.name = name;
-    this.description = description;
-    this.parameters = {
-      ...DEFAULT_FRAME_PARAMETERS,
-      ...parameters
-    };
-  }
-
-  /**
-   * Interpret a perception through this frame's lens
-   * 
-   * @param perception Perception to interpret
-   * @returns The interpreted perception (may be modified)
-   */
-  abstract interpretPerception(perception: Perception): Perception;
-
-  /**
-   * Get propositions relevant to a perception or goal in this frame
-   * 
-   * @param source Perception or goal to extract propositions from
-   * @returns Array of relevant propositions
-   */
-  abstract getRelevantPropositions(source: Perception | Goal): string[];
-
-  /**
-   * Compute initial confidence for a new belief based on justification
-   * 
-   * @param proposition Proposition being considered
-   * @param justificationElements Justification elements supporting the belief
-   * @returns Initial confidence level
-   */
-  abstract computeInitialConfidence(
-    proposition: string, 
-    justificationElements: JustificationElement[]
-  ): number;
-
-  /**
-   * Update confidence based on existing belief and new evidence
-   * 
-   * @param currentConfidence Current confidence level
-   * @param currentJustification Current justification
-   * @param newElements New justification elements
-   * @returns Updated confidence level
-   */
-  abstract updateConfidence(
-    currentConfidence: number, 
-    currentJustification: Justification,
-    newElements: JustificationElement[]
-  ): number;
-
-  /**
-   * Recompute confidence for a belief when the frame changes
-   * 
-   * @param justification Justification supporting the belief
-   * @param currentConfidence Current confidence level
-   * @returns Recomputed confidence level
-   */
-  abstract recomputeConfidence(
-    justification: Justification,
-    currentConfidence: number
-  ): number;
-
-  /**
-   * Evaluate justification from an external source considering frame differences
-   * 
-   * @param proposition Proposition being justified
-   * @param externalJ
+}

@@ -436,10 +436,10 @@ export class SequentialPlanner implements Planner {
       planSteps.push(action);
       
       // Collect supporting beliefs for this action
+      // Check if the belief's proposition is relevant to the subgoal
+      const subgoalRelevantProps = subgoal.getRelevantPropositions();
       const relevantBeliefs = beliefs.filter(belief => 
-        belief.getRelevantPropositions().some(prop => 
-          subgoal.getRelevantPropositions().includes(prop)
-        )
+        subgoalRelevantProps.includes(belief.proposition)
       );
       
       for (const belief of relevantBeliefs) {

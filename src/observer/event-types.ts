@@ -9,12 +9,175 @@ import { Action } from '../action/action';
 import { Message } from '../action/message';
 
 /**
+ * Types of observable events
+ */
+export enum EventType {
+  // Belief events
+  BeliefFormation = 'belief_formation',
+  BeliefUpdate = 'belief_update',
+  BeliefRejection = 'belief_rejection',
+  
+  // Perception events
+  Perception = 'perception',
+  
+  // Conflict events
+  ConflictDetection = 'conflict_detection',
+  JustificationExchange = 'justification_exchange',
+  ConflictResolution = 'conflict_resolution',
+  
+  // Frame events
+  FrameChange = 'frame_change',
+  
+  // Goal events
+  GoalAdoption = 'goal_adoption',
+  GoalCompletion = 'goal_completion',
+  GoalFailure = 'goal_failure',
+  GoalAbandonment = 'goal_abandonment',
+  
+  // Planning events
+  PlanningStart = 'planning_start',
+  PlanCreation = 'plan_creation',
+  PlanExecution = 'plan_execution',
+  PlanCompletion = 'plan_completion',
+  PlanFailure = 'plan_failure',
+  PlanAbort = 'plan_abort',
+  
+  // Action events
+  ActionExecution = 'action_execution',
+  ActionSuccess = 'action_success',
+  ActionFailure = 'action_failure',
+  ActionError = 'action_error',
+  
+  // Message events
+  MessageSent = 'message_sent',
+  MessageReceived = 'message_received',
+  
+  // Confidence events
+  InsufficientConfidence = 'insufficient_confidence',
+  
+  // General events
+  Log = 'log',
+  Error = 'error',
+  Warning = 'warning',
+  Debug = 'debug'
+}
+
+/**
  * Base interface for all observable events
  */
 export interface Event {
   /**
    * Type of the event
    */
+  type: EventType; // Use the enum type
+  
+  /**
+   * Timestamp when the event occurred
+   */
+  timestamp: number;
+  
+  /**
+   * ID of the entity that triggered the event
+   */
+  entityId: EntityId;
+}
+
+// --- Specific Event Interfaces ---
+
+/**
+ * Event for belief formation
+ */
+export interface BeliefFormationEvent extends Event {
+  type: EventType.BeliefFormation;
+  belief: Belief;
+}
+
+/**
+ * Event for belief update
+ */
+export interface BeliefUpdateEvent extends Event {
+  type: EventType.BeliefUpdate;
+  oldBelief: Belief;
+  newBelief: Belief;
+  confidenceDelta: number;
+}
+
+/**
+ * Event for belief rejection
+ */
+export interface BeliefRejectionEvent extends Event {
+  type: EventType.BeliefRejection;
+  belief: Belief;
+  reason: string;
+}
+
+/**
+ * Event for perception
+ */
+export interface PerceptionEvent extends Event {
+  type: EventType.Perception;
+  perception: Perception;
+}
+
+/**
+ * Event for conflict detection
+ */
+export interface ConflictDetectionEvent extends Event {
+  type: EventType.ConflictDetection;
+  conflict: EpistemicConflict;
+  // entityId here refers to the agent detecting the conflict
+}
+
+/**
+ * Event for justification exchange
+ */
+export interface JustificationExchangeEvent extends Event {
+  type: EventType.JustificationExchange;
+  conflict: EpistemicConflict;
+  otherAgentId: EntityId;
+  // entityId here refers to the agent initiating or involved in the exchange
+}
+
+/**
+ * Event for conflict resolution
+ */
+export interface ConflictResolutionEvent extends Event {
+  type: EventType.ConflictResolution;
+  conflict: EpistemicConflict;
+  resolutionType: string;
+  reason: string;
+  // entityId here refers to the agent resolving the conflict
+}
+
+/**
+ * Event for frame change
+ */
+export interface FrameChangeEvent extends Event {
+  type: EventType.FrameChange;
+  oldFrame: Frame;
+  newFrame: Frame;
+}
+
+/**
+ * Event for goal adoption
+ */
+export interface GoalAdoptionEvent extends Event {
+  type: EventType.GoalAdoption;
+  goal: Goal;
+}
+
+/**
+ * Event for goal completion
+ */
+export interface GoalCompletionEvent extends Event {
+  type: EventType.GoalCompletion;
+  goal: Goal;
+}
+
+/**
+ * Event for goal failure
+ */
+export interface GoalFailureEvent extends Event {
   type: EventType.GoalFailure;
   goal: Goal;
   reason: string;
@@ -102,7 +265,7 @@ export interface ActionSuccessEvent extends Event {
 export interface ActionFailureEvent extends Event {
   type: EventType.ActionFailure;
   action: Action;
-  reason: string;
+  reason: string; // Add reason property
 }
 
 /**
@@ -140,6 +303,7 @@ export interface InsufficientConfidenceEvent extends Event {
   belief: Belief;
   goal: Goal;
   requiredConfidence: number;
+  reason: string; // Add reason property
 }
 
 /**
@@ -249,6 +413,19 @@ export class EventFactory {
   }
 
   /**
+   * Create a belief rejection event
+   */
+  static createBeliefRejectionEvent(entityId: EntityId, belief: Belief, reason: string): BeliefRejectionEvent {
+    return {
+      type: EventType.BeliefRejection,
+      timestamp: Date.now(),
+      entityId,
+      belief,
+      reason
+    };
+  }
+
+  /**
    * Create a perception event
    */
   static createPerceptionEvent(entityId: EntityId, perception: Perception): PerceptionEvent {
@@ -276,6 +453,42 @@ export class EventFactory {
   }
 
   /**
+   * Create a justification exchange event
+   */
+  static createJustificationExchangeEvent(
+    entityId: EntityId, 
+    otherAgentId: EntityId, 
+    conflict: EpistemicConflict
+  ): JustificationExchangeEvent {
+    return {
+      type: EventType.JustificationExchange,
+      timestamp: Date.now(),
+      entityId,
+      otherAgentId,
+      conflict
+    };
+  }
+
+  /**
+   * Create a conflict resolution event
+   */
+  static createConflictResolutionEvent(
+    entityId: EntityId,
+    conflict: EpistemicConflict,
+    resolutionType: string,
+    reason: string
+  ): ConflictResolutionEvent {
+    return {
+      type: EventType.ConflictResolution,
+      timestamp: Date.now(),
+      entityId,
+      conflict,
+      resolutionType,
+      reason
+    };
+  }
+
+  /**
    * Create a frame change event
    */
   static createFrameChangeEvent(
@@ -293,6 +506,80 @@ export class EventFactory {
   }
 
   /**
+   * Create a goal adoption event
+   */
+  static createGoalAdoptionEvent(entityId: EntityId, goal: Goal): GoalAdoptionEvent {
+    return {
+      type: EventType.GoalAdoption,
+      timestamp: Date.now(),
+      entityId,
+      goal
+    };
+  }
+
+  /**
+   * Create a goal completion event
+   */
+  static createGoalCompletionEvent(entityId: EntityId, goal: Goal): GoalCompletionEvent {
+    return {
+      type: EventType.GoalCompletion,
+      timestamp: Date.now(),
+      entityId,
+      goal
+    };
+  }
+
+  /**
+   * Create a goal failure event
+   */
+  static createGoalFailureEvent(entityId: EntityId, goal: Goal, reason: string): GoalFailureEvent {
+    return {
+      type: EventType.GoalFailure,
+      timestamp: Date.now(),
+      entityId,
+      goal,
+      reason
+    };
+  }
+
+  /**
+   * Create a goal abandonment event
+   */
+  static createGoalAbandonmentEvent(entityId: EntityId, goal: Goal, reason: string): GoalAbandonmentEvent {
+    return {
+      type: EventType.GoalAbandonment,
+      timestamp: Date.now(),
+      entityId,
+      goal,
+      reason
+    };
+  }
+
+  /**
+   * Create a planning start event
+   */
+  static createPlanningStartEvent(entityId: EntityId, goal: Goal): PlanningStartEvent {
+    return {
+      type: EventType.PlanningStart,
+      timestamp: Date.now(),
+      entityId,
+      goal
+    };
+  }
+
+  /**
+   * Create a plan creation event
+   */
+  static createPlanCreationEvent(entityId: EntityId, plan: Plan): PlanCreationEvent {
+    return {
+      type: EventType.PlanCreation,
+      timestamp: Date.now(),
+      entityId,
+      plan
+    };
+  }
+
+  /**
    * Create a plan execution event
    */
   static createPlanExecutionEvent(entityId: EntityId, plan: Plan): PlanExecutionEvent {
@@ -305,6 +592,44 @@ export class EventFactory {
   }
 
   /**
+   * Create a plan completion event
+   */
+  static createPlanCompletionEvent(entityId: EntityId, plan: Plan): PlanCompletionEvent {
+    return {
+      type: EventType.PlanCompletion,
+      timestamp: Date.now(),
+      entityId,
+      plan
+    };
+  }
+
+  /**
+   * Create a plan failure event
+   */
+  static createPlanFailureEvent(entityId: EntityId, plan: Plan, reason: string): PlanFailureEvent {
+    return {
+      type: EventType.PlanFailure,
+      timestamp: Date.now(),
+      entityId,
+      plan,
+      reason
+    };
+  }
+
+  /**
+   * Create a plan abort event
+   */
+  static createPlanAbortEvent(entityId: EntityId, plan: Plan, reason: string): PlanAbortEvent {
+    return {
+      type: EventType.PlanAbort,
+      timestamp: Date.now(),
+      entityId,
+      plan,
+      reason
+    };
+  }
+
+  /**
    * Create an action execution event
    */
   static createActionExecutionEvent(entityId: EntityId, action: Action): ActionExecutionEvent {
@@ -313,6 +638,45 @@ export class EventFactory {
       timestamp: Date.now(),
       entityId,
       action
+    };
+  }
+
+  /**
+   * Create an action success event
+   */
+  static createActionSuccessEvent(entityId: EntityId, action: Action, result: any): ActionSuccessEvent {
+    return {
+      type: EventType.ActionSuccess,
+      timestamp: Date.now(),
+      entityId,
+      action,
+      result
+    };
+  }
+
+  /**
+   * Create an action failure event
+   */
+  static createActionFailureEvent(entityId: EntityId, action: Action, reason: string): ActionFailureEvent {
+    return {
+      type: EventType.ActionFailure,
+      timestamp: Date.now(),
+      entityId,
+      action,
+      reason
+    };
+  }
+
+  /**
+   * Create an action error event
+   */
+  static createActionErrorEvent(entityId: EntityId, action: Action, error: Error | string): ActionErrorEvent {
+    return {
+      type: EventType.ActionError,
+      timestamp: Date.now(),
+      entityId,
+      action,
+      error
     };
   }
 
@@ -334,6 +698,44 @@ export class EventFactory {
   }
 
   /**
+   * Create a message received event
+   */
+  static createMessageReceivedEvent(
+    entityId: EntityId, 
+    senderId: EntityId, 
+    message: Message
+  ): MessageReceivedEvent {
+    return {
+      type: EventType.MessageReceived,
+      timestamp: Date.now(),
+      entityId,
+      senderId,
+      message
+    };
+  }
+
+  /**
+   * Create an insufficient confidence event
+   */
+  static createInsufficientConfidenceEvent(
+    entityId: EntityId, 
+    belief: Belief, 
+    goal: Goal, 
+    requiredConfidence: number,
+    reason: string
+  ): InsufficientConfidenceEvent {
+    return {
+      type: EventType.InsufficientConfidence,
+      timestamp: Date.now(),
+      entityId,
+      belief,
+      goal,
+      requiredConfidence,
+      reason
+    };
+  }
+
+  /**
    * Create a log event
    */
   static createLogEvent(
@@ -351,162 +753,57 @@ export class EventFactory {
       data
     };
   }
-} string;
-  
+
   /**
-   * Timestamp when the event occurred
+   * Create an error event
    */
-  timestamp: number;
-  
+  static createErrorEvent(
+    entityId: EntityId, 
+    message: string, 
+    error: Error | string, 
+    data?: any
+  ): ErrorEvent {
+    return {
+      type: EventType.Error,
+      timestamp: Date.now(),
+      entityId,
+      message,
+      error,
+      data
+    };
+  }
+
   /**
-   * ID of the entity that triggered the event
+   * Create a warning event
    */
-  entityId: EntityId;
-}
+  static createWarningEvent(
+    entityId: EntityId, 
+    message: string, 
+    data?: any
+  ): WarningEvent {
+    return {
+      type: EventType.Warning,
+      timestamp: Date.now(),
+      entityId,
+      message,
+      data
+    };
+  }
 
-/**
- * Types of observable events
- */
-export enum EventType {
-  // Belief events
-  BeliefFormation = 'belief_formation',
-  BeliefUpdate = 'belief_update',
-  BeliefRejection = 'belief_rejection',
-  
-  // Perception events
-  Perception = 'perception',
-  
-  // Conflict events
-  ConflictDetection = 'conflict_detection',
-  JustificationExchange = 'justification_exchange',
-  ConflictResolution = 'conflict_resolution',
-  
-  // Frame events
-  FrameChange = 'frame_change',
-  
-  // Goal events
-  GoalAdoption = 'goal_adoption',
-  GoalCompletion = 'goal_completion',
-  GoalFailure = 'goal_failure',
-  GoalAbandonment = 'goal_abandonment',
-  
-  // Planning events
-  PlanningStart = 'planning_start',
-  PlanCreation = 'plan_creation',
-  PlanExecution = 'plan_execution',
-  PlanCompletion = 'plan_completion',
-  PlanFailure = 'plan_failure',
-  PlanAbort = 'plan_abort',
-  
-  // Action events
-  ActionExecution = 'action_execution',
-  ActionSuccess = 'action_success',
-  ActionFailure = 'action_failure',
-  ActionError = 'action_error',
-  
-  // Message events
-  MessageSent = 'message_sent',
-  MessageReceived = 'message_received',
-  
-  // Confidence events
-  InsufficientConfidence = 'insufficient_confidence',
-  
-  // General events
-  Log = 'log',
-  Error = 'error',
-  Warning = 'warning',
-  Debug = 'debug'
+  /**
+   * Create a debug event
+   */
+  static createDebugEvent(
+    entityId: EntityId, 
+    message: string, 
+    data?: any
+  ): DebugEvent {
+    return {
+      type: EventType.Debug,
+      timestamp: Date.now(),
+      entityId,
+      message,
+      data
+    };
+  }
 }
-
-/**
- * Event for belief formation
- */
-export interface BeliefFormationEvent extends Event {
-  type: EventType.BeliefFormation;
-  belief: Belief;
-}
-
-/**
- * Event for belief update
- */
-export interface BeliefUpdateEvent extends Event {
-  type: EventType.BeliefUpdate;
-  oldBelief: Belief;
-  newBelief: Belief;
-  confidenceDelta: number;
-}
-
-/**
- * Event for belief rejection
- */
-export interface BeliefRejectionEvent extends Event {
-  type: EventType.BeliefRejection;
-  belief: Belief;
-  reason: string;
-}
-
-/**
- * Event for perception
- */
-export interface PerceptionEvent extends Event {
-  type: EventType.Perception;
-  perception: Perception;
-}
-
-/**
- * Event for conflict detection
- */
-export interface ConflictDetectionEvent extends Event {
-  type: EventType.ConflictDetection;
-  conflict: EpistemicConflict;
-}
-
-/**
- * Event for justification exchange
- */
-export interface JustificationExchangeEvent extends Event {
-  type: EventType.JustificationExchange;
-  conflict: EpistemicConflict;
-  otherAgentId: EntityId;
-}
-
-/**
- * Event for conflict resolution
- */
-export interface ConflictResolutionEvent extends Event {
-  type: EventType.ConflictResolution;
-  conflict: EpistemicConflict;
-  resolutionType: string;
-  reason: string;
-}
-
-/**
- * Event for frame change
- */
-export interface FrameChangeEvent extends Event {
-  type: EventType.FrameChange;
-  oldFrame: Frame;
-  newFrame: Frame;
-}
-
-/**
- * Event for goal adoption
- */
-export interface GoalAdoptionEvent extends Event {
-  type: EventType.GoalAdoption;
-  goal: Goal;
-}
-
-/**
- * Event for goal completion
- */
-export interface GoalCompletionEvent extends Event {
-  type: EventType.GoalCompletion;
-  goal: Goal;
-}
-
-/**
- * Event for goal failure
- */
-export interface GoalFailureEvent extends Event {
-  type:

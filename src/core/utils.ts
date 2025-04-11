@@ -24,14 +24,14 @@ export function debounce<T extends (...args: any[]) => any>(
   fn: T, 
   delay: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: number | null = null; // Use number for timeout ID
   
   return (...args: Parameters<T>) => {
     if (timeout) {
-      clearTimeout(timeout);
+      clearTimeout(timeout); // Use global clearTimeout
     }
     
-    timeout = setTimeout(() => {
+    timeout = setTimeout(() => { // Use global setTimeout
       fn(...args);
       timeout = null;
     }, delay);

@@ -231,7 +231,7 @@ export class InformationGatheringGoal extends Goal {
     id?: string
   ) {
     super(
-      id,
+      id || null, // Pass null if id is undefined
       'information_gathering',
       description || `Gather information about ${topic}`,
       {
@@ -302,7 +302,7 @@ export class CommunicationGoal extends Goal {
     id?: string
   ) {
     super(
-      id,
+      id || null, // Pass null if id is undefined
       'communication',
       `Communicate with ${targetAgents.length} agent(s): ${purpose}`,
       {
@@ -345,7 +345,7 @@ export class FrameAdaptationGoal extends Goal {
     id?: string
   ) {
     super(
-      id,
+      id || null, // Pass null if id is undefined
       'frame_adaptation',
       `Adapt to ${targetFrame} frame: ${reason}`,
       {
@@ -380,7 +380,7 @@ export class TaskGoal extends Goal {
     id?: string
   ) {
     super(
-      id,
+      id || null, // Pass null if id is undefined
       'task',
       `Perform task: ${taskName}`,
       {

@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 import { EntityId } from '../types/common';
 import { BaseObserver, Observer } from './observer';
 import { EventType, AnyEvent } from './event-types';
@@ -377,5 +378,3 @@ export enum LogLevel {
   Info = 2,
   Debug = 3
 }
-
-  
