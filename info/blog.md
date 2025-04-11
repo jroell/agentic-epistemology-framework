@@ -1,5 +1,3 @@
----
-
 # 🧠 The Epistemic Engine: Addressing the Fundamental Problem with Agentic Systems
 
 *By Jason Roell*
@@ -332,10 +330,6 @@ If this resonates—or you're building something similar—let’s connect.
 I'm building agents that think at [Vurvey](https://vurvey.com).
 
 DMs open. Curious minds welcome.
-
----
-
-### 🧭 Epilogue: The Epistemic Engine, Ignited
 
 AEF is not the end. It’s the ignition point of agentic intelligence.
 
