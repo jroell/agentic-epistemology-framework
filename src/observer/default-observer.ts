@@ -55,37 +55,30 @@ export class DefaultObserver extends BaseObserver implements Observer {
    * Process and store an event
    */
   protected override processEvent(event: AnyEvent): void {
-    // Check if event type is filtered out
     if (this.eventFilters.has(event.type)) {
       return;
     }
-    
-    // Check if event level is below the minimum log level
+
     if (this.getLevelForEvent(event) < this.logLevel) {
       return;
     }
-    
-    // Log to console if enabled
+
     if (this.logToConsole) {
       this.logEventToConsole(event);
     }
-    
-    // Store the event
+
     if (!this.events.has(event.entityId)) {
       this.events.set(event.entityId, []);
     }
-    
+
     const entityEvents = this.events.get(event.entityId)!;
-    
-    // Add the event
+
     entityEvents.push(event);
-    
-    // Enforce maximum events per entity
+
     if (entityEvents.length > this.maxEventsPerEntity) {
       entityEvents.splice(0, entityEvents.length - this.maxEventsPerEntity);
     }
-    
-    // Notify listeners
+
     this.notifyListeners(event);
   }
 
@@ -119,10 +112,9 @@ export class DefaultObserver extends BaseObserver implements Observer {
         message += ` Message sent to ${event.recipientId}: ${event.message.toString()}`;
         break;
       default:
-        // Generic toString for other event types
         message += ` ${JSON.stringify(event)}`;
     }
-    
+
     switch (level) {
       case LogLevel.Error:
         console.error(message);
@@ -188,10 +180,10 @@ export class DefaultObserver extends BaseObserver implements Observer {
    */
     setMaxEventsPerEntity(max: number): void {
     this.maxEventsPerEntity = max;
-    
+
     // Enforce new limit on existing events
     // Convert Map iterator to array before iterating
-    for (const [entityId, entityEvents] of Array.from(this.events.entries())) { 
+    for (const [entityId, entityEvents] of Array.from(this.events.entries())) {
       if (entityEvents.length > this.maxEventsPerEntity) {
         this.events.set(
           entityId,
@@ -327,13 +319,12 @@ export class DefaultObserver extends BaseObserver implements Observer {
    */
   getTimeline(): AnyEvent[] {
     const allEvents: AnyEvent[] = [];
-    
+
     // Convert Map values iterator to array before iterating
-    for (const entityEvents of Array.from(this.events.values())) { 
+    for (const entityEvents of Array.from(this.events.values())) {
       allEvents.push(...entityEvents);
     }
-    
-    // Sort by timestamp
+
     return allEvents.sort((a, b) => a.timestamp - b.timestamp);
   }
 
@@ -342,12 +333,12 @@ export class DefaultObserver extends BaseObserver implements Observer {
    */
   exportToJson(): string {
     const data: Record<string, AnyEvent[]> = {};
-    
+
     // Convert Map iterator to array before iterating
-    for (const [entityId, entityEvents] of Array.from(this.events.entries())) { 
+    for (const [entityId, entityEvents] of Array.from(this.events.entries())) {
       data[entityId] = entityEvents;
     }
-    
+
     return JSON.stringify(data, null, 2);
   }
 
@@ -357,11 +348,9 @@ export class DefaultObserver extends BaseObserver implements Observer {
   importFromJson(json: string): void {
     try {
       const data = JSON.parse(json) as Record<string, AnyEvent[]>;
-      
-      // Clear existing events
+
       this.events.clear();
-      
-      // Import new events
+
       for (const [entityId, entityEvents] of Object.entries(data)) {
         this.events.set(entityId, entityEvents);
       }

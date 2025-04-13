@@ -17,7 +17,6 @@ export * from './epistemic';
 export * from './action';
 export * from './observer';
 
-// Export a version constant
 export const VERSION = '1.0.0';
 
 /**
@@ -46,7 +45,12 @@ import { Agent } from './core/agent';
 import { DefaultMemory } from './core/memory';
 import { DefaultObserver } from './observer/default-observer';
 import { Registry } from './core/registry';
-import { EfficiencyFrame } from './epistemic/frame';
+import { EfficiencyFrame } from './epistemic/frame'; // Assuming this is a valid Frame implementation
+import { GeminiClient } from './llm/gemini-client';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 /**
  * Create a default agent instance with basic configuration
@@ -59,8 +63,16 @@ export function createDefaultAgent(id: string, name: string): Agent {
   const registry = new Registry();
   const memory = new DefaultMemory();
   const observer = new DefaultObserver();
-  const frame = new EfficiencyFrame();
-  
+  const frame = new EfficiencyFrame(); // Ensure this frame exists and is correctly implemented
+
+  // Instantiate GeminiClient - Ensure GEMINI_API_KEY is set in your .env file or environment
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY environment variable not set.");
+  }
+  const geminiClient = new GeminiClient(apiKey);
+
+  // Correct argument order: id, name, beliefs, frame, capabilities, registry, geminiClient, memory, observer
   return new Agent(
     id,
     name,
@@ -68,7 +80,9 @@ export function createDefaultAgent(id: string, name: string): Agent {
     frame,
     new Set(), // Initial capabilities
     registry,
+    geminiClient, // Pass the client instance
     memory,
     observer
+    // Confidence thresholds will use default
   );
 }

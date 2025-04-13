@@ -202,29 +202,26 @@ export class BaseObserver implements Observer {
    * Process and store an event
    */
   protected processEvent(event: AnyEvent): void {
-    // Store the event
     if (!this.events.has(event.entityId)) {
       this.events.set(event.entityId, []);
     }
-    
+
     this.events.get(event.entityId)!.push(event);
-    
-    // Notify listeners
+
     this.notifyListeners(event);
   }
-  
+
   /**
    * Notify all listeners of an event
    */
   protected notifyListeners(event: AnyEvent): void {
     // Convert Set iterator to array before iterating
-    for (const listener of Array.from(this.listeners)) { 
+    for (const listener of Array.from(this.listeners)) {
       try {
         listener(event);
-      } catch (error: any) { // Catch as any to access error properties safely
+      } catch (error: any) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        // Use console.error safely, assuming DOM lib is included
-        console.error(`Error in event listener: ${errorMessage}`); 
+        console.error(`Error in event listener: ${errorMessage}`);
       }
     }
   }

@@ -121,9 +121,8 @@ export class UseTool extends Action {
    * @returns True if the tool can achieve the goal
    */
   canAchieve(goal: Goal, beliefs: Belief[]): boolean {
-    // Check if the tool has the required capabilities
     const requiredCapabilities = goal.getRequiredCapabilities();
-    return requiredCapabilities.every(capability => 
+    return requiredCapabilities.every(capability =>
       this.tool.capabilities.has(capability)
     );
   }
@@ -167,7 +166,7 @@ export class SendMessage extends Action {
   constructor(
     message: Message,
     description?: string,
-    executionTime: number = 0, // Assumed to be instantaneous
+    executionTime: number = 0,
     id?: string
   ) {
     super(
@@ -190,10 +189,8 @@ export class SendMessage extends Action {
     // This is a simplified implementation
     // In a real system, this would involve semantic matching between
     // the message content and the goal
-    
-    // Check if goal requires communication
+
     if (goal.requiresCommunication()) {
-      // Check if message is addressed to the right recipient
       if (goal.getTargetAgents().includes(this.message.recipient)) {
         return true;
       }
@@ -208,7 +205,6 @@ export class SendMessage extends Action {
    * @returns Cost value (typically low for messages)
    */
   getCost(): number {
-    // Messages typically have low cost
     // Could be proportional to message size in a more sophisticated implementation
     return 1;
   }
@@ -264,8 +260,7 @@ export class CompositeAction extends Action {
   canAchieve(goal: Goal, beliefs: Belief[]): boolean {
     // A composite action can achieve a goal if any of its component actions can
     // or if the sequence as a whole can achieve it
-    
-    // Check if any individual action can achieve the goal
+
     if (this.actions.some(action => action.canAchieve(goal, beliefs))) {
       return true;
     }
@@ -337,9 +332,9 @@ export class QueryBeliefs extends Action {
     id?: string
   ) {
     super(
-      'query_beliefs', 
+      'query_beliefs',
       description || `Query beliefs: ${query}`,
-      0, // Queries are typically instantaneous
+      0,
       id
     );
     this.query = query;
@@ -356,8 +351,7 @@ export class QueryBeliefs extends Action {
   canAchieve(goal: Goal, beliefs: Belief[]): boolean {
     // Query actions typically don't directly achieve goals
     // but can provide information needed for other actions
-    
-    // If the goal is to gain information, a query might achieve it
+
     if (goal.type === 'information_gathering') {
       return true;
     }
@@ -371,10 +365,9 @@ export class QueryBeliefs extends Action {
    * @returns Cost value (typically very low for queries)
    */
   getCost(): number {
-    // Queries typically have very low cost
     return 0.5;
   }
-  
+
   /**
    * Create a string representation of the action
    * 
@@ -409,7 +402,7 @@ export class ChangeFrame extends Action {
     super(
       'change_frame',
       description || `Change frame to ${targetFrameId}`,
-      0, // Frame changes are typically instantaneous
+      0,
       id
     );
     this.targetFrameId = targetFrameId;

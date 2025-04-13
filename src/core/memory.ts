@@ -57,10 +57,8 @@ export class DefaultMemory implements Memory {
    * @returns The ID of the stored entity
    */
   storeEntity(entity: any): string {
-    // Use existing ID if available, otherwise generate one
     const id = entity.id || generateId('entity');
-    
-    // Store entity with metadata
+
     this.entities.set(id, {
       ...entity,
       _stored: Date.now(),
@@ -79,9 +77,8 @@ export class DefaultMemory implements Memory {
    */
   retrieveEntity(id: string): any | null {
     const entity = this.entities.get(id);
-    
+
     if (entity) {
-      // Update access metadata
       entity._accessed = Date.now();
       entity._accessCount += 1;
       return entity;
@@ -99,8 +96,7 @@ export class DefaultMemory implements Memory {
   queryEntities(criteria: object): any[] {
     const results = Array.from(this.entities.values())
       .filter(entity => this.matchesCriteria(entity, criteria));
-    
-    // Update access metadata for all results
+
     const now = Date.now();
     results.forEach(entity => {
       entity._accessed = now;
@@ -128,26 +124,20 @@ export class DefaultMemory implements Memory {
     for (const [key, value] of Object.entries(criteria)) {
       // Skip internal metadata properties
       if (key.startsWith('_')) continue;
-      
-      // Check for property existence
+
       if (!(key in entity)) return false;
-      
+
       // Handle different types of criteria values
       if (typeof value === 'function') {
-        // Function predicate
         if (!value(entity[key])) return false;
       } else if (value instanceof RegExp) {
-        // Regular expression matching
         if (typeof entity[key] !== 'string' || !value.test(entity[key])) return false;
       } else if (Array.isArray(value)) {
-        // Check if value is in array
         if (!value.includes(entity[key])) return false;
       } else if (typeof value === 'object' && value !== null) {
-        // Nested object criteria
         if (typeof entity[key] !== 'object' || entity[key] === null) return false;
         if (!this.matchesCriteria(entity[key], value)) return false;
       } else {
-        // Simple equality check
         if (entity[key] !== value) return false;
       }
     }
@@ -167,15 +157,13 @@ export class DefaultMemory implements Memory {
     if (count === 0) {
       return { count: 0, avgAccessCount: 0, mostAccessed: [] };
     }
-    
-    // Calculate average access count
+
     const totalAccessCount = entities.reduce(
-      (sum, [_, entity]) => sum + (entity._accessCount || 0), 
+      (sum, [_, entity]) => sum + (entity._accessCount || 0),
       0
     );
     const avgAccessCount = totalAccessCount / count;
-    
-    // Find most frequently accessed entities
+
     const sorted = entities
       .sort(([_, a], [__, b]) => (b._accessCount || 0) - (a._accessCount || 0))
       .slice(0, 5);
@@ -232,10 +220,8 @@ export class SemanticMemory implements Memory {
    * @returns The ID of the stored entity
    */
   storeEntity(entity: any): string {
-    // Store in regular memory
     const id = this.storage.storeEntity(entity);
-    
-    // Compute and store vector representation
+
     try {
       const vector = this.vectorize(entity);
       this.vectors.set(id, vector);
@@ -275,18 +261,16 @@ export class SemanticMemory implements Memory {
    * @returns Array of [entity, similarity] pairs
    */
   findSimilar(query: any | number[], limit: number = 10, threshold: number = 0.7): [any, number][] {
-    // Convert query to vector if it's not already
-    const queryVector = Array.isArray(query) 
-      ? query 
+    const queryVector = Array.isArray(query)
+      ? query
       : this.vectorize(query);
-    
-    // Compute similarity scores with all stored entities
+
     const results: [any, number][] = [];
-    
+
     // Convert Map iterator to array before iterating
-    for (const [id, vector] of Array.from(this.vectors.entries())) { 
+    for (const [id, vector] of Array.from(this.vectors.entries())) {
       const similarity = this.cosineSimilarity(queryVector, vector);
-      
+
       if (similarity >= threshold) {
         const entity = this.storage.retrieveEntity(id);
         if (entity) {
@@ -294,8 +278,7 @@ export class SemanticMemory implements Memory {
         }
       }
     }
-    
-    // Sort by similarity (descending) and limit results
+
     return results
       .sort((a, b) => b[1] - a[1])
       .slice(0, limit);

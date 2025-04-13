@@ -32,8 +32,7 @@ export class Registry {
    */
   registerEntity(entity: Entity): void {
     this.entities.set(entity.id, entity);
-    
-    // Register any capabilities the entity has
+
     if (entity.capabilities) {
       entity.capabilities.forEach(capability => {
         this.registerCapability(entity.id, capability);
@@ -53,8 +52,7 @@ export class Registry {
     if (!entity) {
       return false;
     }
-    
-    // Unregister any capabilities the entity has
+
     if (entity.capabilities) {
       entity.capabilities.forEach(capability => {
         this.unregisterCapability(entityId, capability);
@@ -101,8 +99,7 @@ export class Registry {
    */
   registerTool(tool: Tool): void {
     this.tools.set(tool.id, tool);
-    
-    // Register the tool's capabilities
+
     tool.capabilities.forEach(capability => {
       this.registerCapability(tool.id, capability);
     });
@@ -120,8 +117,7 @@ export class Registry {
     if (!tool) {
       return false;
     }
-    
-    // Unregister the tool's capabilities
+
     tool.capabilities.forEach(capability => {
       this.unregisterCapability(toolId, capability);
     });
@@ -170,10 +166,10 @@ export class Registry {
    */
   private unregisterCapability(providerId: EntityId, capability: Capability): void {
     const providers = this.capabilityMap.get(capability);
-    
+
     if (providers) {
       providers.delete(providerId);
-      
+
       // Remove the capability entirely if there are no more providers
       if (providers.size === 0) {
         this.capabilityMap.delete(capability);

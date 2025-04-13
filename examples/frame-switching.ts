@@ -7,6 +7,8 @@
 import { Agent } from '../src/core/agent'; // Correct import path
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
+import { GeminiClient } from '../src/llm/gemini-client'; // Ensure import is present
+import * as dotenv from 'dotenv';
 import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
 import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame, FrameFactory } from '../src/epistemic/frame'; // Correct import path
 import { Belief } from '../src/epistemic/belief'; // Correct import path
@@ -27,8 +29,16 @@ const memory = new DefaultMemory();
 // Create an observer with console logging enabled
 const observer = new DefaultObserver(1000, LogLevel.Debug, true);
 
+// Load environment variables
+dotenv.config();
+
 // Create an agent starting with the efficiency frame
 const efficiencyFrame = new EfficiencyFrame();
+
+// Initialize the GeminiClient with the API key from .env
+const geminiClient = new GeminiClient(process.env.GEMINI_API_KEY || "");
+
+// Create agent with the GeminiClient
 const agent = new Agent(
   'adaptive_agent',
   'Adaptive Decision Agent',
@@ -40,6 +50,7 @@ const agent = new Agent(
     Capability.SelfMonitoring
   ]),
   registry,
+  geminiClient,
   memory,
   observer
 );
@@ -111,7 +122,7 @@ async function operateWithEfficiencyFrame() {
   );
   
   console.log(`\nExecuting task: ${efficiencyTask.description}`);
-  const plan = agent.plan(efficiencyTask);
+  const plan = await agent.plan(efficiencyTask);
   
   if (plan) {
     agent.executePlan(plan);
@@ -179,7 +190,7 @@ async function switchToThoroughnessFrame() {
   );
   
   console.log(`\nExecuting task: ${thoroughnessTask.description}`);
-  const plan = agent.plan(thoroughnessTask);
+  const plan = await agent.plan(thoroughnessTask);
   
   if (plan) {
     agent.executePlan(plan);
@@ -249,7 +260,7 @@ async function switchToSecurityFrame() {
   );
   
   console.log(`\nExecuting task: ${securityTask.description}`);
-  const plan = agent.plan(securityTask);
+  const plan = await agent.plan(securityTask);
   
   if (plan) {
     agent.executePlan(plan);
@@ -289,7 +300,7 @@ async function compareBeliefConfidence() {
   console.log(`Proposition: "${proposition}"`);
   
   // Function to evaluate in a specific frame
-  async function evaluateInFrame(frameType: string, frameInstance: Frame) {
+  async function evaluateInFrame(frameType: string, frameInstance: Frame, client: GeminiClient) { // Use imported class name for type
     // Set the frame
     agent.setFrame(frameInstance);
     
@@ -305,29 +316,38 @@ async function compareBeliefConfidence() {
     );
     
     // Manually compute confidence using the frame's method
-    const confidence = frameInstance.computeInitialConfidence(
+    // Added await and passed client
+    const confidenceResult = await frameInstance.computeInitialConfidence( 
       proposition,
-      [justificationElement]
+      [justificationElement],
+      client 
     );
     
     console.log(`\nIn ${frameType} frame:`);
-    console.log(`- Confidence in "${proposition}": ${confidence.toFixed(2)}`);
+    // Use the awaited result
+    console.log(`- Confidence in "${proposition}": ${confidenceResult.toFixed(2)}`); 
     console.log(`- Interpretation focus: ${getFrameInterpretationFocus(frameType, evidence)}`);
     
     // Create a belief with this frame's evaluation
     const belief = new Belief(
       proposition,
-      confidence,
+      confidenceResult, // Use awaited result
       new Justification([justificationElement])
     );
     
     return belief;
   }
   
-  // Evaluate in each frame
-  const efficiencyBelief = await evaluateInFrame('Efficiency', new EfficiencyFrame());
-  const thoroughnessBelief = await evaluateInFrame('Thoroughness', new ThoroughnessFrame());
-  const securityBelief = await evaluateInFrame('Security', new SecurityFrame());
+  // Instantiate GeminiClient for the example evaluation
+  const exampleGeminiClient = new GeminiClient(process.env.GEMINI_API_KEY || ""); // Use imported class name for constructor
+  if (!process.env.GEMINI_API_KEY) {
+      console.warn("Warning: GEMINI_API_KEY environment variable not set. LLM calls in example will likely fail.");
+  }
+
+  // Evaluate in each frame, passing the client
+  const efficiencyBelief = await evaluateInFrame('Efficiency', new EfficiencyFrame(), exampleGeminiClient);
+  const thoroughnessBelief = await evaluateInFrame('Thoroughness', new ThoroughnessFrame(), exampleGeminiClient);
+  const securityBelief = await evaluateInFrame('Security', new SecurityFrame(), exampleGeminiClient);
   
   // Show comparison
   console.log('\nComparison of belief confidence across frames:');

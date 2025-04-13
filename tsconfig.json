@@ -7,7 +7,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "downlevelIteration": true, // Add this flag
+    "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "sourceMap": true,
@@ -18,6 +18,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "examples/**/*"], // Add examples directory
+  "include": ["src/**/*", "examples/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

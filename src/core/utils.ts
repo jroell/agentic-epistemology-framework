@@ -165,7 +165,6 @@ export function parseProposition(input: string): string {
  * @returns True if the proposition is negated
  */
 export function isNegatedProposition(proposition: string): boolean {
-  // Check if it starts with a negation symbol
   return proposition.startsWith('¬') ||
          proposition.startsWith('not ') ||
          proposition.startsWith('Not ');
@@ -179,7 +178,6 @@ export function isNegatedProposition(proposition: string): boolean {
  */
 export function negateProposition(proposition: string): string {
   if (isNegatedProposition(proposition)) {
-    // Remove negation
     if (proposition.startsWith('¬')) {
       return proposition.substring(1);
     } else if (proposition.startsWith('not ')) {
@@ -188,8 +186,7 @@ export function negateProposition(proposition: string): string {
       return proposition.substring(4);
     }
   }
-  
-  // Add negation
+
   return `¬${proposition}`;
 }
 

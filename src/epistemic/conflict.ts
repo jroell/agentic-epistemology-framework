@@ -277,10 +277,9 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
   async resolveConflict(conflict: EpistemicConflict): Promise<ConflictResolutionResult> {
     // This would be a more complex implementation in a real system
     // Here we provide a simplified version
-    
-    // Simulate confidence adjustments based on justification exchange
+
     const belief1ConfidenceDelta = this.simulateConfidenceAdjustment(
-      conflict.belief, 
+      conflict.belief,
       conflict.contradictoryBelief.justification
     );
     
@@ -288,19 +287,16 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
       conflict.contradictoryBelief,
       conflict.belief.justification
     );
-    
-    // Calculate new confidence values
+
     const newBelief1Confidence = conflict.belief.confidence + belief1ConfidenceDelta;
     const newBelief2Confidence = conflict.contradictoryBelief.confidence + belief2ConfidenceDelta;
-    
-    // Create updated beliefs
+
     const updatedBelief1 = conflict.belief.withConfidence(newBelief1Confidence);
     const updatedBelief2 = conflict.contradictoryBelief.withConfidence(newBelief2Confidence);
-    
+
     // Determine resolution type based on confidence changes
     if (Math.abs(belief1ConfidenceDelta) >= this.confidenceRevisionThreshold &&
         Math.abs(belief2ConfidenceDelta) >= this.confidenceRevisionThreshold) {
-      // Both agents revised their beliefs
       return {
         success: true,
         type: ResolutionType.MutualRevision,
@@ -309,7 +305,6 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
         updatedContradictoryBelief: updatedBelief2
       };
     } else if (Math.abs(belief1ConfidenceDelta) >= this.confidenceRevisionThreshold) {
-      // Only first agent revised belief
       return {
         success: true,
         type: ResolutionType.FirstAgentRevision,
@@ -317,7 +312,6 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
         updatedBelief: updatedBelief1
       };
     } else if (Math.abs(belief2ConfidenceDelta) >= this.confidenceRevisionThreshold) {
-      // Only second agent revised belief
       return {
         success: true,
         type: ResolutionType.SecondAgentRevision,
@@ -325,7 +319,6 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
         updatedContradictoryBelief: updatedBelief2
       };
     } else {
-      // Neither agent revised belief significantly
       return {
         success: false,
         type: ResolutionType.Persistent,
@@ -348,17 +341,14 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
     // This is a simplified simulation
     // In a real implementation, this would involve semantic analysis
     // of the justifications and more complex belief revision logic
-    
-    // Check justification strength
+
     const otherJustificationStrength = otherJustification.elements.length;
     const ownJustificationStrength = belief.justification.elements.length;
-    
-    // Calculate relative strength
+
     const relativeStrength = otherJustificationStrength - ownJustificationStrength;
-    
-    // Adjust confidence based on relative strength
+
     let confidenceDelta = 0;
-    
+
     if (relativeStrength > 0) {
       // Other justification is stronger, reduce confidence
       confidenceDelta = -0.1 * Math.min(relativeStrength, 5) / 5;
@@ -366,10 +356,10 @@ export class JustificationExchangeStrategy implements ConflictResolutionStrategy
       // Own justification is stronger, increase confidence
       confidenceDelta = 0.05 * Math.min(-relativeStrength, 5) / 5;
     }
-    
+
     // Add some randomness to simulate nuanced evaluation
     confidenceDelta += (Math.random() - 0.5) * 0.05;
-    
+
     return confidenceDelta;
   }
 }

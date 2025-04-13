@@ -1,7 +1,14 @@
-import { EntityId, generateId, clampConfidence } from '../types/common';
+import { EntityId, generateId, clampConfidence, negateProp } from '../types/common'; // Added negateProp
 import { Perception } from '../core/perception';
 import { Goal } from '../action/goal';
-import { Justification, JustificationElement } from './justification';
+import { GeminiClient } from '../llm/gemini-client'; // Added import
+import { 
+  Justification, 
+  JustificationElement, 
+  TestimonyJustificationElement, // Added import
+  InferenceJustificationElement, // Added import
+  ExternalJustificationElement // Added import
+} from './justification';
 
 /**
  * A cognitive lens/perspective that influences interpretation and reasoning
@@ -57,29 +64,39 @@ export abstract class Frame {
    * Interpret a perception through this frame's lens
    * 
    * @param perception Perception to interpret
-   * @returns The interpreted perception (may be modified)
+   * @param geminiClient Client for LLM interaction if needed
+   * @returns Promise resolving to the interpreted perception (may be modified)
    */
-  abstract interpretPerception(perception: Perception): Perception;
+  abstract interpretPerception(
+    perception: Perception, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<Perception>; // Changed return type
 
   /**
    * Get propositions relevant to a perception or goal in this frame
    * 
    * @param source Perception or goal to extract propositions from
-   * @returns Array of relevant propositions
+   * @param geminiClient Client for LLM interaction if needed
+   * @returns Promise resolving to an array of relevant propositions
    */
-  abstract getRelevantPropositions(source: Perception | Goal): string[];
+  abstract getRelevantPropositions(
+    source: Perception | Goal, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<string[]>; // Changed return type
 
   /**
    * Compute initial confidence for a new belief based on justification
    * 
    * @param proposition Proposition being considered
    * @param justificationElements Justification elements supporting the belief
-   * @returns Initial confidence level
+   * @param geminiClient Client for LLM interaction if needed
+   * @returns Promise resolving to the initial confidence level
    */
   abstract computeInitialConfidence(
     proposition: string, 
-    justificationElements: JustificationElement[]
-  ): number;
+    justificationElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number>; // Changed return type to Promise<number>
 
   /**
    * Update confidence based on existing belief and new evidence
@@ -87,25 +104,35 @@ export abstract class Frame {
    * @param currentConfidence Current confidence level
    * @param currentJustification Current justification
    * @param newElements New justification elements
-   * @returns Updated confidence level
+   * @param proposition The proposition being updated
+   * @param currentConfidence Current confidence level
+   * @param currentJustification Current justification
+   * @param newElements New justification elements
+   * @param geminiClient Client for LLM interaction if needed
+   * @returns Promise resolving to the updated confidence level
    */
   abstract updateConfidence(
+    proposition: string, 
     currentConfidence: number, 
     currentJustification: Justification,
-    newElements: JustificationElement[]
-  ): number;
+    newElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number>; // Changed return type to Promise<number>
 
   /**
    * Recompute confidence for a belief when the frame changes
    * 
+   * @param proposition The proposition associated with the justification
    * @param justification Justification supporting the belief
-   * @param currentConfidence Current confidence level
-   * @returns Recomputed confidence level
+   * @param geminiClient Client for LLM interaction
+   * @returns Promise resolving to the recomputed confidence level
    */
   abstract recomputeConfidence(
+    proposition: string, // Added proposition
     justification: Justification,
-    currentConfidence: number
-  ): number;
+    // currentConfidence: number, // Removed unused parameter
+    geminiClient: GeminiClient 
+  ): Promise<number>; 
 
   /**
    * Evaluate justification from an external source considering frame differences
@@ -113,13 +140,15 @@ export abstract class Frame {
    * @param proposition Proposition being justified
    * @param externalJustification Justification from external source
    * @param sourceFrame Frame of the source agent
-   * @returns Confidence level based on external justification
+   * @param geminiClient Client for LLM interaction
+   * @returns Promise resolving to the confidence level based on external justification
    */
   abstract evaluateExternalJustification(
     proposition: string,
     externalJustification: Justification,
-    sourceFrame: Frame
-  ): number;
+    sourceFrame: Frame,
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number>; // Changed return type
   
   /**
    * Update frame parameters
@@ -200,6 +229,12 @@ export interface FrameParameters {
    * Weight given to frame compatibility in evaluating external justifications
    */
   frameCompatibilityWeight: number;
+
+  /**
+   * Sensitivity parameter (alpha) for Justification-Source updates.
+   * Determines how much weight is given to source trust vs. belief inertia.
+   */
+  sourceTrustWeight: number; // Added for Eq. 2
 }
 
 /**
@@ -215,7 +250,8 @@ export const DEFAULT_FRAME_PARAMETERS: FrameParameters = {
   confidenceDecreaseRate: 0.15,
   minSampleSizeForHighConfidence: 5,
   maxInitialConfidence: 0.8,
-  frameCompatibilityWeight: 0.5
+  frameCompatibilityWeight: 0.5,
+  sourceTrustWeight: 0.6 // Default alpha value for Eq. 2
 };
 
 /**
@@ -247,181 +283,224 @@ export class EfficiencyFrame extends Frame {
     );
   }
 
-  interpretPerception(perception: Perception): Perception {
-    // In a real implementation, this would filter or prioritize aspects
-    // of the perception based on efficiency concerns
+  async interpretPerception( // Changed to async
+    perception: Perception, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<Perception> { // Changed return type
+    // Use LLM to interpret data based on frame
+    const interpretedData = await geminiClient.interpretPerceptionData(perception.data, this);
+    // Modify the data of the existing perception object
+    perception.data = interpretedData; 
     return perception;
   }
 
-  getRelevantPropositions(source: Perception | Goal): string[] {
-    // In a real implementation, this would extract propositions
-    // related to efficiency metrics
-    
-    // Simplified implementation
-    if (source instanceof Goal) {
-      return source.getRelevantPropositions().filter(prop => 
-        prop.toLowerCase().includes('speed') ||
-        prop.toLowerCase().includes('fast') ||
-        prop.toLowerCase().includes('efficient') ||
-        prop.toLowerCase().includes('cost') ||
-        prop.toLowerCase().includes('resource')
-      );
-    } else {
-      // For perceptions, extract propositions from data
-      const propositions: string[] = [];
-      const data = JSON.stringify(source.data).toLowerCase();
-      
-      // Extract potential propositions - this is greatly simplified
-      if (data.includes('time') || data.includes('duration')) {
-        propositions.push('ProcessingTimeIsOptimal');
-      }
-      if (data.includes('resource') || data.includes('memory')) {
-        propositions.push('ResourceUsageIsOptimal');
-      }
-      if (data.includes('cost') || data.includes('expense')) {
-        propositions.push('CostIsMinimized');
-      }
-      
-      return propositions;
-    }
+  async getRelevantPropositions( // Changed to async
+    source: Perception | Goal, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<string[]> { // Changed return type
+    // Use LLM to extract propositions based on frame
+    const sourceData = (source instanceof Goal) ? source.description : source.data;
+    return await geminiClient.extractRelevantPropositions(sourceData, this);
   }
 
-  computeInitialConfidence(proposition: string, justificationElements: JustificationElement[]): number {
-    // Higher initial confidence for efficiency-related propositions
-    const isEfficiencyProposition = 
-      proposition.toLowerCase().includes('fast') ||
-      proposition.toLowerCase().includes('speed') ||
-      proposition.toLowerCase().includes('efficient') ||
-      proposition.toLowerCase().includes('cost') ||
-      proposition.toLowerCase().includes('resource');
-    
-    let baseConfidence = isEfficiencyProposition ? 0.7 : 0.5;
-    
-    // Adjust based on justification source types
-    const toolResults = justificationElements.filter(el => el.type === 'tool_result').length;
-    const observations = justificationElements.filter(el => el.type === 'observation').length;
-    const testimonies = justificationElements.filter(el => el.type === 'testimony').length;
-    
-    // Tool results and direct observations get higher weight in efficiency frame
-    const adjustedConfidence = baseConfidence + 
-      (toolResults * this.parameters.toolResultWeight * 0.05) + 
-      (observations * this.parameters.observationWeight * 0.04) - 
-      (testimonies * (1 - this.parameters.testimonyWeight) * 0.03);
-    
+  async computeInitialConfidence( // Changed to async
+    proposition: string, 
+    justificationElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number> { 
+    // Implement weighted average logic using LLM calls
+    if (justificationElements.length === 0) {
+      return 0.5; // Default confidence if no justification
+    }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    // Evaluate all elements concurrently
+    await Promise.all(justificationElements.map(async (element) => {
+      // TODO: Add error handling for LLM calls
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition);
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this);
+      
+      let adjustedStrength = strength;
+      // Modulate strength by trust for relevant types
+      if (element.type === 'testimony' || element.type === 'external') {
+         // TODO: Add error handling for LLM call
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; // Simple modulation, could be more complex
+      }
+      
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    // Calculate weighted average, default to 0.5 if totalSaliency is 0
+    const initialConfidence = totalSaliency > 0 
+      ? totalWeightedStrength / totalSaliency 
+      : 0.5; 
+
+    // Apply max initial confidence limit
     return clampConfidence(
-      Math.min(adjustedConfidence, this.parameters.maxInitialConfidence)
+      Math.min(initialConfidence, this.parameters.maxInitialConfidence)
     );
   }
 
-  updateConfidence(
+  async updateConfidence( // Changed to async
+    proposition: string, 
     currentConfidence: number, 
     currentJustification: Justification,
-    newElements: JustificationElement[]
-  ): number {
-    // In efficiency frame, tool results and observations impact confidence more
-    let confidenceChange = 0;
-    
+    newElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number> { // Changed return type to Promise<number>
+    // Implement Frame-Weighted Update (Eq. 1 from paper Section 5.4)
+    // conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e, P)
+    // Applied sequentially for each new element.
+
+    let updatedConfidence = currentConfidence;
+
     for (const element of newElements) {
-      switch (element.type) {
-        case 'tool_result':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.toolResultWeight;
-          break;
-        case 'observation':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.observationWeight;
-          break;
-        case 'testimony':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.testimonyWeight;
-          break;
-        case 'inference':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.inferenceWeight;
-          break;
-        case 'external':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.externalJustificationWeight;
-          break;
+      // --- Get Evidence Strength C(e, P) using LLM ---
+      // TODO: Implement error handling for LLM call
+      const evidenceStrength = await geminiClient.judgeEvidenceStrength(element, proposition);
+
+      // --- Get Frame Weight w_F(e) using LLM ---
+      // TODO: Implement error handling for LLM call
+      const frameWeight = await geminiClient.judgeEvidenceSaliency(element, this); // Use LLM for saliency
+
+      // --- Apply Update Model ---
+      if (element.type === 'testimony' || element.type === 'external') {
+        // Apply Justification-Source Model (Eq. 2) for these types
+        // TODO: Implement error handling for LLM call
+        const trustScore = await geminiClient.judgeSourceTrust(element.source, this);
+        const alpha = this.parameters.sourceTrustWeight;
+        // Note: This simple form assumes the testimony/external evidence *supports* the proposition.
+        // A more robust version would need the LLM to also judge if the source supports/contradicts,
+        // and adjust the target confidence accordingly (e.g., target = trustScore or 1 - trustScore).
+        // For now, applying the simple interpolation towards the trust score.
+        updatedConfidence = (1 - alpha) * updatedConfidence + alpha * trustScore;
+
+      } else {
+        // Apply Frame-Weighted Model (Eq. 1) for other types
+        updatedConfidence = (1 - frameWeight) * updatedConfidence + frameWeight * evidenceStrength;
       }
     }
     
-    // Adjust for sample size
-    const totalElements = currentJustification.elements.length + newElements.length;
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    confidenceChange *= sampleSizeFactor;
-    
-    return clampConfidence(currentConfidence + confidenceChange);
+    return clampConfidence(updatedConfidence);
   }
+  
+  /**
+   * Helper method to detect if a justification element contradicts a proposition.
+   * Basic implementation - assumes specific content structures.
+   */
+  private _detectContradiction(element: JustificationElement, proposition: string): boolean {
+    const negatedProposition = negateProp(proposition);
 
-  recomputeConfidence(justification: Justification, currentConfidence: number): number {
-    // When switching to this frame, recompute confidence based on justification types
-    const toolResults = justification.getElementsByType('tool_result').length;
-    const observations = justification.getElementsByType('observation').length;
-    const testimonies = justification.getElementsByType('testimony').length;
-    const inferences = justification.getElementsByType('inference').length;
-    const externals = justification.getElementsByType('external').length;
+    if (element instanceof InferenceJustificationElement) {
+      // Check if the inference conclusion is the negation
+      return element.content === negatedProposition;
+    } 
     
-    // Base confidence on current confidence
-    let baseConfidence = currentConfidence;
-    
-    // Adjust based on this frame's parameters
-    const totalWeight = 
-      (toolResults * this.parameters.toolResultWeight) +
-      (observations * this.parameters.observationWeight) +
-      (testimonies * this.parameters.testimonyWeight) +
-      (inferences * this.parameters.inferenceWeight) +
-      (externals * this.parameters.externalJustificationWeight);
-    
-    const totalElements = toolResults + observations + testimonies + inferences + externals;
-    
-    if (totalElements > 0) {
-      const weightedConfidence = totalWeight / totalElements;
-      
-      // Blend current confidence with weighted confidence
-      baseConfidence = (baseConfidence + weightedConfidence) / 2;
+    if (element instanceof TestimonyJustificationElement) {
+      // Basic check: assumes content might be the negated proposition string
+      // TODO: Needs more robust parsing if content is complex (e.g., a Belief object)
+      return typeof element.content === 'string' && element.content === negatedProposition;
     }
-    
-    // Adjust for sample size
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    return clampConfidence(baseConfidence * (0.7 + 0.3 * sampleSizeFactor));
+
+    if (element instanceof ExternalJustificationElement) {
+      // Basic check: assumes content might be the negated proposition string
+      // TODO: Needs more robust parsing/checking of the external justification structure
+      return typeof element.content === 'string' && element.content === negatedProposition;
+    }
+
+    // Assume ToolResult and Observation don't directly contradict in this simple check
+    return false; 
   }
 
-  evaluateExternalJustification(
+  async recomputeConfidence( 
+    proposition: string, // Added proposition
+    justification: Justification, 
+    // currentConfidence: number, // Removed unused parameter
+    geminiClient: GeminiClient 
+  ): Promise<number> { 
+    // Re-evaluate confidence based *only* on the justification from the *current* frame's perspective.
+    // Uses the same weighted average logic as computeInitialConfidence.
+    const justificationElements = justification.elements;
+    if (justificationElements.length === 0) {
+      return 0.5; // Default confidence if no justification
+    }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    // Evaluate all elements concurrently
+    await Promise.all(justificationElements.map(async (element) => {
+      // TODO: Add error handling for LLM calls
+      // Use the passed-in proposition
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition); 
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this);
+      
+      let adjustedStrength = strength;
+      if (element.type === 'testimony' || element.type === 'external') {
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    const recomputedConfidence = totalSaliency > 0 
+      ? totalWeightedStrength / totalSaliency 
+      : 0.5; 
+
+    // Unlike computeInitialConfidence, we don't apply maxInitialConfidence here.
+    return clampConfidence(recomputedConfidence);
+  }
+
+  async evaluateExternalJustification( 
     proposition: string,
     externalJustification: Justification,
-    sourceFrame: Frame
-  ): number {
-    // Evaluate external justification based on this frame's values
-    
-    // Check if the proposition is aligned with efficiency concerns
-    const isEfficiencyProposition = 
-      proposition.toLowerCase().includes('fast') ||
-      proposition.toLowerCase().includes('speed') ||
-      proposition.toLowerCase().includes('efficient') ||
-      proposition.toLowerCase().includes('cost') ||
-      proposition.toLowerCase().includes('resource');
-    
-    // Base confidence on proposition alignment
-    let baseConfidence = isEfficiencyProposition ? 0.6 : 0.3;
-    
-    // Adjust based on frame compatibility
+    sourceFrame: Frame,
+    geminiClient: GeminiClient 
+  ): Promise<number> { 
+    // Evaluate the external justification using this frame's perspective and LLM calls,
+    // then modulate by frame compatibility.
+    const justificationElements = externalJustification.elements;
+     if (justificationElements.length === 0) {
+      return 0.5; // Default confidence if no justification
+    }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    // Evaluate all elements concurrently using *this* frame's perspective
+    await Promise.all(justificationElements.map(async (element) => {
+      // TODO: Add error handling for LLM calls
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition);
+      // Saliency is judged by *this* frame (the evaluating frame)
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this); 
+      
+      let adjustedStrength = strength;
+       // Trust in the source is judged by *this* frame
+      if (element.type === 'testimony' || element.type === 'external') {
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    const calculatedConfidence = totalSaliency > 0 
+      ? totalWeightedStrength / totalSaliency 
+      : 0.5; 
+
+    // Modulate by frame compatibility
     const compatibility = this.getCompatibility(sourceFrame);
-    baseConfidence *= (0.5 + 0.5 * compatibility);
-    
-    // Adjust based on justification types
-    const toolResults = externalJustification.getElementsByType('tool_result').length;
-    const observations = externalJustification.getElementsByType('observation').length;
-    
-    // In efficiency frame, tool results and observations are valued more
-    baseConfidence += 
-      (toolResults * this.parameters.toolResultWeight * 0.05) +
-      (observations * this.parameters.observationWeight * 0.05);
-    
-    return clampConfidence(baseConfidence);
+    // Simple modulation: scale confidence by compatibility. Could use frameCompatibilityWeight parameter.
+    const finalConfidence = calculatedConfidence * compatibility; 
+
+    return clampConfidence(finalConfidence);
   }
 
   withParameters(newParameters: Partial<FrameParameters>): Frame {
@@ -473,204 +552,190 @@ export class ThoroughnessFrame extends Frame {
     );
   }
 
-  interpretPerception(perception: Perception): Perception {
-    // In a real implementation, this would prioritize detailed aspects
-    // of the perception and seek more complete information
+  async interpretPerception( // Changed to async
+    perception: Perception, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<Perception> { // Changed return type
+    // Use LLM to interpret data based on frame
+    const interpretedData = await geminiClient.interpretPerceptionData(perception.data, this);
+     // Modify the data of the existing perception object
+    perception.data = interpretedData;
     return perception;
   }
 
-  getRelevantPropositions(source: Perception | Goal): string[] {
-    // Extract propositions related to thoroughness and completeness
-    
-    if (source instanceof Goal) {
-      return source.getRelevantPropositions().filter(prop => 
-        prop.toLowerCase().includes('thorough') ||
-        prop.toLowerCase().includes('complete') ||
-        prop.toLowerCase().includes('comprehensive') ||
-        prop.toLowerCase().includes('detail') ||
-        prop.toLowerCase().includes('accuracy')
-      );
-    } else {
-      // For perceptions, extract propositions from data
-      const propositions: string[] = [];
-      const data = JSON.stringify(source.data).toLowerCase();
-      
-      if (data.includes('detail') || data.includes('thorough')) {
-        propositions.push('AnalysisIsThorough');
-      }
-      if (data.includes('complet') || data.includes('comprehen')) {
-        propositions.push('InformationIsComplete');
-      }
-      if (data.includes('accura') || data.includes('correct')) {
-        propositions.push('DataIsAccurate');
-      }
-      
-      return propositions;
+  async getRelevantPropositions( // Changed to async
+    source: Perception | Goal, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<string[]> { // Changed return type
+    // Use LLM to extract propositions based on frame
+    const sourceData = (source instanceof Goal) ? source.description : source.data;
+    return await geminiClient.extractRelevantPropositions(sourceData, this);
+  }
+
+  async computeInitialConfidence( // Changed to async
+    proposition: string, 
+    justificationElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number> { 
+    // Implement weighted average logic using LLM calls
+    if (justificationElements.length === 0) {
+      return 0.5; // Default confidence if no justification
     }
-  }
 
-  computeInitialConfidence(proposition: string, justificationElements: JustificationElement[]): number {
-    // Lower initial confidence overall - thoroughness frame is cautious
-    const isThoroughnessProposition = 
-      proposition.toLowerCase().includes('thorough') ||
-      proposition.toLowerCase().includes('complete') ||
-      proposition.toLowerCase().includes('comprehensive') ||
-      proposition.toLowerCase().includes('detail') ||
-      proposition.toLowerCase().includes('accuracy');
-    
-    let baseConfidence = isThoroughnessProposition ? 0.6 : 0.4;
-    
-    // Adjust based on justification source types and quantity
-    const toolResults = justificationElements.filter(el => el.type === 'tool_result').length;
-    const observations = justificationElements.filter(el => el.type === 'observation').length;
-    const testimonies = justificationElements.filter(el => el.type === 'testimony').length;
-    const inferences = justificationElements.filter(el => el.type === 'inference').length;
-    
-    // Thoroughness frame values multiple sources and types of evidence
-    const justificationDiversity = new Set(justificationElements.map(el => el.type)).size / 5;
-    const totalElements = justificationElements.length;
-    
-    // Sample size factor - thoroughness frame requires more evidence
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    // Diversity bonus - thoroughness frame values diverse evidence
-    const diversityBonus = justificationDiversity * 0.2;
-    
-    baseConfidence += 
-      (sampleSizeFactor * 0.2) + 
-      diversityBonus + 
-      (observations * this.parameters.observationWeight * 0.02) + 
-      (inferences * this.parameters.inferenceWeight * 0.02);
-    
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    // Evaluate all elements concurrently
+    await Promise.all(justificationElements.map(async (element) => {
+      // TODO: Add error handling for LLM calls
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition);
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this);
+      
+      let adjustedStrength = strength;
+      // Modulate strength by trust for relevant types
+      if (element.type === 'testimony' || element.type === 'external') {
+         // TODO: Add error handling for LLM call
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    // Calculate weighted average, default to 0.5 if totalSaliency is 0
+    const initialConfidence = totalSaliency > 0 
+      ? totalWeightedStrength / totalSaliency 
+      : 0.5; 
+
+    // Apply max initial confidence limit
+    // Thoroughness frame might apply a stricter limit or additional factors (like diversity) here if needed
     return clampConfidence(
-      Math.min(baseConfidence, this.parameters.maxInitialConfidence)
+      Math.min(initialConfidence, this.parameters.maxInitialConfidence) 
     );
   }
 
-  updateConfidence(
+  async updateConfidence( // Changed to async
+    proposition: string, 
     currentConfidence: number, 
     currentJustification: Justification,
-    newElements: JustificationElement[]
-  ): number {
-    // Thoroughness frame values diverse evidence and requires more of it
-    let confidenceChange = 0;
-    
-    // Calculate evidence diversity before and after
-    const oldTypes = new Set(currentJustification.elements.map(el => el.type));
-    const newTypes = new Set(newElements.map(el => el.type));
-    const allTypes = new Set([...oldTypes, ...newTypes]);
-    
-    // Diversity bonus - thoroughness frame values diverse evidence types
-    const diversityIncrease = (allTypes.size - oldTypes.size) * 0.05;
-    confidenceChange += diversityIncrease;
-    
-    // Add confidence based on element types
+    newElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number> { // Changed return type to Promise<number>
+    // Implement Frame-Weighted Update (Eq. 1 from paper Section 5.4)
+    // conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e, P)
+    // Applied sequentially for each new element.
+
+    let updatedConfidence = currentConfidence;
+
+    // Thoroughness frame might have slightly different placeholder strengths
+    // or weights compared to EfficiencyFrame, but using the same for now.
     for (const element of newElements) {
-      switch (element.type) {
-        case 'tool_result':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.toolResultWeight;
-          break;
-        case 'observation':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.observationWeight;
-          break;
-        case 'testimony':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.testimonyWeight;
-          break;
-        case 'inference':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.inferenceWeight;
-          break;
-        case 'external':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.externalJustificationWeight;
-          break;
+      // --- Get Evidence Strength C(e, P) using LLM ---
+      const evidenceStrength = await geminiClient.judgeEvidenceStrength(element, proposition);
+
+      // --- Get Frame Weight w_F(e) using LLM ---
+      const frameWeight = await geminiClient.judgeEvidenceSaliency(element, this); // Use LLM for saliency
+
+      // --- Apply Update Model ---
+      if (element.type === 'testimony' || element.type === 'external') {
+        // Apply Justification-Source Model (Eq. 2)
+        const trustScore = await geminiClient.judgeSourceTrust(element.source, this);
+        const alpha = this.parameters.sourceTrustWeight;
+        updatedConfidence = (1 - alpha) * updatedConfidence + alpha * trustScore;
+      } else {
+        // Apply Frame-Weighted Model (Eq. 1)
+        updatedConfidence = (1 - frameWeight) * updatedConfidence + frameWeight * evidenceStrength;
       }
     }
     
-    // Sample size factor - thoroughness frame requires more evidence
-    const totalElements = currentJustification.elements.length + newElements.length;
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
+    return clampConfidence(updatedConfidence);
+  }
+  
+  /**
+   * Helper method to detect if a justification element contradicts a proposition.
+   * Basic implementation - assumes specific content structures.
+   * TODO: Consider moving this to the base Frame class for reuse.
+   */
+  private _detectContradiction(element: JustificationElement, proposition: string): boolean {
+    const negatedProposition = negateProp(proposition);
+
+    if (element instanceof InferenceJustificationElement) {
+      return element.content === negatedProposition;
+    } 
     
-    confidenceChange *= sampleSizeFactor;
+    if (element instanceof TestimonyJustificationElement) {
+      return typeof element.content === 'string' && element.content === negatedProposition;
+    }
+
+    if (element instanceof ExternalJustificationElement) {
+      return typeof element.content === 'string' && element.content === negatedProposition;
+    }
     
-    return clampConfidence(currentConfidence + confidenceChange);
+    return false; 
   }
 
-  recomputeConfidence(justification: Justification, currentConfidence: number): number {
-    // When switching to this frame, recompute confidence based on thoroughness criteria
-    const elements = justification.elements;
-    const totalElements = elements.length;
-    
-    // Diversity of justification types
-    const uniqueTypes = new Set(elements.map(el => el.type));
-    const diversityFactor = uniqueTypes.size / 5; // Normalize by maximum possible types
-    
-    // Source diversity - thoroughness frame values diverse sources
-    const uniqueSources = new Set(elements.map(el => el.source));
-    const sourceDiversityFactor = Math.min(uniqueSources.size / 3, 1); // Cap at 3 unique sources
-    
-    // Sample size factor - thoroughness frame requires more evidence
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    // Blend current confidence with thoroughness criteria
-    const thoroughnessScore = 
-      (diversityFactor * 0.3) + 
-      (sourceDiversityFactor * 0.3) + 
-      (sampleSizeFactor * 0.4);
-    
-    const blendedConfidence = (currentConfidence + thoroughnessScore) / 2;
-    
-    return clampConfidence(blendedConfidence);
+  async recomputeConfidence( 
+    proposition: string, // Added proposition
+    justification: Justification, 
+    // currentConfidence: number, // Removed unused parameter
+    geminiClient: GeminiClient 
+  ): Promise<number> { 
+    // Re-evaluate confidence based *only* on the justification from the *current* frame's perspective.
+    const justificationElements = justification.elements;
+    if (justificationElements.length === 0) { return 0.5; }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    await Promise.all(justificationElements.map(async (element) => {
+      // Use the passed-in proposition
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition); 
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this);
+      let adjustedStrength = strength;
+      if (element.type === 'testimony' || element.type === 'external') {
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    const recomputedConfidence = totalSaliency > 0 ? totalWeightedStrength / totalSaliency : 0.5; 
+    return clampConfidence(recomputedConfidence);
   }
 
-  evaluateExternalJustification(
+  async evaluateExternalJustification( 
     proposition: string,
     externalJustification: Justification,
-    sourceFrame: Frame
-  ): number {
-    // Thoroughness frame values comprehensive justifications
-    
-    // Check if the proposition is aligned with thoroughness concerns
-    const isThoroughnessProposition = 
-      proposition.toLowerCase().includes('thorough') ||
-      proposition.toLowerCase().includes('complete') ||
-      proposition.toLowerCase().includes('comprehensive') ||
-      proposition.toLowerCase().includes('detail') ||
-      proposition.toLowerCase().includes('accuracy');
-    
-    // Base confidence on proposition alignment
-    let baseConfidence = isThoroughnessProposition ? 0.6 : 0.4;
-    
-    // Adjust based on frame compatibility
+    sourceFrame: Frame,
+    geminiClient: GeminiClient 
+  ): Promise<number> { 
+    // Evaluate the external justification using this frame's perspective and LLM calls,
+    // then modulate by frame compatibility.
+     const justificationElements = externalJustification.elements;
+     if (justificationElements.length === 0) { return 0.5; }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    await Promise.all(justificationElements.map(async (element) => {
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition);
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this); 
+      let adjustedStrength = strength;
+      if (element.type === 'testimony' || element.type === 'external') {
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    const calculatedConfidence = totalSaliency > 0 ? totalWeightedStrength / totalSaliency : 0.5; 
     const compatibility = this.getCompatibility(sourceFrame);
-    baseConfidence *= (0.5 + 0.5 * compatibility);
-    
-    // Thoroughness frame values diverse, comprehensive justifications
-    const elements = externalJustification.elements;
-    const totalElements = elements.length;
-    
-    // Diversity of justification types
-    const uniqueTypes = new Set(elements.map(el => el.type)).size;
-    const diversityFactor = uniqueTypes / 5; // Normalize by maximum possible types
-    
-    // Sample size factor - thoroughness frame values more evidence
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    baseConfidence += 
-      (diversityFactor * 0.15) + 
-      (sampleSizeFactor * 0.15);
-    
-    return clampConfidence(baseConfidence);
+    const finalConfidence = calculatedConfidence * compatibility; 
+
+    return clampConfidence(finalConfidence);
   }
 
   withParameters(newParameters: Partial<FrameParameters>): Frame {
@@ -722,237 +787,189 @@ export class SecurityFrame extends Frame {
     );
   }
 
-  interpretPerception(perception: Perception): Perception {
-    // In a real implementation, this would prioritize security-related aspects
-    // of the perception and highlight potential risks
+  async interpretPerception( // Changed to async
+    perception: Perception, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<Perception> { // Changed return type
+    // Use LLM to interpret data based on frame
+    const interpretedData = await geminiClient.interpretPerceptionData(perception.data, this);
+     // Modify the data of the existing perception object
+    perception.data = interpretedData;
     return perception;
   }
 
-  getRelevantPropositions(source: Perception | Goal): string[] {
-    // Extract propositions related to security and risk
-    
-    if (source instanceof Goal) {
-      return source.getRelevantPropositions().filter(prop => 
-        prop.toLowerCase().includes('secur') ||
-        prop.toLowerCase().includes('safe') ||
-        prop.toLowerCase().includes('risk') ||
-        prop.toLowerCase().includes('threat') ||
-        prop.toLowerCase().includes('protect') ||
-        prop.toLowerCase().includes('vulnerab')
-      );
-    } else {
-      // For perceptions, extract propositions from data
-      const propositions: string[] = [];
-      const data = JSON.stringify(source.data).toLowerCase();
-      
-      if (data.includes('secur') || data.includes('safe')) {
-        propositions.push('SystemIsSecure');
-      }
-      if (data.includes('risk') || data.includes('threat')) {
-        propositions.push('RisksAreMinimized');
-      }
-      if (data.includes('vulnerab') || data.includes('exploit')) {
-        propositions.push('VulnerabilitiesAreAddressed');
-      }
-      if (data.includes('protect') || data.includes('defense')) {
-        propositions.push('ProtectionsAreEffective');
-      }
-      
-      return propositions;
-    }
+  async getRelevantPropositions( // Changed to async
+    source: Perception | Goal, 
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<string[]> { // Changed return type
+    // Use LLM to extract propositions based on frame
+    const sourceData = (source instanceof Goal) ? source.description : source.data;
+    return await geminiClient.extractRelevantPropositions(sourceData, this);
   }
 
-  computeInitialConfidence(proposition: string, justificationElements: JustificationElement[]): number {
-    // Security frame is cautious and starts with lower confidence
-    const isSecurityProposition = 
-      proposition.toLowerCase().includes('secur') ||
-      proposition.toLowerCase().includes('safe') ||
-      proposition.toLowerCase().includes('risk') ||
-      proposition.toLowerCase().includes('threat') ||
-      proposition.toLowerCase().includes('protect');
-    
-    // For security propositions, start with higher base confidence
-    // For positive security claims, start lower (cautious)
-    // For negative security claims (risks exist), start higher
-    let baseConfidence = 0.3;
-    
-    if (isSecurityProposition) {
-      if (proposition.toLowerCase().includes('is secure') || 
-          proposition.toLowerCase().includes('is safe')) {
-        baseConfidence = 0.3; // Low initial confidence in security claims
-      } else if (proposition.toLowerCase().includes('risk') ||
-                proposition.toLowerCase().includes('threat') ||
-                proposition.toLowerCase().includes('vulnerab')) {
-        baseConfidence = 0.5; // Higher initial confidence in risk claims
-      }
+  async computeInitialConfidence( // Changed to async
+    proposition: string, 
+    justificationElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number> { 
+    // Implement weighted average logic using LLM calls
+    if (justificationElements.length === 0) {
+      return 0.5; // Default confidence if no justification
     }
-    
-    // Security frame values observations highly
-    const observations = justificationElements.filter(el => el.type === 'observation').length;
-    const toolResults = justificationElements.filter(el => el.type === 'tool_result').length;
-    
-    // Security frame is skeptical of testimony
-    const testimonies = justificationElements.filter(el => el.type === 'testimony').length;
-    
-    baseConfidence += 
-      (observations * this.parameters.observationWeight * 0.05) +
-      (toolResults * this.parameters.toolResultWeight * 0.04) -
-      (testimonies * (1 - this.parameters.testimonyWeight) * 0.02);
-    
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    // Evaluate all elements concurrently
+    await Promise.all(justificationElements.map(async (element) => {
+      // TODO: Add error handling for LLM calls
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition);
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this);
+      
+      let adjustedStrength = strength;
+      // Modulate strength by trust for relevant types
+      if (element.type === 'testimony' || element.type === 'external') {
+         // TODO: Add error handling for LLM call
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    // Calculate weighted average, default to 0.5 if totalSaliency is 0
+    const initialConfidence = totalSaliency > 0 
+      ? totalWeightedStrength / totalSaliency 
+      : 0.5; 
+
+    // Apply max initial confidence limit
+    // Security frame might apply a stricter limit or additional factors here if needed
     return clampConfidence(
-      Math.min(baseConfidence, this.parameters.maxInitialConfidence)
+      Math.min(initialConfidence, this.parameters.maxInitialConfidence) 
     );
   }
 
-  updateConfidence(
+  async updateConfidence( // Changed to async
+    proposition: string, 
     currentConfidence: number, 
     currentJustification: Justification,
-    newElements: JustificationElement[]
-  ): number {
-    // Security frame is cautious about increasing confidence
-    // but quick to decrease it for potential risks
-    let confidenceChange = 0;
-    
-    // Check for negative evidence that might reduce confidence
-    const hasNegativeEvidence = newElements.some(element => {
-      if (typeof element.content === 'string') {
-        return element.content.toLowerCase().includes('risk') ||
-               element.content.toLowerCase().includes('threat') ||
-               element.content.toLowerCase().includes('vulnerab') ||
-               element.content.toLowerCase().includes('fail');
-      }
-      return false;
-    });
-    
-    // If negative evidence exists, decrease confidence more rapidly
-    if (hasNegativeEvidence) {
-      confidenceChange -= this.parameters.confidenceDecreaseRate * 1.5;
-    }
-    
-    // Add confidence based on element types
+    newElements: JustificationElement[],
+    geminiClient: GeminiClient // Added geminiClient parameter
+  ): Promise<number> { // Changed return type to Promise<number>
+    // Implement Frame-Weighted Update (Eq. 1 from paper Section 5.4)
+    // conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e, P)
+    // Applied sequentially for each new element.
+
+    let updatedConfidence = currentConfidence;
+
+    // Security frame might have different placeholder strengths/weights.
     for (const element of newElements) {
-      // Security frame values observations and tool results more
-      switch (element.type) {
-        case 'tool_result':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.toolResultWeight;
-          break;
-        case 'observation':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.observationWeight;
-          break;
-        case 'testimony':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.testimonyWeight;
-          break;
-        case 'inference':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.inferenceWeight;
-          break;
-        case 'external':
-          confidenceChange += this.parameters.confidenceIncreaseRate * this.parameters.externalJustificationWeight;
-          break;
+      // --- Get Evidence Strength C(e, P) using LLM ---
+      const evidenceStrength = await geminiClient.judgeEvidenceStrength(element, proposition);
+
+      // --- Get Frame Weight w_F(e) using LLM ---
+      const frameWeight = await geminiClient.judgeEvidenceSaliency(element, this); // Use LLM for saliency
+
+      // --- Apply Update Model ---
+      if (element.type === 'testimony' || element.type === 'external') {
+        // Apply Justification-Source Model (Eq. 2)
+        const trustScore = await geminiClient.judgeSourceTrust(element.source, this);
+        const alpha = this.parameters.sourceTrustWeight;
+        updatedConfidence = (1 - alpha) * updatedConfidence + alpha * trustScore;
+      } else {
+         // Apply Frame-Weighted Model (Eq. 1)
+        updatedConfidence = (1 - frameWeight) * updatedConfidence + frameWeight * evidenceStrength;
       }
     }
     
-    // Security frame requires more evidence before high confidence
-    const totalElements = currentJustification.elements.length + newElements.length;
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    confidenceChange *= sampleSizeFactor;
-    
-    return clampConfidence(currentConfidence + confidenceChange);
+    return clampConfidence(updatedConfidence);
   }
+  
+  /**
+   * Helper method to detect if a justification element contradicts a proposition.
+   * Basic implementation - assumes specific content structures.
+   * TODO: Consider moving this to the base Frame class for reuse.
+   */
+  private _detectContradiction(element: JustificationElement, proposition: string): boolean {
+    const negatedProposition = negateProp(proposition);
 
-  recomputeConfidence(justification: Justification, currentConfidence: number): number {
-    // When switching to security frame, recompute with a security focus
+    if (element instanceof InferenceJustificationElement) {
+      return element.content === negatedProposition;
+    } 
     
-    // Security frame is generally more cautious
-    let securityAdjustedConfidence = currentConfidence * 0.8;
-    
-    // Check for security-related risks in justification
-    const hasSecurityRisks = justification.elements.some(element => {
-      if (typeof element.content === 'string') {
-        return element.content.toLowerCase().includes('risk') ||
-               element.content.toLowerCase().includes('threat') ||
-               element.content.toLowerCase().includes('vulnerab') ||
-               element.content.toLowerCase().includes('fail');
-      }
-      return false;
-    });
-    
-    // If security risks are found, reduce confidence further
-    if (hasSecurityRisks) {
-      securityAdjustedConfidence *= 0.7;
+    if (element instanceof TestimonyJustificationElement) {
+      return typeof element.content === 'string' && element.content === negatedProposition;
+    }
+
+    if (element instanceof ExternalJustificationElement) {
+      return typeof element.content === 'string' && element.content === negatedProposition;
     }
     
-    // Security frame values comprehensive testing
-    const observations = justification.getElementsByType('observation').length;
-    const toolResults = justification.getElementsByType('tool_result').length;
-    
-    // Sample size factor - security frame requires more evidence
-    const totalElements = justification.elements.length;
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    // Add confidence for observations and tool results
-    securityAdjustedConfidence += 
-      (observations * this.parameters.observationWeight * 0.02) +
-      (toolResults * this.parameters.toolResultWeight * 0.02) +
-      (sampleSizeFactor * 0.1);
-    
-    return clampConfidence(securityAdjustedConfidence);
+    return false; 
   }
 
-  evaluateExternalJustification(
+  async recomputeConfidence( 
+    proposition: string, // Added proposition
+    justification: Justification, 
+    // currentConfidence: number, // Removed unused parameter
+    geminiClient: GeminiClient 
+  ): Promise<number> { 
+    // Re-evaluate confidence based *only* on the justification from the *current* frame's perspective.
+     const justificationElements = justification.elements;
+     if (justificationElements.length === 0) { return 0.5; }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    await Promise.all(justificationElements.map(async (element) => {
+      // Use the passed-in proposition
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition); 
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this);
+      let adjustedStrength = strength;
+      if (element.type === 'testimony' || element.type === 'external') {
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    const recomputedConfidence = totalSaliency > 0 ? totalWeightedStrength / totalSaliency : 0.5; 
+    return clampConfidence(recomputedConfidence);
+  }
+
+  async evaluateExternalJustification( 
     proposition: string,
     externalJustification: Justification,
-    sourceFrame: Frame
-  ): number {
-    // Security frame is cautious about external justifications
-    
-    // Check if the proposition is security-related
-    const isSecurityProposition = 
-      proposition.toLowerCase().includes('secur') ||
-      proposition.toLowerCase().includes('safe') ||
-      proposition.toLowerCase().includes('risk') ||
-      proposition.toLowerCase().includes('threat') ||
-      proposition.toLowerCase().includes('protect');
-    
-    // Base confidence is low for security frame evaluating external claims
-    let baseConfidence = 0.3;
-    
-    // Adjust based on frame compatibility (trust security-focused frames more)
+    sourceFrame: Frame,
+    geminiClient: GeminiClient 
+  ): Promise<number> { 
+    // Evaluate the external justification using this frame's perspective and LLM calls,
+    // then modulate by frame compatibility.
+     const justificationElements = externalJustification.elements;
+     if (justificationElements.length === 0) { return 0.5; }
+
+    let totalWeightedStrength = 0;
+    let totalSaliency = 0;
+
+    await Promise.all(justificationElements.map(async (element) => {
+      const strength = await geminiClient.judgeEvidenceStrength(element, proposition);
+      const saliency = await geminiClient.judgeEvidenceSaliency(element, this); 
+      let adjustedStrength = strength;
+      if (element.type === 'testimony' || element.type === 'external') {
+        const trust = await geminiClient.judgeSourceTrust(element.source, this);
+        adjustedStrength = strength * trust; 
+      }
+      totalWeightedStrength += adjustedStrength * saliency;
+      totalSaliency += saliency;
+    }));
+
+    const calculatedConfidence = totalSaliency > 0 ? totalWeightedStrength / totalSaliency : 0.5; 
     const compatibility = this.getCompatibility(sourceFrame);
-    baseConfidence *= (0.5 + 0.5 * compatibility);
-    
-    // Positive security claims start with lower confidence
-    if (isSecurityProposition && 
-        (proposition.toLowerCase().includes('is secure') || 
-         proposition.toLowerCase().includes('is safe'))) {
-      baseConfidence *= 0.8;
-    }
-    
-    // Check for evidence quality
-    const observations = externalJustification.getElementsByType('observation').length;
-    const toolResults = externalJustification.getElementsByType('tool_result').length;
-    
-    // Security frame values detailed observations and tool results
-    baseConfidence += 
-      (observations * this.parameters.observationWeight * 0.03) +
-      (toolResults * this.parameters.toolResultWeight * 0.03);
-    
-    // Sample size factor - security frame requires more evidence
-    const totalElements = externalJustification.elements.length;
-    const sampleSizeFactor = Math.min(
-      totalElements / this.parameters.minSampleSizeForHighConfidence, 
-      1
-    );
-    
-    baseConfidence *= (0.7 + 0.3 * sampleSizeFactor);
-    
-    return clampConfidence(baseConfidence);
+    const finalConfidence = calculatedConfidence * compatibility; 
+
+    return clampConfidence(finalConfidence);
   }
 
   withParameters(newParameters: Partial<FrameParameters>): Frame {

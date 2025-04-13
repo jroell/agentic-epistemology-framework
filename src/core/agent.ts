@@ -3,8 +3,8 @@ import { Belief } from '../epistemic/belief';
 import { Frame } from '../epistemic/frame';
 import { Capability } from '../action/capability';
 import { Memory, DefaultMemory } from './memory';
-import { Observer } from '../observer/observer'; // Import Observer interface
-import { DefaultObserver } from '../observer/default-observer'; // Import DefaultObserver implementation
+import { Observer } from '../observer/observer';
+import { DefaultObserver } from '../observer/default-observer';
 import { Registry } from './registry';
 import { Context, ContextElement } from './context';
 import { Perception, ToolResultPerception } from './perception';
@@ -12,9 +12,10 @@ import { Justification, JustificationElement, ExternalJustificationElement } fro
 import { Goal } from '../action/goal';
 import { Plan } from '../action/plan';
 import { Action, UseTool, SendMessage } from '../action/action';
-import { Tool } from '../action/tool';
+import { Tool } from '../action/tool'; // Keep Tool import
 import { Message } from '../action/message';
 import { EpistemicConflict } from '../epistemic/conflict';
+import { GeminiClient } from '../llm/gemini-client';
 import { negateProp } from '../types/common';
 
 /**
@@ -91,9 +92,14 @@ export class Agent {
   private observer: Observer;
   
   /**
-   * Confidence thresholds for different operations
+ * Confidence thresholds for different operations
+ */
+private confidenceThresholds: ConfidenceThresholds;
+
+  /**
+   * Client for interacting with the Gemini LLM
    */
-  private confidenceThresholds: ConfidenceThresholds;
+  private geminiClient: GeminiClient;
 
   /**
    * Create a new agent
@@ -105,9 +111,11 @@ export class Agent {
    * @param capabilities Agent capabilities
    * @param registry Registry of tools and entities
    * @param memory Optional memory system
-   * @param observer Optional observer for logging
-   * @param confidenceThresholds Optional confidence thresholds
-   */
+ * @param geminiClient Client for LLM interaction
+ * @param memory Optional memory system
+ * @param observer Optional observer for logging
+ * @param confidenceThresholds Optional confidence thresholds
+ */
   constructor(
     id: EntityId,
     name: string,
@@ -115,6 +123,7 @@ export class Agent {
     initialFrame: Frame,
     capabilities: Set<Capability> = new Set(),
     registry: Registry,
+    geminiClient: GeminiClient,
     memory?: Memory,
     observer?: Observer,
     confidenceThresholds: ConfidenceThresholds = DEFAULT_CONFIDENCE_THRESHOLDS
@@ -125,12 +134,12 @@ export class Agent {
     this.capabilities = capabilities;
     this.registry = registry;
     this.memory = memory || new DefaultMemory();
-    this.observer = observer || new DefaultObserver(); // Note: DefaultObserver import might still be an issue
+    this.observer = observer || new DefaultObserver();
     this.confidenceThresholds = confidenceThresholds;
-    this._frame = initialFrame; // Assign directly to _frame
+    this._frame = initialFrame;
     this.context = new Context([]);
+    this.geminiClient = geminiClient;
 
-    // Initialize beliefs
     initialBeliefs.forEach(belief => {
       this.beliefs.set(belief.proposition, belief);
       this.memory.storeEntity(belief);
@@ -142,18 +151,12 @@ export class Agent {
    * 
    * @param perception The perception to process
    */
-  perceive(perception: Perception): void {
-    // Log the perception event
+  async perceive(perception: Perception): Promise<void> { // Changed to async
     this.observer.logPerception(this.id, perception);
-
-    // Update context with new perception
     this.context.addElements(perception.getContextualElements());
-
-    // Process the perception based on current frame
-    const interpretedPerception = this.frame.interpretPerception(perception);
-
-    // Update beliefs based on the interpreted perception
-    this.updateBeliefs(interpretedPerception);
+    // Call async interpretPerception and pass geminiClient
+    const interpretedPerception = await this.frame.interpretPerception(perception, this.geminiClient); 
+    await this.updateBeliefs(interpretedPerception); // Await belief update
   }
 
   /**
@@ -161,17 +164,19 @@ export class Agent {
    * 
    * @param perception The perception containing new information
    */
-  private updateBeliefs(perception: Perception): void {
-    const relevantPropositions = this.frame.getRelevantPropositions(perception);
+  private async updateBeliefs(perception: Perception): Promise<void> { 
+    // Call async getRelevantPropositions and pass geminiClient
+    const relevantPropositions = await this.frame.getRelevantPropositions(perception, this.geminiClient); 
 
-    relevantPropositions.forEach(proposition => {
+    // Use Promise.all to handle async updates concurrently
+    await Promise.all(relevantPropositions.map(async proposition => { // Changed to async map
       const existingBelief = this.beliefs.get(proposition);
       const newJustificationElements = perception.getJustificationElements(proposition);
 
       if (existingBelief) {
-        // Update existing belief
-        const updatedConfidence = this.computeUpdatedConfidence(
-          existingBelief, 
+        // Call the async computeUpdatedConfidence
+        const updatedConfidence = await this.computeUpdatedConfidence( 
+          existingBelief,
           newJustificationElements,
           this.frame
         );
@@ -191,10 +196,11 @@ export class Agent {
         this.memory.storeEntity(updatedBelief);
         this.observer.logBeliefUpdate(this.id, existingBelief, updatedBelief);
       } else if (newJustificationElements.length > 0) {
-        // Create new belief
-        const initialConfidence = this.frame.computeInitialConfidence(
+        // Call async computeInitialConfidence and pass geminiClient
+        const initialConfidence = await this.frame.computeInitialConfidence(
           proposition,
-          newJustificationElements
+          newJustificationElements,
+          this.geminiClient // Pass geminiClient
         );
 
         const justification = new Justification(newJustificationElements);
@@ -204,7 +210,7 @@ export class Agent {
         this.memory.storeEntity(newBelief);
         this.observer.logBeliefFormation(this.id, newBelief);
       }
-    });
+    })); // End Promise.all map
   }
 
   /**
@@ -213,50 +219,47 @@ export class Agent {
    * @param existingBelief The existing belief
    * @param newJustificationElements New evidence
    * @param frame The frame to use for computation
-   * @returns Updated confidence value
+   * @returns Promise resolving to the updated confidence value
    */
-  private computeUpdatedConfidence(
-    existingBelief: Belief,
+  private async computeUpdatedConfidence( // Changed to async
+    existingBelief: Belief, 
     newJustificationElements: JustificationElement[],
     frame: Frame
-  ): number {
+  ): Promise<number> { // Changed return type
+    // Pass the proposition and geminiClient to the frame's updateConfidence method
     return frame.updateConfidence(
+      existingBelief.proposition, 
       existingBelief.confidence, 
       existingBelief.justification,
-      newJustificationElements
+      newJustificationElements,
+      this.geminiClient // Pass geminiClient
     );
   }
 
   /**
    * Construct a plan to achieve a goal
    * 
-   * @param goal The goal to achieve
-   * @returns A plan or null if planning failed
-   */
-  plan(goal: Goal): Plan | null {
-    // Log the planning event
+ * @param goal The goal to achieve
+ * @returns A promise resolving to a plan or null if planning failed
+ */
+  async plan(goal: Goal): Promise<Plan | null> {
     this.observer.logPlanningStart(this.id, goal);
+    // Await the async call to getRelevantBeliefs
+    const relevantBeliefs = await this.getRelevantBeliefs(goal); 
 
-    // Get relevant beliefs from context and memory
-    const relevantBeliefs = this.getRelevantBeliefs(goal);
-
-    // Check if confidence in relevant beliefs is sufficient
     for (const belief of relevantBeliefs) {
       if (belief.confidence < this.confidenceThresholds.action) {
-        // Need more information - could initiate inquiry
         this.observer.logInsufficientConfidence(this.id, belief, goal);
         return null;
       }
     }
 
-    // Simple planning algorithm (in real implementation, this would be more sophisticated)
-    const availableActions = this.getAvailableActions();
-    const plan = this.constructPlan(goal, relevantBeliefs, availableActions);
-    
+    const plan = await this.constructPlan(goal, relevantBeliefs);
+
     if (plan) {
       this.observer.logPlanCreation(this.id, plan);
     }
-    
+
     return plan;
   }
 
@@ -264,12 +267,12 @@ export class Agent {
    * Get beliefs relevant to a specific goal
    * 
    * @param goal The goal to get relevant beliefs for
-   * @returns Array of relevant beliefs
+   * @returns Promise resolving to an array of relevant beliefs
    */
-  private getRelevantBeliefs(goal: Goal): Belief[] {
-    // Retrieve relevant beliefs based on the current frame and goal
-    const relevantPropositions = this.frame.getRelevantPropositions(goal);
-    
+  private async getRelevantBeliefs(goal: Goal): Promise<Belief[]> { // Changed to async
+    // Call async getRelevantPropositions and pass geminiClient
+    const relevantPropositions = await this.frame.getRelevantPropositions(goal, this.geminiClient); 
+
     return relevantPropositions
       .map(prop => this.beliefs.get(prop))
       .filter((belief): belief is Belief => belief !== undefined);
@@ -299,36 +302,44 @@ export class Agent {
    * 
    * @param goal The goal to achieve
    * @param beliefs Relevant beliefs
-   * @param availableActions Available actions
-   * @returns A plan or null if planning failed
-   */
-  private constructPlan(goal: Goal, beliefs: Belief[], availableActions: Action[]): Plan | null {
-    // This is a simplified planning algorithm
-    // In a full implementation, this would include more sophisticated planning methods
-    
-    const planSteps: Action[] = [];
-    
-    // Simple linear planning for demonstration purposes
-    const subgoals = goal.decompose();
-    
-    for (const subgoal of subgoals) {
-      const actionForSubgoal = availableActions.find(action => 
-        action.canAchieve(subgoal, beliefs)
-      );
-      
-      if (!actionForSubgoal) {
-        return null; // Cannot find action for subgoal
-      }
-      
-      planSteps.push(actionForSubgoal);
+ * @param beliefs Relevant beliefs
+ * @returns A promise resolving to a plan or null if planning failed
+ */
+  private async constructPlan(goal: Goal, beliefs: Belief[]): Promise<Plan | null> {
+    const availableTools = this.getAvailableTools();
+
+    if (availableTools.length === 0) {
+        console.warn(`[Agent ${this.id}] No tools available to achieve goal: ${goal.description}`);
+        return null;
     }
-    
-    if (planSteps.length === 0) {
-      return null;
+
+    const planSteps = await this.geminiClient.generatePlan(goal, beliefs, availableTools, this.frame);
+
+    if (!planSteps || planSteps.length === 0) {
+        console.warn(`[Agent ${this.id}] Gemini failed to generate a plan for goal: ${goal.description}`);
+        return null;
     }
-    
+
+    // Note: Gemini provides the actions, so we use those directly.
+    // The 'beliefs' parameter here represents the beliefs *at the time of planning*,
+    // which Gemini used as context. These might be useful for plan monitoring later.
     return new Plan(goal, planSteps, beliefs);
   }
+
+ /**
+  * Get available tools based on current capabilities and registry.
+   * @returns Array of available Tool objects.
+   */
+ private getAvailableTools(): Tool[] {
+    const tools: Tool[] = [];
+    this.capabilities.forEach(capability => {
+        const toolsForCapability = this.registry.getToolsForCapability(capability);
+        tools.push(...toolsForCapability);
+    });
+    // Deduplicate tools if necessary (e.g., if multiple capabilities map to the same tool)
+    return Array.from(new Map(tools.map(tool => [tool.id, tool])).values());
+ }
+
 
   /**
    * Execute a plan, performing actions and updating state
@@ -337,30 +348,27 @@ export class Agent {
    * @returns True if the plan was executed successfully
    */
   executePlan(plan: Plan): boolean {
-    // Log plan execution start
     this.observer.logPlanExecution(this.id, plan);
-    
+
     for (const action of plan.steps) {
-      // Check if supporting beliefs still have sufficient confidence
       const supportingBeliefs = plan.getSupportingBeliefs(action);
-      
+
       for (const belief of supportingBeliefs) {
         const currentBelief = this.beliefs.get(belief.proposition);
-        
+
         if (!currentBelief || currentBelief.confidence < this.confidenceThresholds.action) {
           // Belief confidence has changed, abort plan execution
           // Pass action description or ID instead of the object
-          this.observer.logPlanAbort(this.id, plan, `Action failed pre-check: ${action.toString()}`); 
+          this.observer.logPlanAbort(this.id, plan, `Action failed pre-check: ${action.toString()}`);
           return false;
         }
       }
-      
-      // Execute the action
+
       try {
         const result = this.executeAction(action);
         if (!result) {
           // Call logActionFailure with correct arguments (entityId, action)
-          this.observer.logActionFailure(this.id, action); 
+          this.observer.logActionFailure(this.id, action);
           return false;
         }
       } catch (error) {
@@ -419,7 +427,7 @@ export class Agent {
     try {
       const recipientId = message.recipient;
       const recipient = this.registry.getEntity(recipientId);
-      
+
       if (recipient) {
         // In a real implementation, this would actually send the message
         // For now, we just log it
@@ -441,17 +449,14 @@ export class Agent {
    */
   detectConflicts(otherAgent: Agent): EpistemicConflict[] {
     const conflicts: EpistemicConflict[] = [];
-    
-    // Check each belief in this agent
-    for (const [proposition, belief] of this.beliefs.entries()) {
-      // If confidence is above conflict threshold
+
+    // Convert map iterator to array for compatibility with target settings
+    for (const [proposition, belief] of Array.from(this.beliefs.entries())) { 
       if (belief.confidence >= this.confidenceThresholds.conflict) {
-        // Check if other agent has a contradictory belief
         const negatedProp = negateProp(proposition);
         const otherBelief = otherAgent.getBelief(negatedProp);
-        
+
         if (otherBelief && otherBelief.confidence >= otherAgent.confidenceThresholds.conflict) {
-          // Create a conflict object
           const conflict = new EpistemicConflict(
             this.id,
             otherAgent.id,
@@ -476,19 +481,15 @@ export class Agent {
    * @param otherAgent The other agent involved in the conflict
    */
   exchangeJustifications(conflict: EpistemicConflict, otherAgent: Agent): void {
-    // Log the justification exchange
     this.observer.logJustificationExchange(this.id, otherAgent.id, conflict);
-    
-    // Get the other agent's justification for the conflicting belief
     const otherJustification = conflict.contradictoryBelief.justification;
-    
-    // Process the justification from the other agent
+
     this.processExternalJustification(
       conflict.proposition,
       otherJustification,
       otherAgent.frame
     );
-    
+
     // Other agent also processes this agent's justification
     otherAgent.processExternalJustification(
       negateProp(conflict.proposition),
@@ -504,20 +505,21 @@ export class Agent {
    * @param externalJustification The external justification
    * @param sourceFrame The frame of the source agent
    */
-  processExternalJustification(
+  async processExternalJustification( // Changed to async
     proposition: string,
     externalJustification: Justification,
     sourceFrame: Frame
-  ): void {
-    // Get current belief about the proposition
+  ): Promise<void> { // Changed return type
     const currentBelief = this.beliefs.get(proposition);
-    
+
     if (!currentBelief) {
       // If no current belief, potentially form a new one
-      const initialConfidence = this.frame.evaluateExternalJustification(
+      // Call async evaluateExternalJustification and pass geminiClient
+      const initialConfidence = await this.frame.evaluateExternalJustification( 
         proposition,
         externalJustification,
-        sourceFrame
+        sourceFrame,
+        this.geminiClient 
       );
       
       if (initialConfidence > 0) {
@@ -537,16 +539,18 @@ export class Agent {
         this.observer.logBeliefFormation(this.id, newBelief);
       }
     } else {
-      // Update existing belief
       const externalJustElement = new ExternalJustificationElement(
         externalJustification,
         sourceFrame.id
       );
       
-      const updatedConfidence = this.frame.updateConfidence(
+      // Pass proposition and geminiClient to updateConfidence
+      const updatedConfidence = await this.frame.updateConfidence( // Added await
+        proposition, 
         currentBelief.confidence,
         currentBelief.justification,
-        [externalJustElement]
+        [externalJustElement],
+        this.geminiClient // Pass geminiClient
       );
       
       const updatedJustification = new Justification([
@@ -574,10 +578,9 @@ export class Agent {
   setFrame(newFrame: Frame): void {
     const oldFrame = this.frame;
     this.frame = newFrame;
-    
-    // Log the frame change
+
     this.observer.logFrameChange(this.id, oldFrame, newFrame);
-    
+
     // Potentially update belief confidences based on new frame
     this.recomputeBeliefConfidences();
   }
@@ -585,13 +588,17 @@ export class Agent {
   /**
    * Recompute confidence levels for all beliefs when frame changes
    */
-  private recomputeBeliefConfidences(): void {
-    // Convert Map iterator to array before iterating
-    for (const [proposition, belief] of Array.from(this.beliefs.entries())) { 
+  private async recomputeBeliefConfidences(): Promise<void> { // Changed to async
+    // Iterate using Promise.all for async operations
+    // For now, making the callback async (forEach itself doesn't handle async callbacks well)
+    await Promise.all(Array.from(this.beliefs.entries()).map(async ([proposition, belief]) => { // Changed to async map
       // Frame-dependent confidence recalculation
-      const newConfidence = this.frame.recomputeConfidence(
-        belief.justification,
-        belief.confidence
+      // Call async recomputeConfidence, passing proposition and geminiClient
+      const newConfidence = await this.frame.recomputeConfidence( 
+        proposition,           // Pass proposition (string)
+        belief.justification,  // Pass justification (Justification)
+        // belief.confidence, // Removed unused argument
+        this.geminiClient      // Pass geminiClient (GeminiClient)
       );
       
       if (newConfidence !== belief.confidence) {
@@ -605,7 +612,7 @@ export class Agent {
         this.memory.storeEntity(updatedBelief);
         this.observer.logBeliefUpdate(this.id, belief, updatedBelief);
       }
-    }
+    })); // End Promise.all map
   }
 
   /**
@@ -616,7 +623,7 @@ export class Agent {
    */
   getBeliefs(confidenceThreshold: number = 0): Belief[] {
     // Convert Map values iterator to array before filtering
-    return Array.from(this.beliefs.values()) 
+    return Array.from(this.beliefs.values())
       .filter(belief => belief.confidence >= confidenceThreshold);
   }
 

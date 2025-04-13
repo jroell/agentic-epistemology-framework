@@ -4,33 +4,40 @@
  * This example demonstrates how multiple agents with different frames
  * can negotiate and resolve conflicts using the AEF.
  */
-import { Agent } from '../src/core/agent'; // Correct import path
+import { Agent } from '../src/core/agent';
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
-import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
-import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame } from '../src/epistemic/frame'; // Correct import path
-import { Belief } from '../src/epistemic/belief'; // Correct import path
+import { DefaultObserver, LogLevel } from '../src/observer/default-observer';
+import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame } from '../src/epistemic/frame'; 
+import { Belief } from '../src/epistemic/belief';
 import { Justification, ToolResultJustificationElement, TestimonyJustificationElement } from '../src/epistemic/justification'; // Correct import path
-import { MessagePerception } from '../src/core/perception'; // Correct import path
-import { Tool, FunctionTool } from '../src/action/tool'; // Correct import path
-import { Capability } from '../src/action/capability'; // Correct import path
-// ActionFactory might not be needed if MessageFactory is used
-import { Goal, CommunicationGoal } from '../src/action/goal'; // Correct import path
-import { MessageFactory, Message } from '../src/action/message'; // Correct import path
-import { EpistemicConflict } from '../src/epistemic/conflict'; // Correct import path
-import { JustificationExchangeStrategy } from '../src/epistemic/conflict'; // Assuming strategy is here or needs separate import
-import { Context, ContextElement } from '../src/core/context'; // Correct import path for Context and ContextElement
+import { MessagePerception } from '../src/core/perception';
+import { Tool, FunctionTool } from '../src/action/tool';
+import { Capability } from '../src/action/capability'; 
+import { Goal, CommunicationGoal } from '../src/action/goal';
+import { MessageFactory, Message } from '../src/action/message';
+import { EpistemicConflict } from '../src/epistemic/conflict'; 
+import { JustificationExchangeStrategy } from '../src/epistemic/conflict';
+import { Context, ContextElement } from '../src/core/context';
+import { GeminiClient } from '../src/llm/gemini-client'; // Import GeminiClient
+import * as dotenv from 'dotenv';
 
-// Create the shared registry
+dotenv.config();
+
 const registry = new Registry();
 
-// Create a conflict resolution strategy
+// Instantiate GeminiClient (ensure GEMINI_API_KEY is set)
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("GEMINI_API_KEY environment variable not set for example.");
+}
+const geminiClient = new GeminiClient(apiKey);
+
 const conflictResolver = new JustificationExchangeStrategy(0.1);
 
-// Create agents with different frames
-const agentA = createAgent('agent_a', 'Efficiency Agent', new EfficiencyFrame());
-const agentB = createAgent('agent_b', 'Thoroughness Agent', new ThoroughnessFrame());
-const agentC = createAgent('agent_c', 'Security Agent', new SecurityFrame());
+const agentA = createAgent('agent_a', 'Efficiency Agent', new EfficiencyFrame(), geminiClient);
+const agentB = createAgent('agent_b', 'Thoroughness Agent', new ThoroughnessFrame(), geminiClient);
+const agentC = createAgent('agent_c', 'Security Agent', new SecurityFrame(), geminiClient);
 
 // Initialize agents with different beliefs about a resource allocation problem
 initializeBeliefs();
@@ -42,12 +49,13 @@ simulateNegotiation();
 displayFinalBeliefs();
 
 /**
- * Create an agent with specific frame
+ * Create an agent with specific frame and Gemini client
  */
-function createAgent(id: string, name: string, frame: any): Agent {
+function createAgent(id: string, name: string, frame: Frame, client: GeminiClient): Agent { // Add client parameter, type Frame
   const memory = new DefaultMemory();
-  const observer = new DefaultObserver(1000, LogLevel.Info, true);
-  
+  const observer = new DefaultObserver(1000, LogLevel.Info, true); // Assuming LogLevel is defined
+
+  // Correct argument order: id, name, beliefs, frame, capabilities, registry, geminiClient, memory, observer
   return new Agent(
     id,
     name,
@@ -57,10 +65,12 @@ function createAgent(id: string, name: string, frame: any): Agent {
       Capability.LogicalReasoning,
       Capability.DataAnalysis,
       Capability.TextGeneration
-    ]),
+    ]), // Capabilities
     registry,
+    client, // Pass the gemini client
     memory,
     observer
+    // Confidence thresholds will use default
   );
 }
 
@@ -268,17 +278,15 @@ async function detectAndResolveConflicts(): Promise<void> {
   );
   
   console.log(`Conflict detected between Agent A and Agent B: "${conflictAB.proposition}"`);
-  
-  // Resolve the conflict
+
   const resolutionAB = await conflictResolver.resolveConflict(conflictAB);
-  
+
   console.log(`Conflict resolution result: ${resolutionAB.success ? 'Success' : 'Failure'}`);
   console.log(`Resolution type: ${resolutionAB.type}`);
   console.log(`Reason: ${resolutionAB.reason}`);
   
   if (resolutionAB.updatedBelief) {
     console.log(`Agent A updated belief confidence: ${resolutionAB.updatedBelief.confidence.toFixed(2)}`);
-    // Update Agent A's belief
     agentA['beliefs'].set(
       resolutionAB.updatedBelief.proposition,
       resolutionAB.updatedBelief
@@ -287,7 +295,6 @@ async function detectAndResolveConflicts(): Promise<void> {
   
   if (resolutionAB.updatedContradictoryBelief) {
     console.log(`Agent B updated belief confidence: ${resolutionAB.updatedContradictoryBelief.confidence.toFixed(2)}`);
-    // Update Agent B's belief
     agentB['beliefs'].set(
       'ThoroughnessIsOptimalStrategy',
       resolutionAB.updatedContradictoryBelief
@@ -319,17 +326,15 @@ async function detectAndResolveConflicts(): Promise<void> {
   );
   
   console.log(`\nConflict detected between Agent A and Agent C: "${conflictAC.proposition}"`);
-  
-  // Resolve the conflict
+
   const resolutionAC = await conflictResolver.resolveConflict(conflictAC);
-  
+
   console.log(`Conflict resolution result: ${resolutionAC.success ? 'Success' : 'Failure'}`);
   console.log(`Resolution type: ${resolutionAC.type}`);
   console.log(`Reason: ${resolutionAC.reason}`);
   
   if (resolutionAC.updatedBelief) {
     console.log(`Agent A updated belief confidence: ${resolutionAC.updatedBelief.confidence.toFixed(2)}`);
-    // Update Agent A's belief
     agentA['beliefs'].set(
       resolutionAC.updatedBelief.proposition,
       resolutionAC.updatedBelief
@@ -338,7 +343,6 @@ async function detectAndResolveConflicts(): Promise<void> {
   
   if (resolutionAC.updatedContradictoryBelief) {
     console.log(`Agent C updated belief confidence: ${resolutionAC.updatedContradictoryBelief.confidence.toFixed(2)}`);
-    // Update Agent C's belief
     agentC['beliefs'].set(
       'SecurityIsOptimalStrategy',
       resolutionAC.updatedContradictoryBelief
@@ -372,8 +376,7 @@ function findConsensus(): void {
   
   // Share the consensus with all agents
   console.log(`\nReached consensus: ${consensusBelief.proposition} (conf: ${consensusBelief.confidence.toFixed(2)})`);
-  
-  // Agents adopt the consensus belief
+
   agentA['beliefs'].set(consensusBelief.proposition, consensusBelief);
   agentB['beliefs'].set(consensusBelief.proposition, consensusBelief);
   agentC['beliefs'].set(consensusBelief.proposition, consensusBelief);
@@ -431,7 +434,6 @@ function displayFinalBeliefs(): void {
   }
 }
 
-// Run the simulation
 console.log('\nMulti-agent negotiation example started');
 simulateNegotiation().then(() => {
   console.log('\nMulti-agent negotiation example completed');
