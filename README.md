@@ -29,36 +29,49 @@ npm run build
 
 ```typescript
 // Import necessary components directly from their modules
-import { Agent } from './src/core/agent';
+// Note: You might need a Gemini API key (process.env.GEMINI_API_KEY)
+import { Agent, ConfidenceThresholds, DEFAULT_CONFIDENCE_THRESHOLDS } from './src/core/agent';
 import { Registry } from './src/core/registry';
 import { DefaultMemory } from './src/core/memory';
-import { DefaultObserver, LogLevel } from './src/observer/default-observer';
-import { EfficiencyFrame } from './src/epistemic/frame';
+import { DefaultObserver } from './src/observer/default-observer';
+import { EfficiencyFrame, Frame } from './src/epistemic/frame';
 import { Belief } from './src/epistemic/belief';
-import { Justification, ObservationJustificationElement } from './src/epistemic/justification';
-import { ObservationPerception } from './src/core/perception';
+import { Justification, ObservationJustificationElement, JustificationElement } from './src/epistemic/justification';
+import { Perception, ObservationPerception, ToolResultPerception } from './src/core/perception';
+import { GeminiClient } from './src/llm/gemini-client';
 import { Tool, FunctionTool } from './src/action/tool';
 import { Capability } from './src/action/capability';
-import { Goal, TaskGoal } from './src/action/goal';
+import { Goal } from './src/action/goal';
+import { Context } from './src/core/context'; // Added Context
 
-// Create the registry, memory, and observer
+// --- Setup ---
 const registry = new Registry();
 const memory = new DefaultMemory();
-const observer = new DefaultObserver(1000, LogLevel.Info, true); // Log info level and above to console
+const observer = new DefaultObserver(); // Simplified observer setup
+const geminiApiKey = process.env.GEMINI_API_KEY; // Ensure API key is available
+if (!geminiApiKey) {
+  throw new Error("Set the GEMINI_API_KEY environment variable");
+}
+const geminiClient = new GeminiClient(geminiApiKey);
 
 // Create a frame
-const efficiencyFrame = new EfficiencyFrame();
+const efficiencyFrame: Frame = new EfficiencyFrame();
+
+// Define Confidence Thresholds (Optional, uses defaults if not provided)
+const thresholds: ConfidenceThresholds = DEFAULT_CONFIDENCE_THRESHOLDS;
 
 // Create an agent
 const agent = new Agent(
-  'agent_1',
-  'SimpleAgent',
-  [], // Initial beliefs
-  efficiencyFrame,
+  'agent_1',                          // Agent ID
+  'SimpleAgent',                      // Agent Name
+  [],                                 // Initial beliefs
+  efficiencyFrame,                    // Initial Frame
   new Set([Capability.DataAnalysis]), // Agent capabilities
-  registry,
-  memory,
-  observer
+  registry,                           // Registry instance
+  geminiClient,                       // GeminiClient instance
+  memory,                             // Memory instance
+  observer,                           // Observer instance
+  thresholds                          // Confidence Thresholds
 );
 
 // Create and register a tool
@@ -114,53 +127,67 @@ beliefs.forEach((belief: Belief) => {
 ### Belief Formation and Update
 
 ```typescript
-import { Belief, Justification, ObservationJustificationElement, ToolResultJustificationElement } from './src'; // Assuming index re-exports
+import { Belief, Justification, ObservationJustificationElement, ToolResultJustificationElement, JustificationElement } from './src/epistemic'; // Import from epistemic index
+import { ObservationPerception, ToolResultPerception } from './src/core/perception'; // Import from core index
+import { GeminiClient } from './src/llm/gemini-client'; // Ensure GeminiClient is imported
+import { Frame } from './src/epistemic/frame'; // Ensure Frame is imported
 
-// Create a new belief with justification
-const justification = new Justification([
-  new ObservationJustificationElement('sensor_1', { reading: 0.75, timestamp: Date.now() })
-]);
+// Assume agent and geminiClient are already initialized as in Basic Usage
 
-const belief = new Belief(
-  'RoomTemperatureIsAcceptable',
-  0.6, // Initial confidence
-  justification
-);
+// --- Belief Formation ---
+// Agent perceives an observation
+agent.perceive(new ObservationPerception(
+  'sensor_A',
+  { reading: 0.75, timestamp: Date.now() },
+  'Sensor A reading detected'
+));
+// Internally, the agent uses its Frame and GeminiClient to potentially form a belief
+// like 'SensorAReadingIsHigh' based on this perception and its justification.
 
-// Agent perceives new evidence (e.g., from a tool)
-const newEvidence = new ToolResultJustificationElement(
+
+// --- Belief Update ---
+// Later, the agent perceives conflicting evidence, e.g., from a tool result
+const toolResultData = { reading: 28, unit: 'celsius', timestamp: Date.now() };
+const conflictingEvidence = new ToolResultJustificationElement(
   'thermometer_tool',
-  { reading: 28, unit: 'celsius', timestamp: Date.now() }
+  toolResultData
 );
 
-// In a real scenario, the agent's perceive method handles belief updates internally
-// based on its current frame. For illustration:
+// Agent perceives the tool result
+agent.perceive(new ToolResultPerception('thermometer_tool', toolResultData));
 
-// 1. Agent perceives the tool result
-// agent.perceive(new ToolResultPerception('thermometer_tool', newEvidence.content));
+// Internally, agent.updateBeliefs is called.
+// The Frame (e.g., efficiencyFrame) uses GeminiClient to evaluate the new evidence
+// (conflictingEvidence) against existing beliefs (e.g., 'SensorAReadingIsHigh' or a
+// belief derived from it like 'RoomTemperatureIsAcceptable'). The agent automatically
+// handles the confidence updates based on its frame's logic, which leverages the LLM.
 
-// 2. The agent's internal updateBeliefs method would be triggered,
-//    using its current frame (e.g., efficiencyFrame) to potentially update
-//    the 'RoomTemperatureIsAcceptable' belief or form a new one like 'RoomTemperatureIsHigh'.
-//    The confidence update depends on the frame's parameters and logic.
+// The following shows the *conceptual* internal update logic for illustration:
+async function illustrateInternalUpdateLogic(existingBelief: Belief, newElement: JustificationElement, frame: Frame, client: GeminiClient) {
+  // This logic is inside agent.updateBeliefs / frame.updateConfidence
+  const updatedConfidence = await frame.updateConfidence(
+    existingBelief.proposition, // The proposition being updated
+    existingBelief.confidence,
+    existingBelief.justification,
+    [newElement],
+    client // Pass the GeminiClient
+  );
 
-// Example manual update (for illustration only):
-const updatedConfidence = agent.frame.updateConfidence(
-  belief.confidence,
-  belief.justification,
-  [newEvidence]
-);
-const updatedJustification = new Justification([
-  ...belief.justification.elements,
-  newEvidence
-]);
-const updatedBelief = new Belief(
-  belief.proposition, // Proposition might change based on frame interpretation
-  updatedConfidence,
-  updatedJustification
-);
-console.log(`\nIllustrative updated belief: ${updatedBelief.toString()}`);
+  const updatedJustification = new Justification([
+    ...existingBelief.justification.elements,
+    newElement
+  ]);
 
+  const updatedBelief = new Belief(
+    existingBelief.proposition, // Proposition might change based on frame interpretation
+    updatedConfidence,
+    updatedJustification
+  );
+  console.log(`\nIllustrative internal result: ${updatedBelief.toString()}`);
+  // The agent would then store this updated belief.
+}
+
+// You don't call illustrateInternalUpdateLogic directly; the agent handles it via perceive().
 ```
 
 ### Multi-Agent Interaction
@@ -168,23 +195,12 @@ console.log(`\nIllustrative updated belief: ${updatedBelief.toString()}`);
 See `examples/multi-agent.ts` for a detailed demonstration of conflict detection and resolution between agents with different frames.
 
 ```typescript
-// Simplified snippet from multi-agent example
-import { Agent, ThoroughnessFrame, EfficiencyFrame, EpistemicConflict } from './src'; // Assuming index re-exports
-
-// ... (Agent creation as in the example)
-
-// Agent A detects conflicts with Agent B
-const conflicts = agentA.detectConflicts(agentB);
-
-// Resolve conflicts using a strategy (e.g., JustificationExchangeStrategy)
-if (conflicts.length > 0) {
-  const conflictResolver = new JustificationExchangeStrategy(0.1); // Example strategy
-  for (const conflict of conflicts) {
-    console.log(`\nResolving conflict: ${conflict.proposition}`);
-    await conflictResolver.resolveConflict(conflict);
-    // Beliefs of agentA and agentB might be updated based on resolution
-  }
-}
+// Example: Agent A detects conflicts with Agent B
+// const conflicts = agentA.detectConflicts(agentB);
+// if (conflicts.length > 0) {
+//   agentA.exchangeJustifications(conflicts[0], agentB); // Initiate justification exchange
+//   // Beliefs might update based on processExternalJustification calls internally
+// }
 ```
 
 ## Examples
@@ -200,7 +216,7 @@ node dist/examples/multi-agent.js
 
 ## Documentation
 
-Further details on the framework's concepts and API can be found within the source code documentation (JSDoc comments).
+Comprehensive documentation covering concepts, architecture, component details, and data flow diagrams can be found in `documentation.md`. Further API details are available within the source code documentation (JSDoc comments).
 
 ## Contributing
 
