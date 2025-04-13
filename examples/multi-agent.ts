@@ -10,11 +10,19 @@ import { DefaultMemory } from '../src/core/memory';
 import { DefaultObserver, LogLevel } from '../src/observer/default-observer';
 import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame } from '../src/epistemic/frame'; 
 import { Belief } from '../src/epistemic/belief';
-import { Justification, ToolResultJustificationElement, TestimonyJustificationElement } from '../src/epistemic/justification'; // Correct import path
+import { Justification, ToolResultJustificationElement, TestimonyJustificationElement } from '../src/epistemic/justification'; 
 import { MessagePerception } from '../src/core/perception';
-import { Tool, FunctionTool } from '../src/action/tool';
+// Import newly created tools
+import { 
+  Tool, 
+  FunctionTool, 
+  DataAnalysisTool, 
+  SecurityScanTool, 
+  MitigationTool, 
+  ReportGeneratorTool 
+} from '../src/action/tool'; 
 import { Capability } from '../src/action/capability'; 
-import { Goal, CommunicationGoal } from '../src/action/goal';
+import { Goal, CommunicationGoal, TaskGoal } from '../src/action/goal'; // Added TaskGoal import
 import { MessageFactory, Message } from '../src/action/message';
 import { EpistemicConflict } from '../src/epistemic/conflict'; 
 import { JustificationExchangeStrategy } from '../src/epistemic/conflict';
@@ -25,6 +33,19 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const registry = new Registry();
+
+// Instantiate Tools
+const dataAnalysisTool = new DataAnalysisTool();
+const securityScanTool = new SecurityScanTool();
+const mitigationTool = new MitigationTool();
+const reportGeneratorTool = new ReportGeneratorTool();
+
+// Register Tools
+registry.registerTool(dataAnalysisTool);
+registry.registerTool(securityScanTool);
+registry.registerTool(mitigationTool);
+registry.registerTool(reportGeneratorTool);
+console.log('Tools registered.');
 
 // Instantiate GeminiClient (ensure GEMINI_API_KEY is set)
 const apiKey = process.env.GEMINI_API_KEY;
@@ -56,16 +77,28 @@ function createAgent(id: string, name: string, frame: Frame, client: GeminiClien
   const observer = new DefaultObserver(1000, LogLevel.Info, true); // Assuming LogLevel is defined
 
   // Correct argument order: id, name, beliefs, frame, capabilities, registry, geminiClient, memory, observer
+  // Assign relevant capabilities to agents
+  let agentCapabilities: Set<Capability>;
+  switch (id) {
+    case 'agent_a': // Efficiency Agent
+      agentCapabilities = new Set([Capability.DataAnalysis, Capability.TextGeneration]);
+      break;
+    case 'agent_b': // Thoroughness Agent
+      agentCapabilities = new Set([Capability.DataAnalysis, Capability.TextGeneration, Capability.LogicalReasoning]);
+      break;
+    case 'agent_c': // Security Agent
+      agentCapabilities = new Set([Capability.SecurityAnalysis, Capability.SystemModification, Capability.TextGeneration]);
+      break;
+    default:
+      agentCapabilities = new Set();
+  }
+
   return new Agent(
     id,
     name,
     [], // Initial beliefs
     frame,
-    new Set([
-      Capability.LogicalReasoning,
-      Capability.DataAnalysis,
-      Capability.TextGeneration
-    ]), // Capabilities
+    agentCapabilities, // Use assigned capabilities
     registry,
     client, // Pass the gemini client
     memory,

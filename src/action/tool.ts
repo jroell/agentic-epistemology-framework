@@ -188,6 +188,12 @@ export class FunctionTool extends BaseTool {
   }
 }
 
+// Export concrete tool implementations
+export { DataAnalysisTool } from './tools/data-analysis-tool';
+export { SecurityScanTool } from './tools/security-scan-tool';
+export { MitigationTool } from './tools/mitigation-tool';
+export { ReportGeneratorTool } from './tools/report-generator-tool';
+
 /**
  * Tool that retrieves and processes information
  */

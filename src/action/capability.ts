@@ -34,6 +34,8 @@ export enum Capability {
   FileIO = 'file_io',
   NetworkAccess = 'network_access',
   SystemExecution = 'system_execution',
+  SecurityAnalysis = 'security_analysis', // Added
+  SystemModification = 'system_modification', // Added
   
   // Meta capabilities
   SelfMonitoring = 'self_monitoring',
@@ -543,6 +545,55 @@ export const CAPABILITY_METADATA: Record<Capability, CapabilityMetadata> = {
       }
     ],
     returns: 'Learning results and adaptation status'
+  },
+
+  [Capability.SecurityAnalysis]: { // Added
+    id: Capability.SecurityAnalysis,
+    name: 'Security Analysis',
+    description: 'Analyze systems or data for security vulnerabilities or threats',
+    parameters: [
+      {
+        name: 'target',
+        type: 'string',
+        description: 'Identifier of the system or data to analyze',
+        required: true
+      },
+      {
+        name: 'analysis_type',
+        type: 'string',
+        description: 'Type of security analysis (e.g., vulnerability_scan, threat_assessment)',
+        required: false,
+        defaultValue: 'vulnerability_scan'
+      }
+    ],
+    returns: 'Security analysis report object'
+  },
+
+  [Capability.SystemModification]: { // Added
+    id: Capability.SystemModification,
+    name: 'System Modification',
+    description: 'Modify system configuration or apply patches',
+     parameters: [
+      {
+        name: 'target',
+        type: 'string',
+        description: 'Identifier of the system component to modify',
+        required: true
+      },
+      {
+        name: 'action',
+        type: 'string',
+        description: 'Modification action (e.g., apply_patch, update_config, restart_service)',
+        required: true
+      },
+       {
+        name: 'details',
+        type: 'object',
+        description: 'Specific details for the modification action',
+        required: false
+      }
+    ],
+    returns: 'Operation status object'
   }
 };
 
