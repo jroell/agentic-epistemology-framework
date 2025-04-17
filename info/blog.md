@@ -2,6 +2,8 @@
 
 *By Jason Roell*
 
+<img src="whathavewefound (1).png" style="border: 4px solid black; width: 60%; display: block; margin-left: auto; margin-right: auto; margin: 1em 0;">
+
 > **TL;DR:** Most AI agents today don't *actually* think. They react. The Agentic Epistemology Framework (AEF) gives agents a principled way to form beliefs, justify them, assess confidence, and manage disagreement—enabling them to reason, explain, and collaborate like thoughtful entities, not just prompt executors.
 
 ---
@@ -342,4 +344,3 @@ That future starts now.
 Let’s build it.
 
 ---
-

@@ -2,6 +2,8 @@
 
 *By Jason Roell*
 
+<img src="whathavewefound (1).png" style="border: 4px solid black; width: 60%; display: block; margin-left: auto; margin-right: auto; margin: 1em 0;">
+
 In the age of artificial intelligence, we regularly encounter agents described as "smart," "intelligent," even "thinking." Yet, beneath this veneer of cognition lies a stark reality: most AI agents today don't truly reason—they merely respond. They possess no authentic epistemology, no structured philosophy for belief formation, justification, or revision.
 
 It's time we changed that.
