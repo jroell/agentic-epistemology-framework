@@ -15,6 +15,7 @@ module.exports = {
     es6: true
   },
   rules: {
-    '@typescript-eslint/no-explicit-any': 'warn'
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-inferrable-types': 'off',
   }
 };
