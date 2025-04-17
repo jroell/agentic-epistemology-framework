@@ -15,7 +15,7 @@ import { Action, UseTool, SendMessage } from '../action/action';
 import { Tool } from '../action/tool'; // Keep Tool import
 import { Message } from '../action/message';
 import { EpistemicConflict } from '../epistemic/conflict';
-import { GeminiClient } from '../llm/gemini-client';
+import { LLMClient } from '../llm/llm-client';
 import { negateProp } from '../types/common';
 
 /**
@@ -50,7 +50,7 @@ export class Agent {
   /**
    * Type of entity
    */
-  type: string = 'Agent';
+  type = 'Agent';
   
   /**
    * Human-readable name of the agent
@@ -99,7 +99,7 @@ private confidenceThresholds: ConfidenceThresholds;
   /**
    * Client for interacting with the Gemini LLM
    */
-  private geminiClient: GeminiClient;
+  private llmClient: LLMClient;
 
   /**
    * Create a new agent
@@ -123,7 +123,7 @@ private confidenceThresholds: ConfidenceThresholds;
     initialFrame: Frame,
     capabilities: Set<Capability> = new Set(),
     registry: Registry,
-    geminiClient: GeminiClient,
+    llmClient: LLMClient,
     memory?: Memory,
     observer?: Observer,
     confidenceThresholds: ConfidenceThresholds = DEFAULT_CONFIDENCE_THRESHOLDS
@@ -138,7 +138,7 @@ private confidenceThresholds: ConfidenceThresholds;
     this.confidenceThresholds = confidenceThresholds;
     this._frame = initialFrame;
     this.context = new Context([]);
-    this.geminiClient = geminiClient;
+    this.llmClient = llmClient;
 
     initialBeliefs.forEach(belief => {
       this.beliefs.set(belief.proposition, belief);
@@ -155,7 +155,7 @@ private confidenceThresholds: ConfidenceThresholds;
     this.observer.logPerception(this.id, perception);
     this.context.addElements(perception.getContextualElements());
     // Call async interpretPerception and pass geminiClient
-    const interpretedPerception = await this.frame.interpretPerception(perception, this.geminiClient); 
+    const interpretedPerception = await this.frame.interpretPerception(perception, this.llmClient);
     await this.updateBeliefs(interpretedPerception); // Await belief update
   }
 
@@ -166,7 +166,7 @@ private confidenceThresholds: ConfidenceThresholds;
    */
   private async updateBeliefs(perception: Perception): Promise<void> { 
     // Call async getRelevantPropositions and pass geminiClient
-    const relevantPropositions = await this.frame.getRelevantPropositions(perception, this.geminiClient); 
+    const relevantPropositions = await this.frame.getRelevantPropositions(perception, this.llmClient);
 
     // Use Promise.all to handle async updates concurrently
     await Promise.all(relevantPropositions.map(async proposition => { // Changed to async map
@@ -200,7 +200,7 @@ private confidenceThresholds: ConfidenceThresholds;
         const initialConfidence = await this.frame.computeInitialConfidence(
           proposition,
           newJustificationElements,
-          this.geminiClient // Pass geminiClient
+          this.llmClient
         );
 
         const justification = new Justification(newJustificationElements);
@@ -231,8 +231,7 @@ private confidenceThresholds: ConfidenceThresholds;
       existingBelief.proposition, 
       existingBelief.confidence, 
       existingBelief.justification,
-      newJustificationElements,
-      this.geminiClient // Pass geminiClient
+      newJustificationElements
     );
   }
 
@@ -271,7 +270,7 @@ private confidenceThresholds: ConfidenceThresholds;
    */
   private async getRelevantBeliefs(goal: Goal): Promise<Belief[]> { // Changed to async
     // Call async getRelevantPropositions and pass geminiClient
-    const relevantPropositions = await this.frame.getRelevantPropositions(goal, this.geminiClient); 
+    const relevantPropositions = await this.frame.getRelevantPropositions(goal, this.llmClient);
 
     return relevantPropositions
       .map(prop => this.beliefs.get(prop))
@@ -313,7 +312,7 @@ private confidenceThresholds: ConfidenceThresholds;
         return null;
     }
 
-    const planSteps = await this.geminiClient.generatePlan(goal, beliefs, availableTools, this.frame);
+    const planSteps = await this.llmClient.generatePlan(goal, beliefs, availableTools, this.frame);
 
     if (!planSteps || planSteps.length === 0) {
         console.warn(`[Agent ${this.id}] Gemini failed to generate a plan for goal: ${goal.description}`);
@@ -519,7 +518,7 @@ private confidenceThresholds: ConfidenceThresholds;
         proposition,
         externalJustification,
         sourceFrame,
-        this.geminiClient 
+        this.llmClient 
       );
       
       if (initialConfidence > 0) {
@@ -550,7 +549,7 @@ private confidenceThresholds: ConfidenceThresholds;
         currentBelief.confidence,
         currentBelief.justification,
         [externalJustElement],
-        this.geminiClient // Pass geminiClient
+        sourceFrame
       );
       
       const updatedJustification = new Justification([
@@ -597,8 +596,7 @@ private confidenceThresholds: ConfidenceThresholds;
       const newConfidence = await this.frame.recomputeConfidence( 
         proposition,           // Pass proposition (string)
         belief.justification,  // Pass justification (Justification)
-        // belief.confidence, // Removed unused argument
-        this.geminiClient      // Pass geminiClient (GeminiClient)
+        this.llmClient         // Pass llmClient
       );
       
       if (newConfidence !== belief.confidence) {
@@ -621,7 +619,7 @@ private confidenceThresholds: ConfidenceThresholds;
    * @param confidenceThreshold Minimum confidence threshold (default: 0)
    * @returns Array of beliefs above the threshold
    */
-  getBeliefs(confidenceThreshold: number = 0): Belief[] {
+  getBeliefs(confidenceThreshold = 0): Belief[] {
     // Convert Map values iterator to array before filtering
     return Array.from(this.beliefs.values())
       .filter(belief => belief.confidence >= confidenceThreshold);

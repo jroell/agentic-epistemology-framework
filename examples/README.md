@@ -19,6 +19,44 @@ node dist/examples/simple-agent.js
 
 ## Available Examples
 
+### Debate Simulation (debate-simulation.ts)
+
+This advanced example demonstrates a multi-agent debate with different epistemological frames:
+
+- A moderator agent using a ModeratorFrame
+- Two debater agents (Pro and Con) with different frames
+- A judge agent using a JudgeFrame to evaluate arguments
+
+Run with:
+```bash
+# Run with default output format
+node dist/examples/debate-simulation.js
+
+# Run with pretty-printed logs
+node dist/examples/debate-simulation.js --log-format pretty
+
+# Run with JSON logs (useful for piping to jq)
+node dist/examples/debate-simulation.js --log-format json | jq
+```
+
+#### Using jq with JSON logs
+
+When running with `--log-format json`, you can use `jq` to filter and format the logs:
+
+```bash
+# Show only the debate statements
+node dist/examples/debate-simulation.js --log-format json | jq 'select(.type=="debate_statement")'
+
+# Show all events for a specific agent
+node dist/examples/debate-simulation.js --log-format json | jq 'select(.entityId=="debater_a")'
+
+# Format perception events nicely
+node dist/examples/debate-simulation.js --log-format json | jq 'select(.type=="perception")'
+
+# Show Gemini calls and responses
+node dist/examples/debate-simulation.js --log-format json | jq 'select(.type | startswith("gemini_"))'
+```
+
 ### Simple Agent (simple-agent.ts)
 
 This basic example shows how to create a single agent with beliefs, perceptions, and actions. It demonstrates:

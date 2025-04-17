@@ -90,43 +90,87 @@ export class DefaultObserver extends BaseObserver implements Observer {
     const level = this.getLevelForEvent(event);
     const levelStr = LogLevel[level].toUpperCase();
     
-    let message = `[${timestamp}] [${levelStr}] [${event.entityId}] [${event.type}]`;
+    // Create header with metadata
+    const header = `[${timestamp}] [${levelStr}] [${event.entityId}] [${event.type}]`;
+    
+    // Create a box around the header for better visibility
+    const headerLine = '─'.repeat(header.length + 4);
+    const boxedHeader = `┌${headerLine}┐\n│  ${header}  │\n└${headerLine}┘`;
+    
+    // Format the JSON data with pretty indentation for better readability
+    let jsonData;
     
     switch (event.type) {
       case EventType.BeliefFormation:
-        message += ` Belief formed: ${event.belief.proposition} (conf: ${event.belief.confidence.toFixed(2)})`;
+        jsonData = {
+          type: 'belief_formation',
+          proposition: event.belief.proposition,
+          confidence: event.belief.confidence
+        };
         break;
       case EventType.BeliefUpdate:
-        message += ` Belief updated: ${event.newBelief.proposition} (conf: ${event.oldBelief.confidence.toFixed(2)} -> ${event.newBelief.confidence.toFixed(2)})`;
+        jsonData = {
+          type: 'belief_update',
+          oldProposition: event.oldBelief.proposition,
+          newProposition: event.newBelief.proposition,
+          oldConfidence: event.oldBelief.confidence,
+          newConfidence: event.newBelief.confidence
+        };
         break;
       case EventType.FrameChange:
-        message += ` Frame changed: ${event.oldFrame.name} -> ${event.newFrame.name}`;
+        jsonData = {
+          type: 'frame_change',
+          oldFrame: event.oldFrame.name,
+          newFrame: event.newFrame.name
+        };
         break;
       case EventType.PlanExecution:
-        message += ` Executing plan: ${event.plan.toString()}`;
+        jsonData = {
+          type: 'plan_execution',
+          plan: event.plan.toString()
+        };
         break;
       case EventType.ActionExecution:
-        message += ` Executing action: ${event.action.toString()}`;
+        jsonData = {
+          type: 'action_execution',
+          action: event.action.toString()
+        };
         break;
       case EventType.MessageSent:
-        message += ` Message sent to ${event.recipientId}: ${event.message.toString()}`;
+        jsonData = {
+          type: 'message_sent',
+          recipient: event.recipientId,
+          message: event.message.toString()
+        };
+        break;
+      case EventType.Perception:
+        // For perception events, just stringify the whole event
+        jsonData = event;
         break;
       default:
-        message += ` ${JSON.stringify(event)}`;
+        // For all other event types, just stringify the event directly
+        jsonData = event;
     }
 
+    // Log the formatted output
+    const formattedJson = JSON.stringify(jsonData, null, 2);
+    
     switch (level) {
       case LogLevel.Error:
-        console.error(message);
+        console.error(boxedHeader);
+        console.error(formattedJson);
         break;
       case LogLevel.Warning:
-        console.warn(message);
+        console.warn(boxedHeader);
+        console.warn(formattedJson);
         break;
       case LogLevel.Info:
-        console.info(message);
+        console.info(boxedHeader);
+        console.info(formattedJson);
         break;
       case LogLevel.Debug:
-        console.debug(message);
+        console.debug(boxedHeader);
+        console.debug(formattedJson);
         break;
     }
   }

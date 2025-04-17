@@ -7,8 +7,7 @@
 import { Agent } from '../src/core/agent'; // Correct import path
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
-import { GeminiClient } from '../src/llm/gemini-client';
-import * as dotenv from 'dotenv';
+import { MockGeminiClient } from '../src/llm/mock-gemini-client';
 import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
 import { EfficiencyFrame, ThoroughnessFrame } from '../src/epistemic/frame'; // Correct import path
 import { Belief } from '../src/epistemic/belief'; // Correct import path
@@ -25,12 +24,10 @@ const registry = new Registry();
 const memory = new DefaultMemory();
 const observer = new DefaultObserver(1000, LogLevel.Debug, true);
 
-dotenv.config();
-
 const efficiencyFrame = new EfficiencyFrame();
 
-// Initialize the GeminiClient with the API key from .env
-const geminiClient = new GeminiClient(process.env.GEMINI_API_KEY || "");
+// Use MockGeminiClient that doesn't require an API key
+const geminiClient = new MockGeminiClient();
 
 const agent = new Agent(
   'agent_1',

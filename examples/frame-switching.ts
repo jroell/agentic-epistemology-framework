@@ -7,8 +7,7 @@
 import { Agent } from '../src/core/agent'; // Correct import path
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
-import { GeminiClient } from '../src/llm/gemini-client'; // Ensure import is present
-import * as dotenv from 'dotenv';
+import { MockGeminiClient } from '../src/llm/mock-gemini-client';
 import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
 import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame, FrameFactory } from '../src/epistemic/frame'; // Correct import path
 import { Belief } from '../src/epistemic/belief'; // Correct import path
@@ -29,16 +28,13 @@ const memory = new DefaultMemory();
 // Create an observer with console logging enabled
 const observer = new DefaultObserver(1000, LogLevel.Debug, true);
 
-// Load environment variables
-dotenv.config();
-
 // Create an agent starting with the efficiency frame
 const efficiencyFrame = new EfficiencyFrame();
 
-// Initialize the GeminiClient with the API key from .env
-const geminiClient = new GeminiClient(process.env.GEMINI_API_KEY || "");
+// Use MockGeminiClient that doesn't require an API key
+const geminiClient = new MockGeminiClient();
 
-// Create agent with the GeminiClient
+// Create agent with the MockGeminiClient
 const agent = new Agent(
   'adaptive_agent',
   'Adaptive Decision Agent',
@@ -300,7 +296,7 @@ async function compareBeliefConfidence() {
   console.log(`Proposition: "${proposition}"`);
   
   // Function to evaluate in a specific frame
-  async function evaluateInFrame(frameType: string, frameInstance: Frame, client: GeminiClient) { // Use imported class name for type
+  async function evaluateInFrame(frameType: string, frameInstance: Frame, client: MockGeminiClient) {
     // Set the frame
     agent.setFrame(frameInstance);
     
@@ -316,7 +312,6 @@ async function compareBeliefConfidence() {
     );
     
     // Manually compute confidence using the frame's method
-    // Added await and passed client
     const confidenceResult = await frameInstance.computeInitialConfidence( 
       proposition,
       [justificationElement],
@@ -324,30 +319,26 @@ async function compareBeliefConfidence() {
     );
     
     console.log(`\nIn ${frameType} frame:`);
-    // Use the awaited result
     console.log(`- Confidence in "${proposition}": ${confidenceResult.toFixed(2)}`); 
     console.log(`- Interpretation focus: ${getFrameInterpretationFocus(frameType, evidence)}`);
     
     // Create a belief with this frame's evaluation
     const belief = new Belief(
       proposition,
-      confidenceResult, // Use awaited result
+      confidenceResult,
       new Justification([justificationElement])
     );
     
     return belief;
   }
   
-  // Instantiate GeminiClient for the example evaluation
-  const exampleGeminiClient = new GeminiClient(process.env.GEMINI_API_KEY || ""); // Use imported class name for constructor
-  if (!process.env.GEMINI_API_KEY) {
-      console.warn("Warning: GEMINI_API_KEY environment variable not set. LLM calls in example will likely fail.");
-  }
+  // Use the same MockGeminiClient instance
+  const exampleClient = new MockGeminiClient();
 
   // Evaluate in each frame, passing the client
-  const efficiencyBelief = await evaluateInFrame('Efficiency', new EfficiencyFrame(), exampleGeminiClient);
-  const thoroughnessBelief = await evaluateInFrame('Thoroughness', new ThoroughnessFrame(), exampleGeminiClient);
-  const securityBelief = await evaluateInFrame('Security', new SecurityFrame(), exampleGeminiClient);
+  const efficiencyBelief = await evaluateInFrame('Efficiency', new EfficiencyFrame(), exampleClient);
+  const thoroughnessBelief = await evaluateInFrame('Thoroughness', new ThoroughnessFrame(), exampleClient);
+  const securityBelief = await evaluateInFrame('Security', new SecurityFrame(), exampleClient);
   
   // Show comparison
   console.log('\nComparison of belief confidence across frames:');

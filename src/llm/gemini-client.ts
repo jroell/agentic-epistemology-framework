@@ -3,20 +3,26 @@ import { Tool } from '../action/tool';
 import { Goal } from '../action/goal';
 import { Belief } from '../epistemic/belief';
 import { Frame } from '../epistemic/frame';
-import { JustificationElement } from '../epistemic/justification'; // Added import
+import { JustificationElement } from '../epistemic/justification';
 import { Action, UseTool } from '../action/action';
 import { EntityId } from "../types/common";
+import { LLMClient } from "./llm-client";
 
 // Use the SDK's FunctionDeclarationSchema directly for parameters
 // Note: We might need to refine this if Tool.parameterSchema doesn't exactly match
 // For now, we assume Tool.parameterSchema is compatible or can be cast.
 
-export class GeminiClient {
+/**
+ * Client for interacting with Google's Gemini AI models
+ * 
+ * This implementation connects to the actual Gemini API
+ */
+export class GeminiClient implements LLMClient {
     private genAI: GoogleGenerativeAI;
     private model: GenerativeModel;
     private availableToolsMap: Map<EntityId, Tool> = new Map(); // To quickly find tools by ID
 
-    constructor(apiKey: string, modelName: string = "gemini-2.5-pro-preview-03-25") {
+    constructor(apiKey: string, modelName = "gemini-2.0-flash") {
         if (!apiKey) {
             throw new Error("Gemini API key is required.");
         }
@@ -38,7 +44,13 @@ export class GeminiClient {
      * @returns A promise resolving to an array of Action objects or null if planning fails.
      */
     async generatePlan(goal: Goal, beliefs: Belief[], availableTools: Tool[], frame: Frame): Promise<Action[] | null> {
-        console.log(`[GeminiClient] Generating plan for goal: ${goal.description}`);
+        console.log(JSON.stringify({
+            type: "gemini_planning",
+            timestamp: new Date().toISOString(),
+            goal: goal.description,
+            frame: frame.name,
+            toolCount: availableTools.length
+        }, null, 2));
         this.availableToolsMap.clear();
         availableTools.forEach(tool => this.availableToolsMap.set(tool.id, tool));
 
@@ -59,18 +71,36 @@ export class GeminiClient {
             });
 
             const response = result.response;
-            console.log("[GeminiClient] Received response:", JSON.stringify(response, null, 2));
+            console.log("[GeminiClient] Received response:", JSON.stringify({
+        type: "gemini_response",
+        timestamp: new Date().toISOString(),
+        functionCalls: response?.candidates?.[0]?.content?.parts
+                ?.filter((part): part is Part & { functionCall: FunctionCall } => 'functionCall' in part)
+                ?.map(part => part.functionCall)
+                ?.length || 0,
+        hasText: !!response?.text(),
+        candidates: response?.candidates?.length || 0
+      }, null, 2));
 
             const functionCalls = response?.candidates?.[0]?.content?.parts
                 ?.filter((part): part is Part & { functionCall: FunctionCall } => 'functionCall' in part)
                 ?.map(part => part.functionCall);
 
             if (!functionCalls || functionCalls.length === 0) {
-                console.log("[GeminiClient] No function calls found in response.");
+                console.log(JSON.stringify({
+                type: "gemini_plan_no_functions",
+                timestamp: new Date().toISOString(),
+                hasTextResponse: !!response?.text()
+            }, null, 2));
                 // Optional: Check response.text() for a textual plan or explanation
                 const textResponse = response?.text();
                 if (textResponse) {
-                    console.log("[GeminiClient] Text response:", textResponse);
+                    console.log(JSON.stringify({
+                        type: "gemini_text_response",
+                        timestamp: new Date().toISOString(),
+                        textLength: textResponse.length,
+                        text: textResponse
+                    }, null, 2));
                     // Potentially try to parse text response as a fallback? (More complex)
                 }
                 return null;
@@ -97,15 +127,29 @@ export class GeminiClient {
             }
 
             if (planActions.length === 0) {
-                 console.log("[GeminiClient] No valid actions could be mapped from function calls.");
+                 console.log(JSON.stringify({
+                   type: "gemini_plan_no_valid_actions",
+                   timestamp: new Date().toISOString(),
+                   functionCallCount: functionCalls?.length || 0,
+                   issue: "No valid actions could be mapped from function calls"
+                 }, null, 2));
                  return null;
             }
 
-            console.log(`[GeminiClient] Generated plan with ${planActions.length} actions.`);
+            console.log(JSON.stringify({
+                type: "gemini_plan_success",
+                timestamp: new Date().toISOString(),
+                actionCount: planActions.length,
+                actions: planActions.map(action => action.toString())
+            }, null, 2));
             return planActions;
 
         } catch (error) {
-            console.error("[GeminiClient] Error generating plan:", error);
+            console.error(JSON.stringify({
+                type: "gemini_plan_error",
+                timestamp: new Date().toISOString(),
+                error: error instanceof Error ? error.message : String(error)
+            }, null, 2));
             return null;
         }
     }
@@ -117,7 +161,13 @@ export class GeminiClient {
      * @returns A promise resolving to a trust score (0-1), or a default (e.g., 0.5) on error.
      */
     async judgeSourceTrust(sourceId: string, frame: Frame): Promise<number> {
-        console.log(`[GeminiClient] Judging trust for source: "${sourceId}" under frame: "${frame.name}"`);
+        console.log(JSON.stringify({
+            type: "gemini_source_trust",
+            timestamp: new Date().toISOString(),
+            sourceId: sourceId,
+            frame: frame.name,
+            operation: "start"
+        }, null, 2));
         const prompt = this.buildSourceTrustPrompt(sourceId, frame);
         const defaultValue = 0.5; // Default trust on error or ambiguous response
 
@@ -388,10 +438,38 @@ export class GeminiClient {
         }
     }
 
-    /**
-     * Builds the prompt for the interpretPerceptionData call.
-     */
-    private buildInterpretPerceptionPrompt(perceptionData: any, frame: Frame): string {
+  /**
+   * Public API to call the Gemini model with a prompt
+   * 
+   * This provides a simpler interface for examples and tools
+   */
+  async call(options: {
+    prompt: string,
+    temperature?: number,
+    maxTokens?: number,
+    safetySettings?: any
+  }): Promise<{ response: string }> {
+    try {
+      const result = await this.model.generateContent({
+        contents: [{ role: "user", parts: [{ text: options.prompt }] }],
+        generationConfig: {
+          temperature: options.temperature || 0.7,
+          maxOutputTokens: options.maxTokens || 800
+        },
+        safetySettings: options.safetySettings
+      });
+      
+      return { response: result.response.text().trim() };
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      return { response: "" };
+    }
+  }
+
+  /**
+   * Builds the prompt for the interpretPerceptionData call.
+   */
+  private buildInterpretPerceptionPrompt(perceptionData: any, frame: Frame): string {
          const dataString = typeof perceptionData === 'string' 
             ? perceptionData 
             : JSON.stringify(perceptionData);

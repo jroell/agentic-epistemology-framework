@@ -8,6 +8,11 @@
 export type EntityId = string;
 
 /**
+ * Proposition type alias for strings representing statements
+ */
+export type Proposition = string;
+
+/**
  * Clamp a value between min and max (inclusive)
  * @param value The value to clamp
  * @param min The minimum value (default: 0)
@@ -57,3 +62,21 @@ export function generateId(prefix: string = 'id'): string {
 export function deepCopy<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
+
+/**
+ * Evidence interface for objects that can provide confidence about propositions
+ */
+export interface Evidence {
+  getConfidence(proposition: Proposition): number;
+}
+
+// Re-export the justification types from the justification module
+export { 
+  Justification, 
+  JustificationElement, 
+  ToolResultJustificationElement,
+  TestimonyJustificationElement,
+  ObservationJustificationElement,
+  InferenceJustificationElement,
+  ExternalJustificationElement
+} from '../epistemic/justification';
