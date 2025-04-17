@@ -208,27 +208,28 @@ async function illustrateInternalUpdateLogic(existingBelief: Belief, newElement:
 // You don't call illustrateInternalUpdateLogic directly; the agent handles it via perceive().
 ```
 
-### Multi-Agent Interaction
-
-See `examples/multi-agent.ts` for a detailed demonstration of conflict detection and resolution between agents with different frames.
-
-```typescript
-// Example: Agent A detects conflicts with Agent B
-// const conflicts = agentA.detectConflicts(agentB);
-// if (conflicts.length > 0) {
-//   agentA.exchangeJustifications(conflicts[0], agentB); // Initiate justification exchange
-//   // Beliefs might update based on processExternalJustification calls internally
-// }
-```
-
 ## Example: Debate Simulation
 
-After building the project, run the Debate Simulation example:
+After building the project, run the Debate Simulation example in one of two ways:
 
+### Let AI choose the debate topic (default)
 ```bash
 npm run build
 node dist/examples/debate-simulation.js --log-format pretty
 ```
+
+### Specify your own debate topic
+```bash
+npm run build
+node dist/examples/debate-simulation.js "Artificial Intelligence should be regulated by international law" --log-format pretty
+```
+
+The debate-simulation example features:
+- A moderator that guides the debate (and generates topics when none are provided)
+- Pro and con debaters that argue opposing viewpoints
+- A judge that evaluates the quality of arguments
+- Multiple debate rounds with dynamic question generation
+- Colorful terminal UI for improved readability
 
 ## Documentation
 
