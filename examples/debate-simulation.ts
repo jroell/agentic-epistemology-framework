@@ -46,8 +46,8 @@ import { Justification, ObservationJustificationElement } from '../src/epistemic
 import { ObservationPerception } from '../src/core/perception';
 import { Capability } from '../src/action/capability';
 import { Message } from '../src/action/message';
-import { Frame } from '../src/epistemic/frame';
-import { Tool, FunctionTool } from '../src/action/tool';
+import { Frame } from '../src/epistemic/frame'; // Tool import removed as it was unused
+import { FunctionTool } from '../src/action/tool'; // Removed Tool import
 import { Context } from '../src/core/context';
 
 // Load environment variables (.env file)
@@ -83,7 +83,7 @@ function colorizeJson(jsonString: string): string {
 }
 
 // Monkey patch console methods to colorize JSON output
-console.debug = function(...args: any[]) {
+console.debug = function(...args: unknown[]) { // Use unknown[] instead of any[]
   const newArgs = args.map(arg => {
     if (typeof arg === 'string' && (arg.trim().startsWith('{') || arg.trim().startsWith('['))) {
       return colorizeJson(arg);
@@ -93,7 +93,7 @@ console.debug = function(...args: any[]) {
   originalConsoleDebug.apply(console, newArgs);
 };
 
-console.info = function(...args: any[]) {
+console.info = function(...args: unknown[]) { // Use unknown[] instead of any[]
   const newArgs = args.map(arg => {
     if (typeof arg === 'string' && (arg.trim().startsWith('{') || arg.trim().startsWith('['))) {
       return colorizeJson(arg);
@@ -103,7 +103,7 @@ console.info = function(...args: any[]) {
   originalConsoleInfo.apply(console, newArgs);
 };
 
-console.warn = function(...args: any[]) {
+console.warn = function(...args: unknown[]) { // Use unknown[] instead of any[]
   const newArgs = args.map(arg => {
     if (typeof arg === 'string' && (arg.trim().startsWith('{') || arg.trim().startsWith('['))) {
       return colorizeJson(arg);
@@ -113,7 +113,7 @@ console.warn = function(...args: any[]) {
   originalConsoleWarn.apply(console, newArgs);
 };
 
-console.error = function(...args: any[]) {
+console.error = function(...args: unknown[]) { // Use unknown[] instead of any[]
   const newArgs = args.map(arg => {
     if (typeof arg === 'string' && (arg.trim().startsWith('{') || arg.trim().startsWith('['))) {
       return colorizeJson(arg);
@@ -159,12 +159,12 @@ const apiKey = "AIzaSyAoNAZyLsdBJZTSa7A_YJsrpkN74plgDww";
 console.log(COLORS.system(`Using Gemini API key: ${apiKey.substring(0, 5)}...${apiKey.substring(apiKey.length - 5)}`));
 
 // Determine log format from environment variable (set by command line args)
-const logFormat = process.env.LOG_FORMAT === 'json' ? 'json' : 'simple';
+// const logFormat = process.env.LOG_FORMAT === 'json' ? 'json' : 'simple'; // Removed unused variable
 const geminiClient = new GeminiClient(apiKey);
 
 // Create a topic generator tool
 const topicGeneratorTool = new FunctionTool(
-  async (context: Context) => {
+  async (_context: Context) => { // Mark context as unused
     console.log(COLORS.system("📋 Generating debate topic..."));
     try {
       const prompt = `Generate a interesting but somewhat controversial debate topic suitable for a structured debate. 
@@ -294,7 +294,7 @@ async function generateAgentStatement(
   previousStatements: string[] = [],
   role = 'neutral'
 ): Promise<string> {
-  const frame = (agent as any).frame as Frame;
+  const frame = (agent as any).frame as Frame; // Note: Accessing private member via 'any' cast - consider adding a getter to Agent
   
   console.log(COLORS.system(`🗣️  Generating statement from ${agent.name} (${frame.name} frame)...`));
   
@@ -409,7 +409,7 @@ async function generateJudgingDecision(
     }).join('\n\n' + '='.repeat(50) + '\n\n');
     
     const prompt = `
-    You are ${agent.name}, a debate judge with a ${(agent as any).frame.name} frame in a formal debate.
+    You are ${agent.name}, a debate judge with a ${(agent as any).frame.name /* Note: Accessing private member */} frame in a formal debate.
     
     Topic: ${topic}
     
@@ -417,7 +417,7 @@ async function generateJudgingDecision(
     
     ${transcript}
     
-    As someone with a ${(agent as any).frame.description}, you evaluate arguments based on:
+    As someone with a ${(agent as any).frame.description /* Note: Accessing private member */}, you evaluate arguments based on:
     1. Quality of evidence presented
     2. Logical reasoning
     3. Persuasiveness
@@ -555,11 +555,14 @@ function addBeliefFromStatement(
   );
   
   // Add belief by directly accessing the private method
-  (agent as any).beliefs.set(proposition, belief);
+  (agent as any).beliefs.set(proposition, belief); // Note: Accessing private member via 'any' cast - consider adding a method to Agent
 }
 
 // UI Helper functions
-function createBox(text: string, color: any, width: number = 80): string {
+// Define a type for the color function
+type ColorFunction = (text: string) => string;
+
+function createBox(text: string, color: ColorFunction, width = 80): string { // Use ColorFunction type, remove inferred type for width
   const lines = wordWrap(text, width - 4);
   const box = {
     top: COLORS.box.topLeft + COLORS.box.horizontal.repeat(width - 2) + COLORS.box.topRight,
@@ -658,7 +661,7 @@ function displayMessage(agent: string, message: string, round?: number): void {
   console.log(createBox(message, color, boxWidth));
 }
 
-function displaySystemMessage(message: string, width: number = 80): void {
+function displaySystemMessage(message: string, width = 80): void { // Remove inferred type for width
   const boxWidth = Math.min(process.stdout.columns - 2 || width, width);
   const divider = '═'.repeat(boxWidth);
   console.log(COLORS.topic(divider));

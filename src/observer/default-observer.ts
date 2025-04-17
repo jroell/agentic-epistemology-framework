@@ -2,6 +2,7 @@
 import { EntityId } from '../types/common';
 import { BaseObserver, Observer } from './observer';
 import { EventType, AnyEvent } from './event-types';
+import { Perception, ObservationPerception, MessagePerception, ToolResultPerception } from '../core/perception'; // Import specific types
 
 /**
  * Default observer implementation with enhanced logging capabilities
@@ -39,9 +40,9 @@ export class DefaultObserver extends BaseObserver implements Observer {
    * @param eventFilters Event types to filter out
    */
   constructor(
-    maxEventsPerEntity: number = 1000,
+    maxEventsPerEntity = 1000,
     logLevel: LogLevel = LogLevel.Info,
-    logToConsole: boolean = false,
+    logToConsole = false,
     eventFilters: EventType[] = []
   ) {
     super();
@@ -71,7 +72,12 @@ export class DefaultObserver extends BaseObserver implements Observer {
       this.events.set(event.entityId, []);
     }
 
-    const entityEvents = this.events.get(event.entityId)!;
+    const entityEvents = this.events.get(event.entityId);
+    if (!entityEvents) {
+      // Should not happen if the map is managed correctly, but good practice
+      console.error(`[DefaultObserver] No event array found for entity ${event.entityId}`);
+      return;
+    }
 
     entityEvents.push(event);
 
@@ -143,10 +149,26 @@ export class DefaultObserver extends BaseObserver implements Observer {
           message: event.message.toString()
         };
         break;
-      case EventType.Perception:
-        // For perception events, just stringify the whole event
-        jsonData = event;
+      case EventType.Perception: { // Add block scope
+        // Simplify perception logging
+        let perceptionTypeString = 'unknown';
+        const perception = event.perception as Perception; // Cast for type checking
+        if (perception instanceof ObservationPerception) {
+          perceptionTypeString = perception.observationType;
+        } else if (perception instanceof MessagePerception) {
+          perceptionTypeString = 'message';
+        } else if (perception instanceof ToolResultPerception) {
+          perceptionTypeString = 'tool_result';
+        }
+
+        jsonData = {
+          type: 'perception_received',
+          perceptionType: perceptionTypeString,
+          source: perception.source,
+          details: `Perception of type '${perceptionTypeString}' received from source '${perception.source}'`
+        };
         break;
+      } // Close block scope
       default:
         // For all other event types, just stringify the event directly
         jsonData = event;
@@ -305,9 +327,12 @@ export class DefaultObserver extends BaseObserver implements Observer {
    */
   getFrameChangeEvents(entityId: EntityId, frameId: string): AnyEvent[] {
     const events = this.getEventsByType(entityId, EventType.FrameChange);
-    return events.filter(event => {
-      const frameEvent = event as any;
-      return frameEvent.newFrame.id === frameId || frameEvent.oldFrame.id === frameId;
+    return events.filter((event): event is AnyEvent & { oldFrame: { id: string }, newFrame: { id: string } } => {
+      // Use a type guard to check if the event has the expected frame properties
+      return event.type === EventType.FrameChange &&
+             typeof (event as any).oldFrame === 'object' && (event as any).oldFrame !== null && typeof (event as any).oldFrame.id === 'string' &&
+             typeof (event as any).newFrame === 'object' && (event as any).newFrame !== null && typeof (event as any).newFrame.id === 'string' &&
+             ((event as any).newFrame.id === frameId || (event as any).oldFrame.id === frameId);
     });
   }
 
@@ -317,13 +342,14 @@ export class DefaultObserver extends BaseObserver implements Observer {
   getBeliefEvents(entityId: EntityId, proposition: string): AnyEvent[] {
     const events = this.getEvents(entityId);
     return events.filter(event => {
-      if (event.type === EventType.BeliefFormation) {
+      // Use type guards based on event type
+      if (event.type === EventType.BeliefFormation && typeof (event as any).belief === 'object' && (event as any).belief !== null) {
         return (event as any).belief.proposition === proposition;
-      } else if (event.type === EventType.BeliefUpdate) {
+      } else if (event.type === EventType.BeliefUpdate && typeof (event as any).newBelief === 'object' && (event as any).newBelief !== null) {
         return (event as any).newBelief.proposition === proposition;
-      } else if (event.type === EventType.BeliefRejection) {
+      } else if (event.type === EventType.BeliefRejection && typeof (event as any).belief === 'object' && (event as any).belief !== null) {
         return (event as any).belief.proposition === proposition;
-      } else if (event.type === EventType.InsufficientConfidence) {
+      } else if (event.type === EventType.InsufficientConfidence && typeof (event as any).belief === 'object' && (event as any).belief !== null) {
         return (event as any).belief.proposition === proposition;
       }
       return false;
@@ -336,9 +362,10 @@ export class DefaultObserver extends BaseObserver implements Observer {
   getGoalEvents(entityId: EntityId, goalId: string): AnyEvent[] {
     const events = this.getEvents(entityId);
     return events.filter(event => {
-      if (event.type.startsWith('goal_') || event.type === EventType.PlanningStart) {
+      // Use type guards based on event type
+      if ((event.type.startsWith('goal_') || event.type === EventType.PlanningStart) && typeof (event as any).goal === 'object' && (event as any).goal !== null) {
         return (event as any).goal.id === goalId;
-      } else if (event.type.startsWith('plan_')) {
+      } else if (event.type.startsWith('plan_') && typeof (event as any).plan === 'object' && (event as any).plan !== null && typeof (event as any).plan.goal === 'object' && (event as any).plan.goal !== null) {
         return (event as any).plan.goal.id === goalId;
       }
       return false;
@@ -351,7 +378,8 @@ export class DefaultObserver extends BaseObserver implements Observer {
   getPlanEvents(entityId: EntityId, planId: string): AnyEvent[] {
     const events = this.getEvents(entityId);
     return events.filter(event => {
-      if (event.type.startsWith('plan_')) {
+      // Use type guard based on event type
+      if (event.type.startsWith('plan_') && typeof (event as any).plan === 'object' && (event as any).plan !== null) {
         return (event as any).plan.id === planId;
       }
       return false;

@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, GenerativeModel, FunctionDeclaration, FunctionCall, Part, FunctionDeclarationSchema, SchemaType } from "@google/generative-ai";
+import { GoogleGenerativeAI, GenerativeModel, FunctionDeclaration, FunctionCall, Part, FunctionDeclarationSchema, SchemaType, SafetySetting } from "@google/generative-ai"; // Import SafetySetting
 import { Tool } from '../action/tool';
 import { Goal } from '../action/goal';
 import { Belief } from '../epistemic/belief';
@@ -385,7 +385,7 @@ export class GeminiClient implements LLMClient {
      * @param frame The agent's current cognitive frame.
      * @returns A promise resolving to the interpreted data (structure TBD, maybe string summary for now).
      */
-    async interpretPerceptionData(perceptionData: any, frame: Frame): Promise<any> {
+    async interpretPerceptionData(perceptionData: unknown, frame: Frame): Promise<unknown> { // Use unknown instead of any
         console.log(`[GeminiClient] Interpreting perception data for frame: "${frame.name}"`);
         const prompt = this.buildInterpretPerceptionPrompt(perceptionData, frame);
         // Default value might be the original data or a simple string representation
@@ -394,8 +394,15 @@ export class GeminiClient implements LLMClient {
         try {
             const result = await this.model.generateContent(prompt);
             const response = result.response;
-            const text = response.text().trim();
-            console.log(`[GeminiClient] Interpreted perception response: "${text}"`);
+            const text = response.text().trim() || defaultValue;
+
+            // Log interpreted perception in a simple box
+            const headerInterpretation = `🧠 INTERNAL INTERPRETATION (Frame: ${frame.name}) 🧠`;
+            const boxWidthInterpretation = Math.max(headerInterpretation.length, 80); // Adjust width as needed
+            console.log(`\x1b[90m${headerInterpretation}\x1b[0m`); // Gray header
+            console.log(`\x1b[90m╭${'─'.repeat(boxWidthInterpretation - 2)}╮\x1b[0m`);
+            text.split('\n').forEach(line => console.log(`\x1b[90m│ ${line.padEnd(boxWidthInterpretation - 4)} │\x1b[0m`)); // Simple padding
+            console.log(`\x1b[90m╰${'─'.repeat(boxWidthInterpretation - 2)}╯\x1b[0m`);
             // For now, just return the text summary. Could parse structured output later.
             return text || defaultValue; 
         } catch (error) {
@@ -410,7 +417,7 @@ export class GeminiClient implements LLMClient {
      * @param frame The agent's current cognitive frame.
      * @returns A promise resolving to an array of proposition strings.
      */
-    async extractRelevantPropositions(sourceData: any, frame: Frame): Promise<string[]> {
+    async extractRelevantPropositions(sourceData: unknown, frame: Frame): Promise<string[]> { // Use unknown instead of any
         console.log(`[GeminiClient] Extracting propositions for frame: "${frame.name}"`);
         const prompt = this.buildExtractPropositionsPrompt(sourceData, frame);
         const defaultValue: string[] = [];
@@ -418,8 +425,16 @@ export class GeminiClient implements LLMClient {
         try {
             const result = await this.model.generateContent(prompt);
             const response = result.response;
-            const text = response.text().trim();
-            console.log(`[GeminiClient] Extracted propositions response: "${text}"`);
+            const text = response.text().trim(); // Keep original text for parsing
+
+            // Log extracted propositions in a simple box
+            const propositionsToLog = text ? text.split('\n').map(line => line.trim()).filter(line => line.length > 0) : ['<No propositions extracted>'];
+            const headerPropositions = `💡 INTERNAL PROPOSITIONS (Frame: ${frame.name}) 💡`;
+            const boxWidthPropositions = Math.max(headerPropositions.length, 80); // Adjust width as needed
+            console.log(`\x1b[90m${headerPropositions}\x1b[0m`); // Gray header
+            console.log(`\x1b[90m╭${'─'.repeat(boxWidthPropositions - 2)}╮\x1b[0m`);
+            propositionsToLog.forEach(prop => console.log(`\x1b[90m│ - ${prop.padEnd(boxWidthPropositions - 6)} │\x1b[0m`)); // Simple padding
+            console.log(`\x1b[90m╰${'─'.repeat(boxWidthPropositions - 2)}╯\x1b[0m`);
 
             // Attempt to parse the response as a list of strings (e.g., newline-separated)
             if (text) {
@@ -447,7 +462,7 @@ export class GeminiClient implements LLMClient {
     prompt: string,
     temperature?: number,
     maxTokens?: number,
-    safetySettings?: any
+    safetySettings?: SafetySetting[] // Use the correct type from the SDK
   }): Promise<{ response: string }> {
     try {
       const result = await this.model.generateContent({
@@ -469,7 +484,7 @@ export class GeminiClient implements LLMClient {
   /**
    * Builds the prompt for the interpretPerceptionData call.
    */
-  private buildInterpretPerceptionPrompt(perceptionData: any, frame: Frame): string {
+  private buildInterpretPerceptionPrompt(perceptionData: unknown, frame: Frame): string { // Use unknown instead of any
          const dataString = typeof perceptionData === 'string' 
             ? perceptionData 
             : JSON.stringify(perceptionData);
@@ -488,7 +503,7 @@ export class GeminiClient implements LLMClient {
      /**
      * Builds the prompt for the extractRelevantPropositions call.
      */
-    private buildExtractPropositionsPrompt(sourceData: any, frame: Frame): string {
+    private buildExtractPropositionsPrompt(sourceData: unknown, frame: Frame): string { // Use unknown instead of any
          const dataString = typeof sourceData === 'string' 
             ? sourceData 
             : JSON.stringify(sourceData);
