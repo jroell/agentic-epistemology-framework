@@ -268,7 +268,7 @@ Think: Monte Carlo simulation—but for belief systems.
 
 ## 7. The Road Ahead
 
-✅ TypeScript reference implementation\
+✅ TypeScript reference implementation - [github.com/jroell/agentic-epistemology-framework](https://github.com/jroell/agentic-epistemology-framework)\
 ✅ Academic paper formalizing ontology and inference\
 🔜 Frame libraries and justification templates\
 🔜 Symbolic verification tools for epistemic health
