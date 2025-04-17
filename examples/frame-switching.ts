@@ -5,20 +5,20 @@
  * to different situations, affecting its belief formation and decision-making.
  */
 import * as dotenv from 'dotenv';
-import { Agent } from '../src/core/agent'; // Correct import path
+import { Agent } from '../src/core/agent'; 
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
 import { GeminiClient } from '../src/llm/gemini-client'; // Use the real client
-import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
-import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame, FrameFactory } from '../src/epistemic/frame'; // Correct import path
-import { Belief } from '../src/epistemic/belief'; // Correct import path
-import { Justification, ToolResultJustificationElement, ObservationJustificationElement } from '../src/epistemic/justification'; // Correct import path
-import { Perception, ToolResultPerception, ObservationPerception } from '../src/core/perception'; // Correct import path
-import { Capability } from '../src/action/capability'; // Correct import path
+import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; 
+import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame, FrameFactory } from '../src/epistemic/frame'; 
+import { Belief } from '../src/epistemic/belief'; 
+import { Justification, ToolResultJustificationElement, ObservationJustificationElement } from '../src/epistemic/justification'; 
+import { Perception, ToolResultPerception, ObservationPerception } from '../src/core/perception'; 
+import { Capability } from '../src/action/capability'; 
 // ActionFactory might not be exported or needed directly, assuming Goal subclasses are sufficient
-import { Goal, TaskGoal, FrameAdaptationGoal } from '../src/action/goal'; // Correct import path
-import { Plan, PlanStatus } from '../src/action/plan'; // Correct import path
-import { Context, ContextElement } from '../src/core/context'; // Correct import path
+import { Goal, TaskGoal, FrameAdaptationGoal } from '../src/action/goal'; 
+import { Plan, PlanStatus } from '../src/action/plan'; 
+import { Context, ContextElement } from '../src/core/context'; 
 import { displayMessage, displaySystemMessage, COLORS } from '../src/core/cli-formatter'; // Import shared formatter
 
 // Create a registry

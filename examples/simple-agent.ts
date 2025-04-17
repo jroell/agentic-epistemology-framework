@@ -5,21 +5,21 @@
  * and demonstrates how they interact in the AEF.
  */
 import * as dotenv from 'dotenv';
-import { Agent } from '../src/core/agent'; // Correct import path
+import { Agent } from '../src/core/agent'; 
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
 import { GeminiClient } from '../src/llm/gemini-client'; // Use the real client
-import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
-import { EfficiencyFrame, ThoroughnessFrame } from '../src/epistemic/frame'; // Correct import path
-import { Belief } from '../src/epistemic/belief'; // Correct import path
-import { Justification, ObservationJustificationElement } from '../src/epistemic/justification'; // Correct import path
-import { ObservationPerception, ToolResultPerception } from '../src/core/perception'; // Correct import path
-import { Tool, FunctionTool } from '../src/action/tool'; // Correct import path
-import { Capability } from '../src/action/capability'; // Correct import path
+import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; 
+import { EfficiencyFrame, ThoroughnessFrame } from '../src/epistemic/frame'; 
+import { Belief } from '../src/epistemic/belief'; 
+import { Justification, ObservationJustificationElement } from '../src/epistemic/justification'; 
+import { ObservationPerception, ToolResultPerception } from '../src/core/perception'; 
+import { Tool, FunctionTool } from '../src/action/tool'; 
+import { Capability } from '../src/action/capability'; 
 // ActionFactory might not be needed
-import { Goal, TaskGoal } from '../src/action/goal'; // Correct import path
-import { ContextElement } from '../src/core/context'; // Correct import path
-import { MessageFactory } from '../src/action/message'; // Correct import path
+import { Goal, TaskGoal } from '../src/action/goal'; 
+import { ContextElement } from '../src/core/context'; 
+import { MessageFactory } from '../src/action/message'; 
 import { displayMessage, displaySystemMessage, COLORS } from '../src/core/cli-formatter'; // Import shared formatter
 
 // Load environment variables (.env file)

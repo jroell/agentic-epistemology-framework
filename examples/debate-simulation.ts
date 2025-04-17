@@ -26,7 +26,7 @@ import { Message } from '../src/action/message';
 import { Frame } from '../src/epistemic/frame'; // Tool import removed as it was unused
 import { FunctionTool } from '../src/action/tool'; // Removed Tool import
 import { Context } from '../src/core/context';
-import { displayMessage, displaySystemMessage, COLORS, chalk, ColorFunction } from '../src/core/cli-formatter'; // Import shared formatter
+import { displayMessage, displaySystemMessage, COLORS, chalk } from '../src/core/cli-formatter'; // Import shared formatter
 
 // Load environment variables (.env file)
 dotenv.config();

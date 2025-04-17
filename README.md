@@ -27,78 +27,78 @@ npm run build
 
 ## Getting Started
 
-Clone the repository and run the Debate Simulation:
+Clone the repository and run the Debate Simulation using ts-node:
 
 ### macOS / Linux
 ```bash
 cd agentic-epistemology-framework
-npm run build
-node dist/examples/debate-simulation.js --log-format pretty
+npx ts-node examples/debate-simulation.ts
 ```
 
 ### Windows (PowerShell)
 ```powershell
 cd agentic-epistemology-framework
-npm run build
-node dist/examples/debate-simulation.js --log-format pretty
+npx ts-node examples/debate-simulation.ts
 ```
 
 ## Basic Usage
 
 ```typescript
-// Import necessary components directly from their modules
-// Note: You might need a Gemini API key (process.env.GEMINI_API_KEY)
-import { Agent, ConfidenceThresholds, DEFAULT_CONFIDENCE_THRESHOLDS } from './src/core/agent';
+/**
+ * Simple agent example demonstrating the AEF
+ */
+import * as dotenv from 'dotenv';
+import { Agent } from './src/core/agent';
 import { Registry } from './src/core/registry';
 import { DefaultMemory } from './src/core/memory';
-import { DefaultObserver } from './src/observer/default-observer';
-import { EfficiencyFrame, Frame } from './src/epistemic/frame';
-import { Belief } from './src/epistemic/belief';
-import { Justification, ObservationJustificationElement, JustificationElement } from './src/epistemic/justification';
-import { Perception, ObservationPerception, ToolResultPerception } from './src/core/perception';
 import { GeminiClient } from './src/llm/gemini-client';
-import { Tool, FunctionTool } from './src/action/tool';
+import { DefaultObserver, LogLevel } from './src/observer/default-observer';
+import { EfficiencyFrame } from './src/epistemic/frame';
+import { Belief } from './src/epistemic/belief';
+import { Justification, ObservationJustificationElement } from './src/epistemic/justification';
+import { ObservationPerception } from './src/core/perception';
+import { FunctionTool } from './src/action/tool';
 import { Capability } from './src/action/capability';
-import { Goal } from './src/action/goal';
-import { Context } from './src/core/context'; // Added Context
+import { TaskGoal } from './src/action/goal';
+import { displayMessage, displaySystemMessage, COLORS } from './src/core/cli-formatter';
 
-// --- Setup ---
+// Load environment variables
+dotenv.config();
+
+// Setup components
 const registry = new Registry();
 const memory = new DefaultMemory();
-const observer = new DefaultObserver(); // Simplified observer setup
-const geminiApiKey = process.env.GEMINI_API_KEY; // Ensure API key is available
-if (!geminiApiKey) {
-  throw new Error("Set the GEMINI_API_KEY environment variable");
-}
-const geminiClient = new GeminiClient(geminiApiKey);
+const observer = new DefaultObserver(1000, LogLevel.Debug, true);
 
 // Create a frame
-const efficiencyFrame: Frame = new EfficiencyFrame();
+const efficiencyFrame = new EfficiencyFrame();
 
-// Define Confidence Thresholds (Optional, uses defaults if not provided)
-const thresholds: ConfidenceThresholds = DEFAULT_CONFIDENCE_THRESHOLDS;
+// Load API key from environment
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error("Error: GEMINI_API_KEY environment variable not set.");
+  process.exit(1);
+}
+const geminiClient = new GeminiClient(apiKey);
 
 // Create an agent
 const agent = new Agent(
-  'agent_1',                          // Agent ID
-  'SimpleAgent',                      // Agent Name
-  [],                                 // Initial beliefs
-  efficiencyFrame,                    // Initial Frame
-  new Set([Capability.DataAnalysis]), // Agent capabilities
-  registry,                           // Registry instance
-  geminiClient,                       // GeminiClient instance
-  memory,                             // Memory instance
-  observer,                           // Observer instance
-  thresholds                          // Confidence Thresholds
+  'agent_1',                                // Agent ID
+  'ResearchAgent',                          // Agent Name
+  [],                                       // Initial beliefs
+  efficiencyFrame,                          // Initial Frame
+  new Set([Capability.DataAnalysis]),       // Agent capabilities
+  registry,                                 // Registry instance
+  geminiClient,                             // GeminiClient instance
+  memory,                                   // Memory instance
+  observer                                  // Observer instance
 );
 
 // Create and register a tool
 const dataAnalysisTool = new FunctionTool(
   (context: any) => {
-    console.log('Data analysis tool executed with context:', context);
-    // Simulate analysis based on context
-    const data = context.getElementByType('dataset')?.content || {};
-    return { summary: `Analyzed ${data.name || 'data'}`, trends: ['stable'] };
+    displayMessage('System', 'Data analysis tool executed', COLORS.info);
+    return { summary: 'Analysis complete', trends: ['increasing', 'seasonal'] };
   },
   'Data Analyzer',
   'Performs statistical analysis on data',
@@ -106,37 +106,57 @@ const dataAnalysisTool = new FunctionTool(
 );
 registry.registerTool(dataAnalysisTool);
 
+// Add initial belief
+const initialBelief = new Belief(
+  'DataAnalysisRequiresPreprocessing',
+  0.8,
+  new Justification([
+    new ObservationJustificationElement(
+      'past_experience',
+      { observation: 'Previous data analysis tasks required preprocessing' }
+    )
+  ])
+);
+
 // Agent perceives an observation
 agent.perceive(new ObservationPerception(
-  'system_log',
-  { event: 'Data processing started', timestamp: Date.now() }
+  'memory',
+  { observation: 'Previous data analysis tasks required preprocessing' },
+  'past_experience'
 ));
 
 // Create a goal
-const analysisGoal = new TaskGoal(
-  'data_analysis', // Corresponds to FunctionTool taskName
-  { dataset: { name: 'sales_data', size: '10MB' }, objective: 'find_trends' },
-  0.7 // Priority
+const researchGoal = new TaskGoal(
+  'data_analysis',
+  { dataset: 'customer_feedback', objective: 'sentiment_trends' },
+  0.7
 );
 
-// Agent creates a plan
-console.log(`\n--- Creating plan for: ${analysisGoal.description} ---`);
-const plan = agent.plan(analysisGoal);
+// Run agent
+async function runAgent() {
+  displaySystemMessage(`Creating a plan for goal: ${researchGoal.description}`);
+  const plan = await agent.plan(researchGoal);
 
-// Execute the plan
-if (plan) {
-  console.log(`--- Executing plan: ${plan.id} ---`);
-  agent.executePlan(plan);
-  console.log(`--- Plan ${plan.id} status: ${plan.status} ---`);
-} else {
-  console.log('--- Failed to create plan ---');
+  if (plan) {
+    displaySystemMessage(`Executing plan: ${plan.toString()}`);
+    await agent.executePlan(plan);
+    displaySystemMessage(`Plan status: ${plan.status}`);
+  } else {
+    displayMessage('System', 'Failed to create a plan for the goal', COLORS.error);
+  }
+
+  // Inspect the agent's beliefs
+  displaySystemMessage(`Agent's beliefs (confidence > 0.5)`);
+  const beliefs = agent.getBeliefs(0.5);
+  let beliefText = beliefs.length > 0 ? '' : 'No beliefs with confidence > 0.5';
+  beliefs.forEach((belief: Belief) => {
+    beliefText += `- ${belief.toString()}\n`;
+  });
+  displayMessage('Agent', beliefText.trim(), COLORS.agent1);
 }
 
-// Inspect the agent's beliefs
-console.log("\n--- Agent's final beliefs (confidence > 0.5) ---");
-const beliefs = agent.getBeliefs(0.5);
-beliefs.forEach((belief: Belief) => {
-  console.log(`- ${belief.toString()}`);
+runAgent().catch(error => {
+  console.error('Error running agent:', error);
 });
 ```
 
@@ -210,18 +230,16 @@ async function illustrateInternalUpdateLogic(existingBelief: Belief, newElement:
 
 ## Example: Debate Simulation
 
-After building the project, run the Debate Simulation example in one of two ways:
+Run the Debate Simulation example directly with ts-node in one of two ways:
 
 ### Let AI choose the debate topic (default)
 ```bash
-npm run build
-node dist/examples/debate-simulation.js --log-format pretty
+npx ts-node examples/debate-simulation.ts
 ```
 
 ### Specify your own debate topic
 ```bash
-npm run build
-node dist/examples/debate-simulation.js "Artificial Intelligence should be regulated by international law" --log-format pretty
+npx ts-node examples/debate-simulation.ts "Artificial Intelligence should be regulated by international law"
 ```
 
 The debate-simulation example features:
