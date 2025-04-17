@@ -352,6 +352,32 @@ async function generateDebateTopic(): Promise<{ topic: string, description: stri
 }
 
 /**
+ * Generate a debate description for a given topic
+ */
+async function generateDebateDescription(topic: string): Promise<string> {
+  console.log(COLORS.system(`📋 Generating debate description for topic: ${topic}`));
+  try {
+    const prompt = `
+    The following is a debate topic: "${topic}"
+    
+    Generate a short, neutral context paragraph (about 100 words) that introduces this topic, explains why it's worth debating,
+    and provides some brief background information that would help frame the debate.
+    
+    Write only the description paragraph without any preamble, introduction, or conclusion.
+    `;
+    const result = await geminiClient.call({
+      prompt,
+      temperature: 0.7,
+      maxTokens: 300
+    });
+    return result.response || "No description available.";
+  } catch (error) {
+    console.error("Error generating debate description:", error);
+    return "No description available.";
+  }
+}
+
+/**
  * Generate a judge's final decision
  */
 async function generateJudgingDecision(
@@ -524,12 +550,26 @@ function addBeliefFromStatement(
 /**
  * Main function to run the debate simulation
  */
-async function runDebateSimulation() {
+async function runDebateSimulation(overrideTopic?: string) {
   console.clear();
   displaySystemMessage("🎭 DEBATE SIMULATION STARTING 🎭");
   
-  // Step 1: Generate a debate topic
-  const { topic, description } = await generateDebateTopic();
+  // Step 1: Determine debate topic (user override if provided)
+  let topic: string;
+  let description: string;
+  if (overrideTopic) {
+    if (overrideTopic.toLowerCase().startsWith('resolved:')) {
+      topic = overrideTopic;
+    } else {
+      topic = `Resolved: ${overrideTopic}`;
+    }
+    console.log(COLORS.system(`📋 Using user-specified debate topic: ${topic}`));
+    description = await generateDebateDescription(topic);
+  } else {
+    const result = await generateDebateTopic();
+    topic = result.topic;
+    description = result.description;
+  }
   
   // Use imported displaySystemMessage
   displaySystemMessage(`📜 DEBATE TOPIC: ${topic}`);
@@ -689,18 +729,25 @@ async function runDebateSimulation() {
 /**
  * Parse command line arguments to determine logging options
  */
-function parseCommandLineArgs(): { logFormat: 'default' | 'pretty' | 'json' } {
+function parseCommandLineArgs(): { logFormat: 'default' | 'pretty' | 'json'; topic?: string } {
   const args = process.argv.slice(2);
   const options = {
-    logFormat: 'default' as 'default' | 'pretty' | 'json'
+    logFormat: 'default' as 'default' | 'pretty' | 'json',
+    topic: undefined as string | undefined
   };
 
-  // Check for log format option
-  const formatIndex = args.findIndex(arg => arg === '--log-format' || arg === '-f');
-  if (formatIndex !== -1 && formatIndex < args.length - 1) {
-    const format = args[formatIndex + 1].toLowerCase();
-    if (['default', 'pretty', 'json'].includes(format)) {
-      options.logFormat = format as 'default' | 'pretty' | 'json';
+  // Parse for log format flag and topic argument
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--log-format' || args[i] === '-f') {
+      if (i < args.length - 1) {
+        const format = args[i + 1].toLowerCase();
+        if (['default', 'pretty', 'json'].includes(format)) {
+          options.logFormat = format as 'default' | 'pretty' | 'json';
+        }
+        i++;
+      }
+    } else if (!options.topic) {
+      options.topic = args[i];
     }
   }
 
@@ -724,7 +771,7 @@ if (require.main === module) {
     console.log(COLORS.system("Starting debate simulation...")); // Use imported COLORS
   }
   
-  runDebateSimulation().catch(error => {
+  runDebateSimulation(options.topic).catch(error => {
     if (options.logFormat === 'json') {
       console.error('{"type":"error","message":"' + error.message + '","timestamp":"' + new Date().toISOString() + '"}');
     } else {
