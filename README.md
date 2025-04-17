@@ -19,7 +19,7 @@ The Agentic Epistemology Framework (AEF) provides a principled approach to model
 Currently, this is a reference implementation. To use it, clone the repository and build the project:
 
 ```bash
-git clone https://github.com/yourusername/agentic-epistemology-framework.git
+git clone https://github.com/jroell/agentic-epistemology-framework.git
 cd agentic-epistemology-framework
 npm install
 npm run build
@@ -264,5 +264,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Citation
 
 If you use this framework or the underlying concepts in your research, please consider citing the original paper (if applicable) or the repository.
-
-*(Placeholder for actual citation if available)*

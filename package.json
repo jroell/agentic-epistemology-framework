@@ -45,7 +45,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/agentic-epistemology-framework.git"
+    "url": "https://github.com/jroell/agentic-epistemology-framework.git"
   },
   "engines": {
     "node": ">=14.0.0"

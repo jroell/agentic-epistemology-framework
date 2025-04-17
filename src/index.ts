@@ -26,7 +26,7 @@ export const FRAMEWORK_INFO = {
   name: 'Agentic Epistemology Framework',
   version: VERSION,
   description: 'A structured framework for reasoning in autonomous agents and synthetic societies',
-  repository: 'https://github.com/yourusername/agentic-epistemology-framework',
+  repository: 'https://github.com/jroell/agentic-epistemology-framework',
   license: 'MIT'
 };
 
