@@ -23,10 +23,10 @@ import { Justification, ObservationJustificationElement } from '../src/epistemic
 import { ObservationPerception } from '../src/core/perception';
 import { Capability } from '../src/action/capability';
 import { Message } from '../src/action/message';
-import { Frame } from '../src/epistemic/frame'; // Tool import removed as it was unused
-import { FunctionTool } from '../src/action/tool'; // Removed Tool import
+import { Frame } from '../src/epistemic/frame';
+import { FunctionTool } from '../src/action/tool';
 import { Context } from '../src/core/context';
-import { displayMessage, displaySystemMessage, COLORS, chalk } from '../src/core/cli-formatter'; // Import shared formatter
+import { displayMessage, displaySystemMessage, COLORS, chalk } from '../src/core/cli-formatter';
 
 // Load environment variables (.env file)
 dotenv.config();
@@ -47,14 +47,14 @@ function colorizeJson(jsonString: string): string {
   try {
     // Replace JSON syntax with colored versions (use imported chalk)
     return jsonString
-      .replace(/{/g, chalk.gray('{')) // Use imported chalk
-      .replace(/}/g, chalk.gray('}')) // Use imported chalk
-      .replace(/\[/g, chalk.gray('[')) // Use imported chalk
-      .replace(/\]/g, chalk.gray(']')) // Use imported chalk
-      .replace(/"([^"]+)":/g, `${chalk.cyan('"$1"')}:`) // Use imported chalk
-      .replace(/: "([^"]+)"/g, `: ${chalk.green('"$1"')}`) // Use imported chalk
-      .replace(/: (true|false)/g, `: ${chalk.yellow('$1')}`) // Use imported chalk
-      .replace(/: ([0-9]+\.?[0-9]*)/g, `: ${chalk.yellow('$1')}`); // Use imported chalk
+      .replace(/{/g, chalk.gray('{')) 
+      .replace(/}/g, chalk.gray('}')) 
+      .replace(/\[/g, chalk.gray('[')) 
+      .replace(/\]/g, chalk.gray(']')) 
+      .replace(/"([^"]+)":/g, `${chalk.cyan('"$1"')}:`) 
+      .replace(/: "([^"]+)"/g, `: ${chalk.green('"$1"')}`) 
+      .replace(/: (true|false)/g, `: ${chalk.yellow('$1')}`) 
+      .replace(/: ([0-9]+\.?[0-9]*)/g, `: ${chalk.yellow('$1')}`); 
   } catch (e) {
     return jsonString;
   }
