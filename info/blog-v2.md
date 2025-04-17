@@ -66,13 +66,7 @@ Our journey is just beginning. We're proud to open-source a reference implementa
 
 Next steps include creating domain-specific epistemic frame libraries and developing rigorous verification methods for belief consistency. Further, we must foster interdisciplinary collaboration between engineers, philosophers, cognitive scientists, ethicists, sociologists, and domain experts to continually refine and enrich the framework. Such interdisciplinary synergy is vital for ensuring that AEF evolves in alignment with societal values and practical requirements.
 
-## A Call to Action
-
-Ultimately, our goal should be clear: to evolve AI from mere tools into thoughtful collaborators—entities capable not only of computing but understanding, reasoning, and explaining.
-
-Join me in shaping a future where AI doesn't just mimic intelligence—it embodies it authentically.
-
-Let's build agents with genuine epistemologies. Let's give AI a philosophy. Together, we have the opportunity—and indeed, the responsibility—to ensure that the next generation of AI is ethically sound, intellectually robust, and genuinely beneficial for society.
+Ultimately, our goal should be clear: to evolve AI from mere tools into thoughtful collaborators—entities capable not only of computing but understanding, reasoning, and explaining. Join me in shaping a future where AI doesn't just mimic intelligence—it embodies it authentically. Let's build agents with genuine epistemologies. Let's give AI a philosophy. Together, we have the opportunity—and indeed, the responsibility—to ensure that the next generation of AI is ethically sound, intellectually robust, and genuinely beneficial for society.
 
 ### 👇 Join the Conversation
 
