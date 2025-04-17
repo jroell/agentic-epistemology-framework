@@ -19,10 +19,28 @@ The Agentic Epistemology Framework (AEF) provides a principled approach to model
 Currently, this is a reference implementation. To use it, clone the repository and build the project:
 
 ```bash
-git clone https://github.com/yourusername/agentic-epistemology-framework.git # Replace with actual URL if available
+git clone https://github.com/yourusername/agentic-epistemology-framework.git
 cd agentic-epistemology-framework
 npm install
 npm run build
+```
+
+## Getting Started
+
+Clone the repository and run the Debate Simulation:
+
+### macOS / Linux
+```bash
+cd agentic-epistemology-framework
+npm run build
+node dist/examples/debate-simulation.js --log-format pretty
+```
+
+### Windows (PowerShell)
+```powershell
+cd agentic-epistemology-framework
+npm run build
+node dist/examples/debate-simulation.js --log-format pretty
 ```
 
 ## Basic Usage
@@ -203,15 +221,13 @@ See `examples/multi-agent.ts` for a detailed demonstration of conflict detection
 // }
 ```
 
-## Examples
+## Example: Debate Simulation
 
-Run the examples using Node.js after building the project:
+After building the project, run the Debate Simulation example:
 
 ```bash
 npm run build
-node dist/examples/simple-agent.js
-node dist/examples/frame-switching.js
-node dist/examples/multi-agent.js
+node dist/examples/debate-simulation.js --log-format pretty
 ```
 
 ## Documentation

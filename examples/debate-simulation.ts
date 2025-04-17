@@ -13,29 +13,6 @@
 
 import * as dotenv from 'dotenv';
 import { Agent } from '../src/core/agent';
-
-// Use chalk individually
-const chalk = {
-  yellow: (text: string) => `\x1b[33m${text}\x1b[0m`,
-  blue: (text: string) => `\x1b[34m${text}\x1b[0m`,
-  red: (text: string) => `\x1b[31m${text}\x1b[0m`,
-  green: (text: string) => `\x1b[32m${text}\x1b[0m`,
-  white: (text: string) => `\x1b[37m${text}\x1b[0m`,
-  magenta: (text: string) => `\x1b[35m${text}\x1b[0m`,
-  gray: (text: string) => `\x1b[90m${text}\x1b[0m`,
-  cyan: (text: string) => `\x1b[36m${text}\x1b[0m`,
-  bold: {
-    yellow: (text: string) => `\x1b[1;33m${text}\x1b[0m`,
-    blue: (text: string) => `\x1b[1;34m${text}\x1b[0m`,
-    red: (text: string) => `\x1b[1;31m${text}\x1b[0m`,
-    green: (text: string) => `\x1b[1;32m${text}\x1b[0m`,
-    white: (text: string) => `\x1b[1;37m${text}\x1b[0m`,
-    magenta: (text: string) => `\x1b[1;35m${text}\x1b[0m`,
-    gray: (text: string) => `\x1b[1;90m${text}\x1b[0m`,
-    cyan: (text: string) => `\x1b[1;36m${text}\x1b[0m`
-  }
-};
-
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
 import { GeminiClient } from '../src/llm/gemini-client';
@@ -49,6 +26,7 @@ import { Message } from '../src/action/message';
 import { Frame } from '../src/epistemic/frame'; // Tool import removed as it was unused
 import { FunctionTool } from '../src/action/tool'; // Removed Tool import
 import { Context } from '../src/core/context';
+import { displayMessage, displaySystemMessage, COLORS, chalk, ColorFunction } from '../src/core/cli-formatter'; // Import shared formatter
 
 // Load environment variables (.env file)
 dotenv.config();
@@ -67,16 +45,16 @@ const originalConsoleError = console.error;
 // Helper function to colorize JSON output
 function colorizeJson(jsonString: string): string {
   try {
-    // Replace JSON syntax with colored versions
+    // Replace JSON syntax with colored versions (use imported chalk)
     return jsonString
-      .replace(/{/g, chalk.gray('{'))
-      .replace(/}/g, chalk.gray('}'))
-      .replace(/\[/g, chalk.gray('['))
-      .replace(/\]/g, chalk.gray(']'))
-      .replace(/"([^"]+)":/g, `${chalk.cyan('"$1"')}:`)
-      .replace(/: "([^"]+)"/g, `: ${chalk.green('"$1"')}`)
-      .replace(/: (true|false)/g, `: ${chalk.yellow('$1')}`)
-      .replace(/: ([0-9]+\.?[0-9]*)/g, `: ${chalk.yellow('$1')}`);
+      .replace(/{/g, chalk.gray('{')) // Use imported chalk
+      .replace(/}/g, chalk.gray('}')) // Use imported chalk
+      .replace(/\[/g, chalk.gray('[')) // Use imported chalk
+      .replace(/\]/g, chalk.gray(']')) // Use imported chalk
+      .replace(/"([^"]+)":/g, `${chalk.cyan('"$1"')}:`) // Use imported chalk
+      .replace(/: "([^"]+)"/g, `: ${chalk.green('"$1"')}`) // Use imported chalk
+      .replace(/: (true|false)/g, `: ${chalk.yellow('$1')}`) // Use imported chalk
+      .replace(/: ([0-9]+\.?[0-9]*)/g, `: ${chalk.yellow('$1')}`); // Use imported chalk
   } catch (e) {
     return jsonString;
   }
@@ -128,26 +106,7 @@ const DEBATE_ROUNDS = 3;
 const MIN_STATEMENTS_PER_ROUND = 1;
 const MAX_STATEMENTS_PER_ROUND = 2;
 
-// Colors and styling
-const COLORS = {
-  moderator: (text: string) => chalk.bold.yellow(text),
-  debaterA: (text: string) => chalk.bold.blue(text),
-  debaterB: (text: string) => chalk.bold.red(text),
-  judge: (text: string) => chalk.bold.green(text),
-  topic: (text: string) => chalk.bold.white(text),
-  round: (text: string) => chalk.bold.magenta(text),
-  system: (text: string) => chalk.gray(text),
-  analytics: (text: string) => chalk.cyan(text),
-  divider: (text: string) => chalk.gray(text),
-  box: {
-    topLeft: '╭',
-    topRight: '╮',
-    bottomLeft: '╰',
-    bottomRight: '╯',
-    horizontal: '─',
-    vertical: '│',
-  }
-};
+// Note: Local COLORS constant removed, using imported COLORS from cli-formatter
 
 // Create shared components
 const registry = new Registry();
@@ -558,116 +517,9 @@ function addBeliefFromStatement(
   (agent as any).beliefs.set(proposition, belief); // Note: Accessing private member via 'any' cast - consider adding a method to Agent
 }
 
-// UI Helper functions
-// Define a type for the color function
-type ColorFunction = (text: string) => string;
-
-function createBox(text: string, color: ColorFunction, width = 80): string { // Use ColorFunction type, remove inferred type for width
-  const lines = wordWrap(text, width - 4);
-  const box = {
-    top: COLORS.box.topLeft + COLORS.box.horizontal.repeat(width - 2) + COLORS.box.topRight,
-    bottom: COLORS.box.bottomLeft + COLORS.box.horizontal.repeat(width - 2) + COLORS.box.bottomRight,
-    empty: COLORS.box.vertical + ' '.repeat(width - 2) + COLORS.box.vertical,
-    content: (line: string) => COLORS.box.vertical + ' ' + line + ' '.repeat(Math.max(0, width - line.length - 4)) + ' ' + COLORS.box.vertical
-  };
-
-  let result = color(box.top) + '\n';
-  
-  lines.forEach(line => {
-    result += color(box.content(line)) + '\n';
-  });
-  
-  result += color(box.bottom);
-  return result;
-}
-
-function wordWrap(text: string, maxLength: number): string[] {
-  // Simple word wrap implementation
-  const words = text.split(' ');
-  const lines: string[] = [];
-  let currentLine = '';
-
-  words.forEach(word => {
-    // Handle new line characters in the text
-    if (word.includes('\n')) {
-      const segments = word.split('\n');
-      segments.forEach((segment, index) => {
-        if (index === 0) {
-          if (currentLine.length + segment.length + 1 <= maxLength) {
-            currentLine += (currentLine ? ' ' : '') + segment;
-          } else {
-            lines.push(currentLine);
-            currentLine = segment;
-          }
-        } else {
-          lines.push(currentLine);
-          currentLine = segment;
-        }
-      });
-      return;
-    }
-
-    if (currentLine.length + word.length + 1 <= maxLength) {
-      currentLine += (currentLine ? ' ' : '') + word;
-    } else {
-      lines.push(currentLine);
-      currentLine = word;
-    }
-  });
-
-  if (currentLine) {
-    lines.push(currentLine);
-  }
-
-  return lines;
-}
-
-function displayMessage(agent: string, message: string, round?: number): void {
-  const width = process.stdout.columns || 80;
-  const boxWidth = Math.min(width - 2, 100);
-  
-  let color = COLORS.system;
-  let name = '';
-  
-  switch(agent.toLowerCase()) {
-    case 'moderator':
-      color = COLORS.moderator;
-      name = 'MODERATOR';
-      break;
-    case 'debater a (pro)':
-    case 'debater a':
-    case 'pro':
-      color = COLORS.debaterA;
-      name = 'DEBATER A (PRO)';
-      break;
-    case 'debater b (con)':
-    case 'debater b': 
-    case 'con':
-      color = COLORS.debaterB;
-      name = 'DEBATER B (CON)';
-      break;
-    case 'judge':
-      color = COLORS.judge;
-      name = 'JUDGE';
-      break;
-    case 'system':
-      color = COLORS.system;
-      name = 'SYSTEM';
-      break;
-  }
-  
-  const header = name + (round ? ` (ROUND ${round})` : '');
-  console.log('\n' + color(header));
-  console.log(createBox(message, color, boxWidth));
-}
-
-function displaySystemMessage(message: string, width = 80): void { // Remove inferred type for width
-  const boxWidth = Math.min(process.stdout.columns - 2 || width, width);
-  const divider = '═'.repeat(boxWidth);
-  console.log(COLORS.topic(divider));
-  console.log(chalk.bold.white(message)); // Use chalk directly for bold
-  console.log(COLORS.topic(divider));
-}
+// Note: UI Helper functions (ColorFunction, createBox, wordWrap, displayMessage, displaySystemMessage)
+// have been removed and are now imported from src/core/cli-formatter.ts
+// The local displayMessage function is slightly different, so calls will be adjusted below.
 
 /**
  * Main function to run the debate simulation
@@ -679,9 +531,11 @@ async function runDebateSimulation() {
   // Step 1: Generate a debate topic
   const { topic, description } = await generateDebateTopic();
   
+  // Use imported displaySystemMessage
   displaySystemMessage(`📜 DEBATE TOPIC: ${topic}`);
-  displayMessage('System', description);
-  
+  // Use imported displayMessage with appropriate color
+  displayMessage('System', description, COLORS.system);
+
   // Add beliefs to agents about the topic
   const topicProposition = `The proposition "${topic.replace('Resolved: ', '')}" is true`;
   addBeliefFromStatement(moderator, `${topicProposition} is debatable`, description, 0.9, 'topic_selection');
@@ -699,8 +553,9 @@ async function runDebateSimulation() {
   
   // Step 2: Conduct debate rounds
   for (let round = 1; round <= DEBATE_ROUNDS; round++) {
+    // Use imported displaySystemMessage
     displaySystemMessage(`🔄 ROUND ${round} OF ${DEBATE_ROUNDS}`);
-    
+
     // Moderator asks question
     const moderatorQuestion = await generateModeratorQuestion(
       topic, 
@@ -708,9 +563,10 @@ async function runDebateSimulation() {
       round, 
       allStatements
     );
-    
-    displayMessage('Moderator', moderatorQuestion, round);
-    
+
+    // Use imported displayMessage with appropriate color
+    displayMessage('Moderator', moderatorQuestion, COLORS.moderator);
+
     // Send moderator's question to both debaters
     await sendAndProcessMessage(moderator, debaterA, moderatorQuestion, 'question');
     await sendAndProcessMessage(moderator, debaterB, moderatorQuestion, 'question');
@@ -739,8 +595,9 @@ async function runDebateSimulation() {
         allStatements,
         'pro'
       );
-      
-      displayMessage('Debater A (Pro)', debaterAResponse, round);
+
+      // Use imported displayMessage with appropriate color
+      displayMessage('Debater A (Pro)', debaterAResponse, COLORS.agent1); // Assuming agent1 is blue
       roundLog.statements.push({ agent: "Debater A (Pro)", text: debaterAResponse });
       allStatements.push(`Debater A (Pro): ${debaterAResponse}`);
       
@@ -757,8 +614,9 @@ async function runDebateSimulation() {
         allStatements,
         'con'
       );
-      
-      displayMessage('Debater B (Con)', debaterBResponse, round);
+
+      // Use imported displayMessage with appropriate color
+      displayMessage('Debater B (Con)', debaterBResponse, COLORS.agent2); // Assuming agent2 is red
       roundLog.statements.push({ agent: "Debater B (Con)", text: debaterBResponse });
       allStatements.push(`Debater B (Con): ${debaterBResponse}`);
       
@@ -773,11 +631,13 @@ async function runDebateSimulation() {
   }
   
   // Step 3: Judge renders a decision
+  // Use imported displaySystemMessage
   displaySystemMessage("⚖️ JUDGE'S DECISION");
-  
+
   const judgement = await generateJudgingDecision(topic, debateLog, judge);
-  displayMessage('Judge', judgement);
-  
+  // Use imported displayMessage with appropriate color
+  displayMessage('Judge', judgement, COLORS.judge);
+
   // Send judgement to all participants
   await sendAndProcessMessage(judge, moderator, judgement, 'judgement');
   await sendAndProcessMessage(judge, debaterA, judgement, 'judgement');
@@ -790,13 +650,16 @@ async function runDebateSimulation() {
     `Debate has concluded with the judge's decision: ${judgement}`,
     allStatements
   );
-  
+
+  // Use imported displaySystemMessage
   displaySystemMessage("🏁 DEBATE CONCLUSION");
-  displayMessage('Moderator', closingStatement);
-  
+  // Use imported displayMessage with appropriate color
+  displayMessage('Moderator', closingStatement, COLORS.moderator);
+
   // Print statistics from the observer
+  // Use imported displaySystemMessage
   displaySystemMessage("📊 DEBATE ANALYTICS");
-  
+
   // Cast to DefaultObserver to access statistics methods
   const defaultObserver = observer as DefaultObserver;
   
@@ -815,9 +678,11 @@ async function runDebateSimulation() {
   // Print total events
   const timeline = defaultObserver.getTimeline();
   analyticsContent += `Total events tracked: ${timeline.length}`;
-  
-  displayMessage('System', analyticsContent);
-  
+
+  // Use imported displayMessage with appropriate color
+  displayMessage('System', analyticsContent, COLORS.analytics);
+
+  // Use imported displaySystemMessage
   displaySystemMessage("🎭 DEBATE SIMULATION COMPLETED 🎭");
 }
 
@@ -853,10 +718,10 @@ if (require.main === module) {
     console.log('{"type":"debate_simulation","status":"starting","timestamp":"' + new Date().toISOString() + '"}');
   } else if (options.logFormat === 'pretty') {
     // Enhanced pretty printing is already configured
-    console.log(COLORS.system("Starting debate simulation with pretty log formatting..."));
+    console.log(COLORS.system("Starting debate simulation with pretty log formatting...")); // Use imported COLORS
   } else {
     // Default format
-    console.log(COLORS.system("Starting debate simulation..."));
+    console.log(COLORS.system("Starting debate simulation...")); // Use imported COLORS
   }
   
   runDebateSimulation().catch(error => {

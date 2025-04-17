@@ -1,12 +1,14 @@
+// src/observer/default-observer.ts
 /// <reference lib="dom" />
 import { EntityId } from '../types/common';
 import { BaseObserver, Observer } from './observer';
 import { EventType, AnyEvent } from './event-types';
 import { Perception, ObservationPerception, MessagePerception, ToolResultPerception } from '../core/perception'; // Import specific types
+import { displayMessage, COLORS } from '../core/cli-formatter'; // Import shared formatter
 
 /**
  * Default observer implementation with enhanced logging capabilities
- * 
+ *
  * This observer extends the base observer with additional features like
  * log levels, maximum event storage, and event filtering
  */
@@ -15,17 +17,17 @@ export class DefaultObserver extends BaseObserver implements Observer {
    * Maximum number of events to store per entity
    */
   private maxEventsPerEntity: number;
-  
+
   /**
    * Current log level
    */
   private logLevel: LogLevel;
-  
+
   /**
    * Whether to log to console
    */
   private logToConsole: boolean;
-  
+
   /**
    * Event filters
    */
@@ -33,7 +35,7 @@ export class DefaultObserver extends BaseObserver implements Observer {
 
   /**
    * Create a new default observer
-   * 
+   *
    * @param maxEventsPerEntity Maximum number of events to store per entity
    * @param logLevel Minimum log level to record
    * @param logToConsole Whether to log events to console
@@ -75,7 +77,8 @@ export class DefaultObserver extends BaseObserver implements Observer {
     const entityEvents = this.events.get(event.entityId);
     if (!entityEvents) {
       // Should not happen if the map is managed correctly, but good practice
-      console.error(`[DefaultObserver] No event array found for entity ${event.entityId}`);
+      // Use displayMessage for error
+      displayMessage("DefaultObserver", `No event array found for entity ${event.entityId}`, COLORS.error);
       return;
     }
 
@@ -95,17 +98,14 @@ export class DefaultObserver extends BaseObserver implements Observer {
     const timestamp = new Date(event.timestamp).toISOString();
     const level = this.getLevelForEvent(event);
     const levelStr = LogLevel[level].toUpperCase();
-    
-    // Create header with metadata
-    const header = `[${timestamp}] [${levelStr}] [${event.entityId}] [${event.type}]`;
-    
-    // Create a box around the header for better visibility
-    const headerLine = '─'.repeat(header.length + 4);
-    const boxedHeader = `┌${headerLine}┐\n│  ${header}  │\n└${headerLine}┘`;
-    
+
+    // Create header with metadata (will be part of the message title)
+    const header = `[${levelStr}] [${event.entityId}] [${event.type}]`;
+    const messageTitle = `OBSERVER EVENT: ${header}`;
+
     // Format the JSON data with pretty indentation for better readability
-    let jsonData;
-    
+    let jsonData: object; // Ensure jsonData is typed as object
+
     switch (event.type) {
       case EventType.BeliefFormation:
         jsonData = {
@@ -169,33 +169,45 @@ export class DefaultObserver extends BaseObserver implements Observer {
         };
         break;
       } // Close block scope
-      default:
+      default: { // Add block scope for default case
         // For all other event types, just stringify the event directly
-        jsonData = event;
+        // Filter out potentially large or circular properties if needed
+        const simplifiedEvent: Record<string, any> = {};
+        for (const key in event) {
+            if (Object.prototype.hasOwnProperty.call(event, key)) {
+                // Example: Skip potentially large 'context' or complex objects
+                if (key !== 'context' && key !== 'agent' && key !== 'observer') {
+                     simplifiedEvent[key] = (event as any)[key];
+                }
+            }
+        }
+        jsonData = simplifiedEvent;
+        break; // Added break statement
+       } // Close block scope for default case
     }
 
-    // Log the formatted output
+    // Log the formatted output using displayMessage
     const formattedJson = JSON.stringify(jsonData, null, 2);
-    
+    let messageColor = COLORS.system; // Default color
+
     switch (level) {
       case LogLevel.Error:
-        console.error(boxedHeader);
-        console.error(formattedJson);
+        messageColor = COLORS.error;
         break;
       case LogLevel.Warning:
-        console.warn(boxedHeader);
-        console.warn(formattedJson);
+        messageColor = COLORS.warning;
         break;
       case LogLevel.Info:
-        console.info(boxedHeader);
-        console.info(formattedJson);
+        messageColor = COLORS.info;
         break;
       case LogLevel.Debug:
-        console.debug(boxedHeader);
-        console.debug(formattedJson);
+        messageColor = COLORS.system; // Use gray for debug
         break;
     }
+    // Add timestamp to the title for context
+    displayMessage(`${messageTitle} @ ${timestamp}`, formattedJson, messageColor);
   }
+
 
   /**
    * Get the log level for an event type
@@ -204,7 +216,7 @@ export class DefaultObserver extends BaseObserver implements Observer {
     switch (event.type) {
       case EventType.Error:
         return LogLevel.Error;
-      
+
       case EventType.Warning:
       case EventType.ActionFailure:
       case EventType.ActionError:
@@ -214,7 +226,7 @@ export class DefaultObserver extends BaseObserver implements Observer {
       case EventType.GoalAbandonment:
       case EventType.InsufficientConfidence:
         return LogLevel.Warning;
-      
+
       case EventType.BeliefFormation:
       case EventType.BeliefUpdate:
       case EventType.ConflictDetection:
@@ -231,7 +243,7 @@ export class DefaultObserver extends BaseObserver implements Observer {
       case EventType.MessageReceived:
       case EventType.Log:
         return LogLevel.Info;
-      
+
       case EventType.Perception:
       case EventType.JustificationExchange:
       case EventType.PlanningStart:
@@ -300,11 +312,11 @@ export class DefaultObserver extends BaseObserver implements Observer {
   getEventCountByType(entityId: EntityId): Record<string, number> {
     const events = this.events.get(entityId) || [];
     const counts: Record<string, number> = {};
-    
+
     for (const event of events) {
       counts[event.type] = (counts[event.type] || 0) + 1;
     }
-    
+
     return counts;
   }
 
@@ -312,12 +324,12 @@ export class DefaultObserver extends BaseObserver implements Observer {
    * Get events within a time range for an entity
    */
   getEventsInTimeRange(
-    entityId: EntityId, 
-    startTime: number, 
+    entityId: EntityId,
+    startTime: number,
     endTime: number
   ): AnyEvent[] {
     const events = this.events.get(entityId) || [];
-    return events.filter(event => 
+    return events.filter(event =>
       event.timestamp >= startTime && event.timestamp <= endTime
     );
   }
@@ -427,7 +439,8 @@ export class DefaultObserver extends BaseObserver implements Observer {
         this.events.set(entityId, entityEvents);
       }
     } catch (error) {
-      console.error('Error importing events from JSON:', error);
+      // Use displayMessage for error
+      displayMessage("DefaultObserver", `Error importing events from JSON: ${error instanceof Error ? error.message : String(error)}`, COLORS.error);
       throw new Error('Invalid JSON format for events');
     }
   }

@@ -1,3 +1,4 @@
+import './cli-formatter';
 import { EntityId } from '../types/common';
 import { Belief } from '../epistemic/belief';
 import { Frame } from '../epistemic/frame';

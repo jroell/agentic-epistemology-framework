@@ -4,10 +4,11 @@
  * This example creates a simple agent with beliefs, perceptions, and actions
  * and demonstrates how they interact in the AEF.
  */
+import * as dotenv from 'dotenv';
 import { Agent } from '../src/core/agent'; // Correct import path
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
-import { MockGeminiClient } from '../src/llm/mock-gemini-client';
+import { GeminiClient } from '../src/llm/gemini-client'; // Use the real client
 import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
 import { EfficiencyFrame, ThoroughnessFrame } from '../src/epistemic/frame'; // Correct import path
 import { Belief } from '../src/epistemic/belief'; // Correct import path
@@ -19,6 +20,10 @@ import { Capability } from '../src/action/capability'; // Correct import path
 import { Goal, TaskGoal } from '../src/action/goal'; // Correct import path
 import { ContextElement } from '../src/core/context'; // Correct import path
 import { MessageFactory } from '../src/action/message'; // Correct import path
+import { displayMessage, displaySystemMessage, COLORS } from '../src/core/cli-formatter'; // Import shared formatter
+
+// Load environment variables (.env file)
+dotenv.config();
 
 const registry = new Registry();
 const memory = new DefaultMemory();
@@ -26,8 +31,14 @@ const observer = new DefaultObserver(1000, LogLevel.Debug, true);
 
 const efficiencyFrame = new EfficiencyFrame();
 
-// Use MockGeminiClient that doesn't require an API key
-const geminiClient = new MockGeminiClient();
+// Use GeminiClient and load API key from environment
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error("Error: GEMINI_API_KEY environment variable not set.");
+  process.exit(1); // Exit if the key is missing
+}
+console.log(`Using Gemini API key: ${apiKey.substring(0, 5)}...${apiKey.substring(apiKey.length - 5)}`);
+const geminiClient = new GeminiClient(apiKey);
 
 const agent = new Agent(
   'agent_1',
@@ -88,25 +99,31 @@ const researchGoal = new TaskGoal(
   0.7
 );
 
+// Note: UI Helper functions (chalk, COLORS, createBox, wordWrap, displayMessage, displaySystemMessage)
+// have been removed and are now imported from src/core/cli-formatter.ts
+
+
 async function runAgent() {
-  console.log(`\n--- Creating a plan for goal: ${researchGoal.description} ---`);
+  displaySystemMessage(`🚀 Simple Agent Example Starting 🚀`);
+  displaySystemMessage(`Creating a plan for goal: ${researchGoal.description}`);
   const plan = await agent.plan(researchGoal);
 
   if (plan) {
-    console.log(`\n--- Executing plan: ${plan.toString()} ---`);
-    agent.executePlan(plan);
-    console.log(`\n--- Plan status: ${plan.status} ---`);
+    displaySystemMessage(`Executing plan: ${plan.toString()}`);
+    agent.executePlan(plan); // Tool execution logs will still appear normally
+    displaySystemMessage(`Plan status: ${plan.status}`);
   } else {
-    console.log('Failed to create a plan for the goal');
+    displayMessage('System', 'Failed to create a plan for the goal', COLORS.error);
   }
 
   // Simulate receiving a message from another agent
-  console.log(`\n--- Receiving a message from another agent ---`);
+  displaySystemMessage(`Receiving a message from another agent (agent_2)`);
   const message = MessageFactory.createRequest(
     'agent_1', // recipient
     { query: 'What are the sentiment trends in customer feedback?' },
     'agent_2' // sender
   );
+  displayMessage('Agent 2', `Sent message: ${JSON.stringify(message.content)}`, COLORS.agent2);
 
   agent.perceive(new ObservationPerception(
     'message',
@@ -114,41 +131,55 @@ async function runAgent() {
     'agent_2'
   ));
 
-  console.log(`\n--- Changing agent's frame to ThoroughnessFrame ---`);
+  displaySystemMessage(`Changing agent's frame to ThoroughnessFrame`);
   const thoroughnessFrame = new ThoroughnessFrame();
   agent.setFrame(thoroughnessFrame);
+  displayMessage('Agent 1', `Frame changed to: ${agent['frame'].name}`, COLORS.agent1);
+
 
   agent.perceive(new ToolResultPerception(
     'data_analyzer',
     { analysis: { sample_size: 500, confidence_interval: 0.95 } }
   ));
+  displayMessage('System', `Agent perceived new tool result from 'data_analyzer'`, COLORS.info);
 
-  console.log(`\n--- Agent's beliefs (confidence > 0.5) ---`);
+
+  displaySystemMessage(`Agent's beliefs (confidence > 0.5)`);
   const beliefs = agent.getBeliefs(0.5);
+  let beliefText = beliefs.length > 0 ? '' : 'No beliefs with confidence > 0.5';
   beliefs.forEach((belief: Belief) => {
-    console.log(`- ${belief.toString()}`);
+    beliefText += `- ${belief.toString()}\n`;
   });
+  displayMessage('Agent 1', beliefText.trim(), COLORS.agent1);
 
-  console.log(`\n--- Event statistics ---`);
+
+  displaySystemMessage(`Event statistics`);
   // Cast observer to DefaultObserver to access getEventCountByType
   const defaultObserver = observer as DefaultObserver;
   const eventStats = defaultObserver.getEventCountByType('agent_1');
+  let statsText = '';
   for (const [type, count] of Object.entries(eventStats)) {
-    console.log(`- ${type}: ${count}`);
+    statsText += `- ${type}: ${count}\n`;
   }
+  displayMessage('System', statsText.trim(), COLORS.info);
+
 
   const observerData = defaultObserver.exportToJson(); // Use casted observer
-  console.log(`\n--- Observer data exported (${observerData.length} bytes) ---`);
+  displaySystemMessage(`Observer data exported (${observerData.length} bytes)`);
 
-  console.log(`\n--- Timeline of recent events ---`);
+
+  displaySystemMessage(`Timeline of recent events`);
   const timeline = defaultObserver.getTimeline(); // Use casted observer
   const recentEvents = timeline.slice(-5); // Last 5 events
+  let timelineText = '';
   recentEvents.forEach(event => {
     const time = new Date(event.timestamp).toISOString();
-    console.log(`[${time}] [${event.type}] [${event.entityId}]`);
+    timelineText += `[${time}] [${event.type}] [${event.entityId}]\n`;
   });
+  displayMessage('System', timelineText.trim(), COLORS.info);
 
-  console.log('\nSimple agent example completed');
+
+  displaySystemMessage('🏁 Simple Agent Example Completed 🏁');
 }
 
 runAgent().catch(error => {

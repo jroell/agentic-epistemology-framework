@@ -4,10 +4,11 @@
  * This example demonstrates how an agent can switch frames to adapt
  * to different situations, affecting its belief formation and decision-making.
  */
+import * as dotenv from 'dotenv';
 import { Agent } from '../src/core/agent'; // Correct import path
 import { Registry } from '../src/core/registry';
 import { DefaultMemory } from '../src/core/memory';
-import { MockGeminiClient } from '../src/llm/mock-gemini-client';
+import { GeminiClient } from '../src/llm/gemini-client'; // Use the real client
 import { DefaultObserver, LogLevel } from '../src/observer/default-observer'; // Correct import path
 import { EfficiencyFrame, ThoroughnessFrame, SecurityFrame, Frame, FrameFactory } from '../src/epistemic/frame'; // Correct import path
 import { Belief } from '../src/epistemic/belief'; // Correct import path
@@ -18,6 +19,7 @@ import { Capability } from '../src/action/capability'; // Correct import path
 import { Goal, TaskGoal, FrameAdaptationGoal } from '../src/action/goal'; // Correct import path
 import { Plan, PlanStatus } from '../src/action/plan'; // Correct import path
 import { Context, ContextElement } from '../src/core/context'; // Correct import path
+import { displayMessage, displaySystemMessage, COLORS } from '../src/core/cli-formatter'; // Import shared formatter
 
 // Create a registry
 const registry = new Registry();
@@ -28,13 +30,22 @@ const memory = new DefaultMemory();
 // Create an observer with console logging enabled
 const observer = new DefaultObserver(1000, LogLevel.Debug, true);
 
+// Load environment variables (.env file)
+dotenv.config();
+
 // Create an agent starting with the efficiency frame
 const efficiencyFrame = new EfficiencyFrame();
 
-// Use MockGeminiClient that doesn't require an API key
-const geminiClient = new MockGeminiClient();
+// Use GeminiClient and load API key from environment
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error("Error: GEMINI_API_KEY environment variable not set.");
+  process.exit(1); // Exit if the key is missing
+}
+console.log(`Using Gemini API key: ${apiKey.substring(0, 5)}...${apiKey.substring(apiKey.length - 5)}`);
+const geminiClient = new GeminiClient(apiKey);
 
-// Create agent with the MockGeminiClient
+// Create agent with the GeminiClient
 const agent = new Agent(
   'adaptive_agent',
   'Adaptive Decision Agent',
@@ -53,34 +64,35 @@ const agent = new Agent(
 
 // Main execution
 async function main() {
-  console.log('--- Frame Switching Example Started ---');
-  
+  displaySystemMessage('🚀 Frame Switching Example Started 🚀');
+
   // Phase 1: Agent operates with Efficiency frame
-  console.log('\n--- Phase 1: Efficiency Frame ---');
+  displaySystemMessage('--- Phase 1: Efficiency Frame ---');
   await operateWithEfficiencyFrame();
-  
+
   // Phase 2: Agent switches to Thoroughness frame
-  console.log('\n--- Phase 2: Switching to Thoroughness Frame ---');
+  displaySystemMessage('--- Phase 2: Switching to Thoroughness Frame ---');
   await switchToThoroughnessFrame();
-  
+
   // Phase 3: Agent switches to Security frame based on new information
-  console.log('\n--- Phase 3: Switching to Security Frame ---');
+  displaySystemMessage('--- Phase 3: Switching to Security Frame ---');
   await switchToSecurityFrame();
-  
+
   // Phase 4: Compare beliefs across frames
-  console.log('\n--- Phase 4: Comparing Belief Confidence Across Frames ---');
+  displaySystemMessage('--- Phase 4: Comparing Belief Confidence Across Frames ---');
   await compareBeliefConfidence();
-  
-  console.log('\n--- Frame Switching Example Completed ---');
+
+  displaySystemMessage('🏁 Frame Switching Example Completed 🏁');
 }
 
 /**
  * Phase 1: Agent operates with Efficiency frame
  */
 async function operateWithEfficiencyFrame() {
-  console.log(`Current frame: ${agent['frame'].name}`);
-  
+  displayMessage('Adaptive Agent', `Current frame: ${agent['frame'].name}`, COLORS.agent1);
+
   // Create some initial beliefs under Efficiency frame
+  displayMessage('System', 'Agent perceiving performance monitor results', COLORS.info);
   agent.perceive(new ToolResultPerception(
     'performance_monitor',
     {
@@ -89,7 +101,8 @@ async function operateWithEfficiencyFrame() {
       resource_utilization: '30%'
     }
   ));
-  
+
+  displayMessage('System', 'Agent perceiving system metrics', COLORS.info);
   agent.perceive(new ObservationPerception(
     'system_metrics',
     {
@@ -98,14 +111,17 @@ async function operateWithEfficiencyFrame() {
       user_satisfaction: 'high'
     }
   ));
-  
+
   // Show current beliefs
-  console.log('\nBeliefs formed under Efficiency frame:');
-  const beliefs = agent.getBeliefs();
-  beliefs.forEach((belief: Belief) => { // Add Belief type annotation
-    console.log(`- ${belief.toString()}`);
+  displaySystemMessage('Beliefs formed under Efficiency frame:');
+  const beliefsEfficiency = agent.getBeliefs();
+  let beliefTextEfficiency = beliefsEfficiency.length > 0 ? '' : 'No beliefs formed yet.';
+  beliefsEfficiency.forEach((belief: Belief) => {
+    beliefTextEfficiency += `- ${belief.toString()}\n`;
   });
-  
+  displayMessage('Adaptive Agent', beliefTextEfficiency.trim(), COLORS.agent1);
+
+
   // Create and execute a task with efficiency focus
   const efficiencyTask = new TaskGoal(
     'data_processing',
@@ -116,15 +132,15 @@ async function operateWithEfficiencyFrame() {
     },
     0.8
   );
-  
-  console.log(`\nExecuting task: ${efficiencyTask.description}`);
-  const plan = await agent.plan(efficiencyTask);
-  
-  if (plan) {
-    agent.executePlan(plan);
-    console.log(`Task completed with status: ${plan.status}`);
+
+  displaySystemMessage(`Executing task: ${efficiencyTask.description}`);
+  const planEfficiency = await agent.plan(efficiencyTask);
+
+  if (planEfficiency) {
+    agent.executePlan(planEfficiency); // Assuming executePlan logs tool usage
+    displayMessage('System', `Task completed with status: ${planEfficiency.status}`, COLORS.success);
   } else {
-    console.log('Failed to create plan for the task');
+    displayMessage('System', 'Failed to create plan for the task', COLORS.error);
   }
 }
 
@@ -138,16 +154,17 @@ async function switchToThoroughnessFrame() {
     'Need for detailed analysis and high accuracy',
     0.9
   );
-  
-  console.log(`Frame adaptation goal: ${adaptationGoal.description}`);
-  
+
+  displayMessage('System', `Frame adaptation goal: ${adaptationGoal.description}`, COLORS.info);
+
   // Execute frame change
   const thoroughnessFrame = new ThoroughnessFrame();
   agent.setFrame(thoroughnessFrame);
-  
-  console.log(`New frame: ${agent['frame'].name}`);
-  
+
+  displayMessage('Adaptive Agent', `New frame: ${agent['frame'].name}`, COLORS.agent1);
+
   // Create new perceptions under Thoroughness frame
+  displayMessage('System', 'Agent perceiving quality analyzer results', COLORS.info);
   agent.perceive(new ToolResultPerception(
     'quality_analyzer',
     {
@@ -157,7 +174,8 @@ async function switchToThoroughnessFrame() {
       validation_level: 'rigorous'
     }
   ));
-  
+
+  displayMessage('System', 'Agent perceiving data integrity metrics', COLORS.info);
   agent.perceive(new ObservationPerception(
     'data_integrity',
     {
@@ -166,14 +184,17 @@ async function switchToThoroughnessFrame() {
       reliability: 'excellent'
     }
   ));
-  
+
   // Show current beliefs
-  console.log('\nBeliefs formed or updated under Thoroughness frame:');
-  const beliefs = agent.getBeliefs();
-  beliefs.forEach((belief: Belief) => { // Add Belief type annotation
-    console.log(`- ${belief.toString()}`);
+  displaySystemMessage('Beliefs formed or updated under Thoroughness frame:');
+  const beliefsThoroughness = agent.getBeliefs();
+  let beliefTextThoroughness = beliefsThoroughness.length > 0 ? '' : 'No beliefs formed yet.';
+  beliefsThoroughness.forEach((belief: Belief) => {
+    beliefTextThoroughness += `- ${belief.toString()}\n`;
   });
-  
+  displayMessage('Adaptive Agent', beliefTextThoroughness.trim(), COLORS.agent1);
+
+
   // Create and execute a task with thoroughness focus
   const thoroughnessTask = new TaskGoal(
     'data_analysis',
@@ -184,15 +205,15 @@ async function switchToThoroughnessFrame() {
     },
     0.8
   );
-  
-  console.log(`\nExecuting task: ${thoroughnessTask.description}`);
-  const plan = await agent.plan(thoroughnessTask);
-  
-  if (plan) {
-    agent.executePlan(plan);
-    console.log(`Task completed with status: ${plan.status}`);
+
+  displaySystemMessage(`Executing task: ${thoroughnessTask.description}`);
+  const planThoroughness = await agent.plan(thoroughnessTask);
+
+  if (planThoroughness) {
+    agent.executePlan(planThoroughness);
+    displayMessage('System', `Task completed with status: ${planThoroughness.status}`, COLORS.success);
   } else {
-    console.log('Failed to create plan for the task');
+    displayMessage('System', 'Failed to create plan for the task', COLORS.error);
   }
 }
 
@@ -201,7 +222,7 @@ async function switchToThoroughnessFrame() {
  */
 async function switchToSecurityFrame() {
   // Agent receives security-relevant information
-  console.log('Received security alert information');
+  displayMessage('System', 'Received security alert information', COLORS.warning);
   agent.perceive(new ToolResultPerception(
     'security_scanner',
     {
@@ -218,16 +239,17 @@ async function switchToSecurityFrame() {
     'Security vulnerability detected',
     0.95 // High priority
   );
-  
-  console.log(`Frame adaptation goal: ${adaptationGoal.description}`);
-  
+
+  displayMessage('System', `Frame adaptation goal: ${adaptationGoal.description}`, COLORS.info);
+
   // Execute frame change
   const securityFrame = new SecurityFrame();
   agent.setFrame(securityFrame);
-  
-  console.log(`New frame: ${agent['frame'].name}`);
-  
+
+  displayMessage('Adaptive Agent', `New frame: ${agent['frame'].name}`, COLORS.agent1);
+
   // Create new perceptions under Security frame
+  displayMessage('System', 'Agent perceiving threat analysis results', COLORS.info);
   agent.perceive(new ObservationPerception(
     'threat_analysis',
     {
@@ -236,14 +258,17 @@ async function switchToSecurityFrame() {
       potential_impact: 'data_breach'
     }
   ));
-  
+
   // Show current beliefs
-  console.log('\nBeliefs formed or updated under Security frame:');
-  const beliefs = agent.getBeliefs();
-  beliefs.forEach((belief: Belief) => { // Add Belief type annotation
-    console.log(`- ${belief.toString()}`);
+  displaySystemMessage('Beliefs formed or updated under Security frame:');
+  const beliefsSecurity = agent.getBeliefs();
+  let beliefTextSecurity = beliefsSecurity.length > 0 ? '' : 'No beliefs formed yet.';
+  beliefsSecurity.forEach((belief: Belief) => {
+    beliefTextSecurity += `- ${belief.toString()}\n`;
   });
-  
+  displayMessage('Adaptive Agent', beliefTextSecurity.trim(), COLORS.agent1);
+
+
   // Create and execute a task with security focus
   const securityTask = new TaskGoal(
     'vulnerability_mitigation',
@@ -254,15 +279,15 @@ async function switchToSecurityFrame() {
     },
     0.9
   );
-  
-  console.log(`\nExecuting task: ${securityTask.description}`);
-  const plan = await agent.plan(securityTask);
-  
-  if (plan) {
-    agent.executePlan(plan);
-    console.log(`Task completed with status: ${plan.status}`);
+
+  displaySystemMessage(`Executing task: ${securityTask.description}`);
+  const planSecurity = await agent.plan(securityTask);
+
+  if (planSecurity) {
+    agent.executePlan(planSecurity);
+    displayMessage('System', `Task completed with status: ${planSecurity.status}`, COLORS.success);
   } else {
-    console.log('Failed to create plan for the task');
+    displayMessage('System', 'Failed to create plan for the task', COLORS.error);
   }
 }
 
@@ -291,12 +316,12 @@ async function compareBeliefConfidence() {
       patch_status: 'in_progress'
     }
   };
-  
-  console.log('Evaluating the same evidence across different frames');
-  console.log(`Proposition: "${proposition}"`);
-  
+
+  displaySystemMessage('Evaluating the same evidence across different frames');
+  displayMessage('System', `Proposition: "${proposition}"`, COLORS.info);
+
   // Function to evaluate in a specific frame
-  async function evaluateInFrame(frameType: string, frameInstance: Frame, client: MockGeminiClient) {
+  async function evaluateInFrame(frameType: string, frameInstance: Frame, client: GeminiClient) { // Use GeminiClient type
     // Set the frame
     agent.setFrame(frameInstance);
     
@@ -317,11 +342,13 @@ async function compareBeliefConfidence() {
       [justificationElement],
       client 
     );
-    
-    console.log(`\nIn ${frameType} frame:`);
-    console.log(`- Confidence in "${proposition}": ${confidenceResult.toFixed(2)}`); 
-    console.log(`- Interpretation focus: ${getFrameInterpretationFocus(frameType, evidence)}`);
-    
+
+    displaySystemMessage(`In ${frameType} frame:`);
+    let evalText = `- Confidence in "${proposition}": ${confidenceResult.toFixed(2)}\n`;
+    evalText += `- Interpretation focus: ${getFrameInterpretationFocus(frameType, evidence)}`;
+    displayMessage('Adaptive Agent', evalText, COLORS.agent1);
+
+
     // Create a belief with this frame's evaluation
     const belief = new Belief(
       proposition,
@@ -331,21 +358,20 @@ async function compareBeliefConfidence() {
     
     return belief;
   }
-  
-  // Use the same MockGeminiClient instance
-  const exampleClient = new MockGeminiClient();
 
-  // Evaluate in each frame, passing the client
-  const efficiencyBelief = await evaluateInFrame('Efficiency', new EfficiencyFrame(), exampleClient);
-  const thoroughnessBelief = await evaluateInFrame('Thoroughness', new ThoroughnessFrame(), exampleClient);
-  const securityBelief = await evaluateInFrame('Security', new SecurityFrame(), exampleClient);
+  // Evaluate in each frame, passing the main geminiClient instance
+  const efficiencyBelief = await evaluateInFrame('Efficiency', new EfficiencyFrame(), geminiClient);
+  const thoroughnessBelief = await evaluateInFrame('Thoroughness', new ThoroughnessFrame(), geminiClient);
+  const securityBelief = await evaluateInFrame('Security', new SecurityFrame(), geminiClient);
   
   // Show comparison
-  console.log('\nComparison of belief confidence across frames:');
-  console.log(`- Efficiency frame: ${efficiencyBelief.confidence.toFixed(2)}`);
-  console.log(`- Thoroughness frame: ${thoroughnessBelief.confidence.toFixed(2)}`);
-  console.log(`- Security frame: ${securityBelief.confidence.toFixed(2)}`);
-  
+  displaySystemMessage('Comparison of belief confidence across frames:');
+  let comparisonText = `- Efficiency frame: ${efficiencyBelief.confidence.toFixed(2)}\n`;
+  comparisonText += `- Thoroughness frame: ${thoroughnessBelief.confidence.toFixed(2)}\n`;
+  comparisonText += `- Security frame: ${securityBelief.confidence.toFixed(2)}`;
+  displayMessage('System', comparisonText, COLORS.info);
+
+
   // Determine the most cautious frame
   const frames = [
     { name: 'Efficiency', confidence: efficiencyBelief.confidence },
