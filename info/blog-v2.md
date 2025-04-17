@@ -1,4 +1,4 @@
-# The Epistemic Engine: Toward an Authentic Philosophy for AI
+# 🧠 The Epistemic Engine: Toward an Authentic Philosophy for AI
 
 *By Jason Roell*
 
@@ -62,7 +62,9 @@ Imagine product launches informed by simulations of diverse consumer perspective
 
 AEF is more than just a technical toolkit—it's a philosophical commitment to epistemic integrity in AI. By defining explicitly how agents form, justify, and revise beliefs, we move toward a future where AI is more transparent, accountable, and genuinely intelligent.
 
-Our journey is just beginning. Upcoming steps include open-sourcing reference implementations, creating domain-specific epistemic frame libraries, and developing rigorous verification methods for belief consistency. Further, we must foster interdisciplinary collaboration between engineers, philosophers, cognitive scientists, ethicists, sociologists, and domain experts to continually refine and enrich the framework. Such interdisciplinary synergy is vital for ensuring that AEF evolves in alignment with societal values and practical requirements.
+Our journey is just beginning. We're proud to open-source a reference implementation of the Agentic Epistemology Framework at [https://github.com/jroell/agentic-epistemology-framework](https://github.com/jroell/agentic-epistemology-framework). This TypeScript implementation provides a starting point for researchers and developers to experiment with epistemic agents and build upon these concepts.
+
+Next steps include creating domain-specific epistemic frame libraries and developing rigorous verification methods for belief consistency. Further, we must foster interdisciplinary collaboration between engineers, philosophers, cognitive scientists, ethicists, sociologists, and domain experts to continually refine and enrich the framework. Such interdisciplinary synergy is vital for ensuring that AEF evolves in alignment with societal values and practical requirements.
 
 ## A Call to Action
 
@@ -72,3 +74,18 @@ Join me in shaping a future where AI doesn't just mimic intelligence—it embodi
 
 Let's build agents with genuine epistemologies. Let's give AI a philosophy. Together, we have the opportunity—and indeed, the responsibility—to ensure that the next generation of AI is ethically sound, intellectually robust, and genuinely beneficial for society.
 
+### 👇 Join the Conversation
+
+If this resonates—or you're building something similar—let's connect.
+
+I'm building agents that think at Vurvey.
+
+DMs open. Curious minds welcome.
+
+AEF is not the end. It's the ignition point of agentic intelligence.
+
+If your systems still behave like parrots, you're missing the turn.
+
+The future belongs to agents who know what they know, why they know it, and how to reason about it together.
+
+That future starts with epistemology. That future starts now. Let's build it.
