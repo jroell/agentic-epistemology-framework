@@ -1,15 +1,18 @@
 \documentclass[10pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{hyperref}
-\usepackage{natbib} % Using natbib for citations if needed, though placeholder refs used
+\usepackage{natbib} % Using natbib for citations with references.bib
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage{parskip} % Adds space between paragraphs instead of indentation
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,calc}
 
 % Placeholder for actual bibliography file
 % \usepackage{filecontents}
@@ -20,24 +23,29 @@
 % Placeholder citations removed. Using natbib with references.bib now.
 
 
-\title{Agentic Epistemology: A Structured Framework for Reasoning in Autonomous Agents and Synthetic Societies}
+\title{Agentic Epistemology: A Framework for Reasoning in Autonomous Agents}
 
 \author{Jason Roell}
-\date{April 11, 2025} % Added date from page 1 of OCR
+\date{April 11, 2025} % Original writing date
+
+% Keywords for discoverability
+\newcommand{\keywords}{autonomous agents, epistemology, belief revision, justification, confidence, cognitive frames, multi-agent systems, formal models, explainable AI, synthetic societies}
 
 \begin{document}
 
 \maketitle
 
+% Draft notice removed for arXiv submission
+
 \begin{abstract}
-Autonomous agent systems increasingly require principled design, yet often lack formal models for their epistemic capabilities—how they handle beliefs, justifications, confidence, and context. This paper introduces the Agentic Epistemology Framework (AEF), comprising a structured ontology, foundational principles, and operational rules focused on these epistemic dimensions. AEF explicitly models belief formation, justification mechanisms, confidence assessment, and the influence of cognitive frames on reasoning. By providing a shared vocabulary and logical structure, AEF aims to enhance the transparency, interpretability, and robustness of individual agents and multi-agent synthetic societies. We validate our approach through empirical testing on standard benchmarks and demonstrate performance improvements in multi-agent collaboration tasks.
+Autonomous agent systems increasingly require principled design, yet often lack formal models for their epistemic capabilities—how they handle beliefs, justifications, confidence, and context. This paper introduces the Agentic Epistemology Framework (AEF), comprising a structured ontology, foundational principles, and operational rules focused on these epistemic dimensions. AEF explicitly models belief formation, justification mechanisms, confidence assessment, and the influence of cognitive frames on reasoning. By providing a shared vocabulary and logical structure, AEF aims to enhance the transparency, interpretability, and robustness of individual agents and multi-agent synthetic societies. This paper presents the theoretical foundations and proposes comprehensive validation methodologies for empirical testing across multi-agent negotiation, collaborative problem-solving, and information cascade resilience domains. The framework addresses critical gaps in existing approaches by providing significantly more robust support for justification tracking, frame modeling, and belief confidence representation compared to contemporary agent architectures.
 \end{abstract}
 
 \section{Introduction}
 \subsection{Motivation}
-The rapid emergence of autonomous agent systems, particularly those powered by large language models (LLMs), represents a profound shift in how software can reason, interact, and adapt. These "agentic" systems increasingly populate critical domains, from automated research assistants to multi-agent collaboration platforms and AI-driven simulations. Despite their promise, such systems are often developed with fragmented architectures, varying definitions of agency, and limited attention to foundational reasoning structures \citep{chase2023langchain, autoGPT, agents_js, react}.
+The rapid emergence of autonomous agent systems, particularly those powered by large language models (LLMs), represents a profound shift in how software can reason, interact, and adapt. These "agentic" systems increasingly populate critical domains, from automated research assistants to multi-agent collaboration platforms and AI-driven simulations. Despite their promise, such systems are often developed with fragmented architectures, varying definitions of agency, and limited attention to foundational reasoning structures \citep{chase2023langchain, autoGPT, agents_js, yao2023react}.
 
-Most notably, the epistemic dimensions of agents—how they form and justify beliefs, manage uncertainty, revise knowledge, and resolve conflicts—are frequently underspecified or treated as mere implementation details. Yet these dimensions are essential for building interpretable, reliable, and socially coherent agents \citep{kahneman1979prospect, epistemic_agents}.
+Most notably, the epistemic dimensions of agents—how they form and justify beliefs, manage uncertainty, revise knowledge, and resolve conflicts—are frequently underspecified or treated as mere implementation details. Yet these dimensions are essential for building interpretable, reliable, and socially coherent agents \citep{kahneman1979prospect, simon1955behavioral}.
 
 This paper introduces the Agentic Epistemology Framework (AEF), a conceptual system that defines an agent's behavior as a logically structured process of reasoning, planning, and action rooted in its beliefs, justifications, confidence levels, and cognitive frames. AEF provides a shared formalism—comprising an ontology, foundational principles, and operational rules—that clarifies how agents think and how their reasoning can be inspected, analyzed, and trusted.
 
@@ -48,7 +56,7 @@ AEF is designed for agent systems in which agents:
 \item Perceive stimuli from and act within a dynamic environment
 \item Use tools or communicate with other entities (agents, humans, APIs) \citep{agents_js}
 \item Construct and execute plans
-\item Form beliefs with confidence levels and justifications \citep{kahneman1979prospect, justification_models}
+\item Form beliefs with confidence levels and justifications \citep{kahneman1979prospect, dung1995acceptability}
 \item Maintain memory and draw from it for decision-making \citep{agents_js}
 \item Operate under distinct frames that influence interpretation and priority \citep{lakoff1987women, minsky1974framework}
 \end{itemize}
@@ -61,7 +69,7 @@ The primary contributions of AEF are:
 \item Operational rules describing how beliefs, justifications, and confidence interact with action and communication
 \item A formal account of frames as modulators of interpretation and behavior, including mathematical models for confidence updates
 \item A basis for building interpretable agents through observer models and epistemic traceability
-\item Empirical validation demonstrating performance improvements in multi-agent reasoning tasks
+\item Proposed validation methodologies for empirical testing across multiple agent reasoning domains
 \item Comprehensive comparison with state-of-the-art agent architectures
 \end{itemize}
 
@@ -72,7 +80,7 @@ The primary contributions of AEF are:
 \item Section 4 presents foundational principles
 \item Section 5 outlines operational rules, including the mathematical formalism for confidence updates
 \item Section 6 gives an illustrative example
-\item Section 7 presents empirical validation
+\item Section 7 proposes validation methodologies
 \item Section 8 discusses implementation, applications, ethical considerations, and future work
 \item Section 9 concludes
 \end{itemize}
@@ -80,17 +88,24 @@ The primary contributions of AEF are:
 \section{Related Work}
 AEF builds on insights from multiple research traditions while integrating under-explored epistemic dimensions central to modern autonomous systems.
 
-\textbf{Belief-Desire-Intention (BDI) Models:} BDI agents are defined through beliefs, desires, and intentions \citep{bratman1987intention, rao1991modeling, bdi_extended1, bdi_extended2, wooldridge2009multiagent}. While powerful, they often treat beliefs as binary and lack explicit mechanisms for justification, confidence grading, or frame-sensitive reasoning \citep{bdi_limitations}. AEF generalizes and extends these ideas by incorporating richer epistemic elements.
+\textbf{Belief-Desire-Intention (BDI) Models:} BDI agents are defined through beliefs, desires, and intentions \citep{bratman1987intention, rao1991modeling, wooldridge2009multiagent}. While powerful, they often treat beliefs as binary and lack explicit mechanisms for justification, confidence grading, or frame-sensitive reasoning \citep{rao1995bdi}. AEF generalizes and extends these ideas by incorporating richer epistemic elements.
 
-\textbf{Epistemic Logic:} Formal epistemic logic enables reasoning about knowledge and belief \citep{fagin2003reasoning}, especially in multi-agent systems. However, it often abstracts away belief formation, justification provenance, and real-time revision under uncertainty \citep{epistemic_limitations}. AEF fills this gap by modeling these epistemic mechanics structurally within the agent's operational cycle.
+\textbf{Epistemic Logic:} Formal epistemic logic enables reasoning about knowledge and belief \citep{fagin2003reasoning}, especially in multi-agent systems. However, it often abstracts away belief formation, justification provenance, and real-time revision under uncertainty \citep{fagin2003reasoning}. AEF fills this gap by modeling these epistemic mechanics structurally within the agent's operational cycle.
 
-\textbf{Belief Revision Theory:} AGM theory and its successors formalize rational belief change \citep{belief_revision1, belief_revision2, belief_revision3, belief_revision4}. While AEF is compatible with these postulates, it adds constructs for tracking justification sources, modulating confidence based on evidence quality (as formalized in Section 5.4), and incorporating contextual frames that influence revision policies.
+\textbf{Belief Revision Theory:} AGM theory and its successors formalize rational belief change \citep{alchourron1985logic, gardenfors1988knowledge, hansson1999survey}. While AEF is compatible with these postulates, it adds constructs for tracking justification sources, modulating confidence based on evidence quality (as formalized in Section 5.4), and incorporating contextual frames that influence revision policies.
 
 \textbf{Agent Ontologies and Standards:} Standards like FIPA \citep{fipa2002acl, fipa2002agent, fipa2002ontology, fipa2001interaction, fipa2002communicative} provide ontologies for communication protocols but say little about internal epistemic states or reasoning processes. AEF complements these by focusing inward on the reasoning core required for meaningful communication and interaction.
 
-\textbf{Cognitive Architectures:} ACT-R and Soar \citep{cognitive_arch1, cognitive_arch2, cognitive_arch3, cognitive_arch4, cognitive_arch5} provide detailed computational models of cognition. AEF takes a higher-level, modular approach focusing specifically on the structure of epistemic reasoning, potentially serving as a specification layer or component within broader architectures.
+\textbf{Cognitive Architectures:} ACT-R and Soar \citep{anderson2004integrated, laird2012soar} provide detailed computational models of cognition. AEF takes a higher-level, modular approach focusing specifically on the structure of epistemic reasoning, potentially serving as a specification layer or component within broader architectures.
 
-\textbf{Frame Semantics:} Frames, schemas, or mental models influence how agents interpret stimuli and prioritize actions \citep{fillmore1976frame, lakoff1987women, minsky1974framework}. AEF elevates frames to first-class citizens within the epistemic state, enabling explicit modeling of frame-sensitive reasoning, cognitive bias, or differing perspectives, as formalized in Section 5.4.
+\textbf{Frame Semantics:} Frames, schemas, or mental models influence how agents interpret stimuli and prioritize actions \citep{fillmore1976frame, lakoff1987women, minsky1974framework}. While Minsky's frames focused on knowledge representation structures and Fillmore's on linguistic semantics, AEF significantly extends these concepts by:
+\begin{itemize}
+\item \textbf{Operationalizing frames as active cognitive filters:} Unlike static knowledge structures, AEF frames dynamically modulate evidence interpretation through mathematical weighting functions $w_F(e)$.
+\item \textbf{Integrating frames with formal belief revision:} AEF provides explicit mechanisms (Section 5.4) for how frames influence confidence updates, going beyond descriptive accounts to computational models.
+\item \textbf{Enabling frame-aware multi-agent reasoning:} AEF models how frame differences lead to persistent disagreements and provides protocols for frame-sensitive communication.
+\item \textbf{Supporting meta-reasoning about frames:} The Observer Model allows agents and external systems to inspect and reason about active frames, enabling frame adaptation and learning.
+\end{itemize}
+Thus, AEF elevates frames from passive representational structures to active, first-class citizens within the epistemic state, enabling explicit modeling of frame-sensitive reasoning, cognitive bias, and differing perspectives.
 
 \textbf{LLM Agent Frameworks:} Recent frameworks such as LangChain and AutoGPT \citep{chase2023langchain, autoGPT, agents_js} provide valuable tools for building LLM-powered agents but often lack a consistent formal treatment of their internal epistemic state. Table \ref{tab:comparison} presents a detailed comparison of these frameworks with AEF. As shown, AEF provides significantly more robust support for justification tracking, frame modeling, and belief confidence representation.
 
@@ -111,13 +126,19 @@ Formal observer model & \textbf{+++} & + & + & + & $\times$ \\
 \bottomrule
 \end{tabular}
 \begin{flushleft}
-{Legend: +++ (comprehensive), ++ (partial), + (limited), $\times$ (absent)}
+\textbf{Legend and Assessment Criteria:}\\
+\textbf{+++} (Comprehensive): Full implementation with formal specifications, complete coverage of the feature\\
+\textbf{++} (Partial): Significant implementation with some limitations or incomplete coverage\\
+\textbf{+} (Limited): Basic implementation or ad-hoc support without formal treatment\\
+$\times$ (Absent): Feature not present or addressed in the framework\\
+\vspace{0.2cm}
+\textit{Assessment methodology}: Each framework was evaluated based on published documentation, source code analysis where available, and representative implementations. For example, ``Explicit belief representation'' assesses whether beliefs are first-class objects with defined structure, ``Confidence quantification'' evaluates numerical uncertainty representation, and ``Frame modeling'' examines support for context-dependent reasoning perspectives.
 \end{flushleft}
 \end{table}
 
-\textbf{Justification and Confidence Models:} Work on argumentation theory, defeasible reasoning \citep{justification_models1, justification_models}, and uncertainty quantification in machine learning \citep{gal2016dropout} provides theoretical underpinnings for AEF's structured approach to tracking justifications and representing belief confidence, formalized further in Section 5.4.
+\textbf{Justification and Confidence Models:} Work on argumentation theory, defeasible reasoning \citep{dung1995acceptability, nute1994defeasible}, and uncertainty quantification in machine learning \citep{gal2016dropout} provides theoretical underpinnings for AEF's structured approach to tracking justifications and representing belief confidence, formalized further in Section 5.4.
 
-\textbf{Agent-Based Modeling and Synthetic Societies:} ABM simulates complex social phenomena like opinion dynamics and belief diffusion \citep{epstein1996growing, abm_dynamic1, wooldridge2009multiagent}. AEF enables deeper, more nuanced epistemic modeling within these simulations, allowing exploration of phenomena such as frame-based echo chambers, justification-driven consensus building, or confidence-based information cascades.
+\textbf{Agent-Based Modeling and Synthetic Societies:} ABM simulates complex social phenomena like opinion dynamics and belief diffusion \citep{epstein1996growing, wooldridge2009multiagent}. AEF enables deeper, more nuanced epistemic modeling within these simulations, allowing exploration of phenomena such as frame-based echo chambers, justification-driven consensus building, or confidence-based information cascades.
 
 \section{Ontology: Core Constructs}
 \subsection{Notation Conventions}
@@ -173,7 +194,12 @@ $\theta_{\mathrm{conflict}}$: Confidence threshold above which opposing beliefs 
 
 \textbf{Frame:} A cognitive lens, perspective, or mode of interpretation (e.g., Optimistic, SecurityFocused, EfficiencyPrioritized) that influences how stimuli are perceived, which beliefs are activated, how confidence is assessed (Section 5.4), and which goals are prioritized.
 
-\textbf{Rationality:} Defined as internal coherence between an agent's beliefs, goals, plans, actions, and active frame, specifically acting in accordance with the framework's principles and rules given the agent's current state.
+\textbf{Rationality:} Defined as internal coherence between an agent's beliefs, goals, plans, actions, and active frame, specifically acting in accordance with the framework's principles and rules given the agent's current state. This definition aligns with established concepts of rationality in AI and cognitive science, particularly:
+\begin{itemize}
+\item \textbf{BDI Rationality:} Similar to Bratman's notion of practical rationality where intentions (plans) must be consistent with beliefs and desires (goals), extended here to include frame coherence \citep{bratman1987intention}.
+\item \textbf{Bounded Rationality:} This frame-dependent approach acknowledges cognitive limitations and context-sensitivity, echoing Simon's bounded rationality where agents make decisions within their informational and computational constraints.
+\item \textbf{Coherence Theory:} The emphasis on internal coherence rather than correspondence to an objective standard reflects coherentist approaches to epistemic justification, where beliefs are justified by their mutual support within a system.
+\end{itemize}
 
 \textbf{Observer Model:} An interface or component designed to allow external systems (or the agent itself via meta-reasoning) to inspect the agent's epistemic state (beliefs, justifications, confidence, frame) and reasoning processes for transparency, debugging, or analysis.
 
@@ -240,15 +266,25 @@ The following rules describe expected dynamics and reasoning patterns for an age
 \subsection{Mathematical Formalism for Confidence Updates}
 \label{sec:math_formalism}
 
-To operationalize belief revision and provide a precise mechanism for how an agent's confidence $\mathrm{conf} \in [0, 1]$ in a proposition $P$ changes upon receiving new evidence $e$, we need formal update functions. The general form is:
+To operationalize belief revision and provide a precise mechanism for how an agent's confidence $\mathrm{conf} \in [0, 1]$ in a proposition $P$ changes upon receiving new evidence $e$, formal update functions are needed. The general form is:
 $$ \mathrm{conf}_{\mathrm{new}} = f(\mathrm{conf}_{\mathrm{old}}, \mathrm{just}_{\mathrm{old}}, e, F) $$
 where $\mathrm{conf}_{\mathrm{old}}$ is the agent's current confidence in proposition $P$, $\mathrm{just}_{\mathrm{old}}$ is the existing justification for that belief, $e$ represents the new evidence, and $F$ is the agent's active cognitive Frame. The evidence $e$ itself can be characterized by its content, its source ($e_{\mathrm{source}}$), its perceived intrinsic strength, and its type (e.g., direct observation, communication from another agent, logical inference). The Frame $F$ influences how $e$ is interpreted, weighted, and integrated.
 
-While AEF is agnostic to the specific update function used (allowing flexibility for different agent designs and domains), we propose several functional forms capturing different epistemic rationales, moving beyond simple Bayesian updates where probabilities might be unavailable or inappropriate. We focus on models emphasizing frame influence, source credibility, and evidence weighting.
+While AEF is agnostic to the specific update function used (allowing flexibility for different agent designs and domains), several functional forms are proposed that capture different epistemic rationales. The choice of weighted averaging/interpolation models over purely Bayesian approaches is motivated by several key considerations:
+
+\begin{itemize}
+\item \textbf{Cognitive Plausibility:} Human reasoning often employs heuristic weighting rather than strict probabilistic calculations, particularly under uncertainty or time pressure. These models align with insights from cognitive science on bounded rationality.
+\item \textbf{Computational Tractability:} Unlike Bayesian updates which require precise likelihood estimates $P(e|P)$ and $P(e|\neg P)$, this approach needs only evidence weights and trust values, which can be more readily estimated or learned.
+\item \textbf{Frame Modeling:} Bayesian frameworks struggle to naturally incorporate the influence of cognitive frames on evidence interpretation. The weighted models explicitly capture how frames modulate evidence salience through $w_F(e)$.
+\item \textbf{Heterogeneous Evidence:} In multi-agent systems, evidence often comes in varied forms (sensor data, agent communications, logical inferences) that resist unified probabilistic treatment. This approach handles this heterogeneity through context-appropriate weight functions.
+\item \textbf{Graceful Degradation:} When probabilistic information is available, the framework can incorporate Bayesian updates as a special case (Section 5.4.3.C), while still functioning effectively when such information is incomplete or unavailable.
+\end{itemize}
+
+The focus is on models emphasizing frame influence, source credibility, and evidence weighting, providing a more flexible and psychologically grounded approach to belief revision in autonomous agents.
 
 \subsubsection{Evidence Representation}
 
-Let's assume evidence $e$ provides information relevant to proposition $P$. We can model $e$ as suggesting a particular confidence level for $P$, denoted $C(e, P) \in [0, 1]$.
+Assume evidence $e$ provides information relevant to proposition $P$. Evidence $e$ can be modeled as suggesting a particular confidence level for $P$, denoted $C(e, P) \in [0, 1]$.
 \begin{itemize}
     \item If $e$ strongly supports $P$, $C(e, P)$ approaches 1.
     \item If $e$ strongly contradicts $P$ (supports $\neg P$), $C(e, P)$ approaches 0.
@@ -258,7 +294,7 @@ The calculation of $C(e, P)$ depends on the nature of $e$. For instance, if $e$ 
 
 \subsubsection{Frame-Dependent Weighting ($w_F(e)$)}
 
-A key aspect of AEF is the Frame $F$. We introduce a \textit{frame-dependent evidence weight} $w_F(e) \in [0, 1]$, representing the \textit{saliency} or \textit{attention} the agent pays to evidence $e$ under frame $F$.
+A key aspect of AEF is the Frame $F$. This introduces a \textit{frame-dependent evidence weight} $w_F(e) \in [0, 1]$, representing the \textit{saliency} or \textit{attention} the agent pays to evidence $e$ under frame $F$.
 \begin{itemize}
     \item A high $w_F(e)$ means the frame considers this type of evidence highly relevant and impactful.
     \item A low $w_F(e)$ means the frame discounts or ignores this evidence.
@@ -269,7 +305,7 @@ A key aspect of AEF is the Frame $F$. We introduce a \textit{frame-dependent evi
 
 A flexible and common approach for belief merging that keeps confidence bounded within $[0, 1]$ is linear interpolation or weighted averaging:
 $$ \mathrm{conf}_{\mathrm{new}} = (1 - \beta) \cdot \mathrm{conf}_{\mathrm{old}} + \beta \cdot \mathrm{target\_conf} $$
-Here, $\beta \in [0, 1]$ represents the \textit{influence} or \textit{weight} assigned to the new evidence/perspective, and $\mathrm{target\_conf} \in [0, 1]$ is the confidence level suggested by that new evidence/perspective. The term $(1 - \beta)$ represents the \textit{inertia} of the existing belief. We adapt this general form for AEF update types:
+Here, $\beta \in [0, 1]$ represents the \textit{influence} or \textit{weight} assigned to the new evidence/perspective, and $\mathrm{target\_conf} \in [0, 1]$ is the confidence level suggested by that new evidence/perspective. The term $(1 - \beta)$ represents the \textit{inertia} of the existing belief. This general form is adapted for AEF update types:
 
 \textbf{A. Frame-Weighted Update (Focus on Evidence Content Saliency)}
 
@@ -337,92 +373,198 @@ Agent\_B operates under the Frame: $F_B = \text{"Thoroughness"}$. It focuses on 
 $\mathrm{Belief}(\text{"¬OverallSentimentPositive"}, \mathrm{conf}_B=0.75, \mathrm{just}_B=[J_{B1}, J_{B2}])$.
 (This is equivalent to $\mathrm{Belief}(\text{"OverallSentimentPositive"}, \mathrm{conf}_B = 1 - 0.75 = 0.25)$.)
 
-Assuming $\theta_{\mathrm{conflict}} = 0.70$, an epistemic conflict exists regarding "OverallSentimentPositive" since $\mathrm{conf}_A = 0.85 \geq 0.70$ and Agent B's confidence in the negation is $0.75 \geq 0.70$. The agents engage in justification exchange (Rule 12). Agent\_A receives $e_B = [J_{B1}, J_{B2}]$ from Agent\_B, and Agent\_B receives $e_A = [J_{A1}, J_{A2}]$ from Agent\_A.
+Assuming $\theta_{\mathrm{conflict}} = 0.70$, an epistemic conflict exists regarding "OverallSentimentPositive" since $\mathrm{conf}_A = 0.85 \geq 0.70$ and Agent B's confidence in the negation is $0.75 \geq 0.70$. 
+
+The agents engage in justification exchange (Rule 12). Agent\_A receives $e_B = [J_{B1}, J_{B2}]$ from Agent\_B, and Agent\_B receives $e_A = [J_{A1}, J_{A2}]$ from Agent\_A.
 
 Let's analyze Agent\_A's update using the \textbf{Frame-Weighted Update} (Equation \ref{eq:frame_weighted}). Agent\_A receives evidence $e_B$ (reopened tickets, detailed complaints) which intrinsically suggests low positive sentiment. Let's model this as $C(e_B, \text{"Positive"}) = 0.1$. Agent\_A's "Efficiency" frame gives less weight to this type of evidence: let $w_{F_A}(e_B) = 0.3$.
 Agent\_A's new confidence is:
-$$ \mathrm{conf}_{A,\mathrm{new}} = (1 - w_{F_A}(e_B)) \cdot \mathrm{conf}_{A,\mathrm{old}} + w_{F_A}(e_B) \cdot C(e_B, \text{"Positive"}) $$
-$$ \mathrm{conf}_{A,\mathrm{new}} = (1 - 0.3) \cdot 0.85 + 0.3 \cdot 0.1 = 0.7 \cdot 0.85 + 0.03 = 0.595 + 0.03 = 0.625 $$
+\begin{align}
+\mathrm{conf}_{A,\mathrm{new}} &= (1 - w_{F_A}(e_B)) \cdot \mathrm{conf}_{A,\mathrm{old}} \nonumber \\
+&\quad + w_{F_A}(e_B) \cdot C(e_B, \text{"Positive"})
+\end{align}
+\begin{align}
+\mathrm{conf}_{A,\mathrm{new}} &= (1 - 0.3) \cdot 0.85 + 0.3 \cdot 0.1 \nonumber \\
+&= 0.7 \cdot 0.85 + 0.03 = 0.595 + 0.03 = 0.625
+\end{align}
 Agent A's confidence in positive sentiment decreases significantly, but remains above 0.5 due to the low frame weight.
 
 Now analyze Agent\_B's update. Agent\_B receives evidence $e_A$ (fast resolution, positive snippets) which intrinsically suggests high positive sentiment. Let's model this as $C(e_A, \text{"Positive"}) = 0.9$. Agent\_B's "Thoroughness" frame gives less weight to this superficial evidence: let $w_{F_B}(e_A) = 0.2$.
 Agent\_B's original confidence in "Positive" was $\mathrm{conf}_{B,\mathrm{old}} = 0.25$.
 Agent\_B's new confidence is:
-$$ \mathrm{conf}_{B,\mathrm{new}} = (1 - w_{F_B}(e_A)) \cdot \mathrm{conf}_{B,\mathrm{old}} + w_{F_B}(e_A) \cdot C(e_A, \text{"Positive"}) $$
-$$ \mathrm{conf}_{B,\mathrm{new}} = (1 - 0.2) \cdot 0.25 + 0.2 \cdot 0.9 = 0.8 \cdot 0.25 + 0.18 = 0.20 + 0.18 = 0.38 $$
+\begin{align}
+\mathrm{conf}_{B,\mathrm{new}} &= (1 - w_{F_B}(e_A)) \cdot \mathrm{conf}_{B,\mathrm{old}} \nonumber \\
+&\quad + w_{F_B}(e_A) \cdot C(e_A, \text{"Positive"})
+\end{align}
+\begin{align}
+\mathrm{conf}_{B,\mathrm{new}} &= (1 - 0.2) \cdot 0.25 + 0.2 \cdot 0.9 \nonumber \\
+&= 0.8 \cdot 0.25 + 0.18 = 0.20 + 0.18 = 0.38
+\end{align}
 Agent B's confidence in positive sentiment increases slightly but remains low, consistent with its frame discounting quick positive feedback.
 
 Their distinct frames lead them to weigh the exchanged evidence differently (Rule 13). $\mathrm{conf}_{A,\mathrm{new}} = 0.625$ and $\mathrm{conf}_{B,\mathrm{new}} = 0.38$. They fail to reach consensus, resulting in a persistent, justified disagreement (Rule 14). An Observer Model monitoring this interaction would log the justification exchange, the frame-dependent weights ($w_{F_A}(e_B)=0.3$, $w_{F_B}(e_A)=0.2$), the confidence updates, and highlight the frame divergence as the core cause (Rule 15).
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    agent/.style={circle, draw, minimum size=2cm, thick},
+    frame/.style={rectangle, draw, dashed, minimum width=2.5cm, minimum height=0.8cm},
+    belief/.style={rectangle, draw, minimum width=4cm, minimum height=0.6cm},
+    arrow/.style={->, thick},
+    exchange/.style={<->, thick, red}
+]
+
+% Agent A
+\node[agent] (agentA) at (0,0) {Agent A};
+\node[frame] (frameA) at (0,1.5) {Frame: Efficiency};
+\node[belief] (beliefA1) at (0,-2) {Belief: PositiveSentiment};
+\node at (0,-2.7) {conf = 0.85 $\rightarrow$ 0.625};
+
+% Agent B
+\node[agent] (agentB) at (8,0) {Agent B};
+\node[frame] (frameB) at (8,1.5) {Frame: Thoroughness};
+\node[belief] (beliefB1) at (8,-2) {Belief: $\neg$PositiveSentiment};
+\node at (8,-2.7) {conf = 0.25 $\rightarrow$ 0.38};
+
+% Evidence exchange
+\draw[exchange] (agentA) -- node[above] {Justification Exchange} (agentB);
+\node at (4,-0.7) {$e_A = [J_{A1}, J_{A2}]$};
+\node at (4,-1.2) {$e_B = [J_{B1}, J_{B2}]$};
+
+% Frame weights
+\node[align=center] at (2,-3.8) {$w_{F_A}(e_B) = 0.3$\\(low weight to detailed complaints)};
+\node[align=center] at (6,-3.8) {$w_{F_B}(e_A) = 0.2$\\(low weight to quick metrics)};
+
+% Outcome
+\node[rectangle, draw, thick, minimum width=6cm, minimum height=0.8cm] at (4,-5.5) {Persistent Disagreement Due to Frame Divergence};
+
+\end{tikzpicture}
+\caption{Illustrative example of frame-based disagreement between Agent A (Efficiency frame) and Agent B (Thoroughness frame) regarding customer sentiment. Despite justification exchange, their distinct frames lead to different evidence weighting and persistent disagreement.}
+\label{fig:frame_disagreement}
+\end{figure}
+
 % ------------- END OF REVISED SECTION 6 -------------
 
 
-\section{Empirical Validation}
-To validate AEF's effectiveness, we conducted experiments across three domains: multi-agent negotiation, collaborative problem-solving, and information cascade resilience.
 
-\subsection{Experimental Setup}
-We implemented AEF on three different agent architectures:
+\section{Proposed Validation Methodologies}
+To empirically validate the effectiveness of AEF, comprehensive experimental methodologies are proposed across three critical domains that would test the framework's core capabilities: multi-agent negotiation, collaborative problem-solving, and information cascade resilience.
+
+\subsection{Experimental Design Framework}
+The proposed approach implements AEF on three distinct agent architectures to ensure generalizability:
 \begin{itemize}
-\item A symbolic rule-based system (SRS)
-\item A hybrid neuro-symbolic architecture (HNS)
-\item An LLM-based agent system (LAS)
+\item A symbolic rule-based system (SRS) - to test AEF's integration with traditional AI approaches
+\item A hybrid neuro-symbolic architecture (HNS) - to evaluate performance in systems combining logical and learned components
+\item An LLM-based agent system (LAS) - to assess AEF's utility in modern language model-based agents
 \end{itemize}
 
-For comparison, we implemented baseline versions of each architecture without AEF components, maintaining identical task-specific capabilities but lacking structured epistemic modeling (especially confidence tracking, justification handling, and frame modulation).
+For rigorous comparison, baseline versions of each architecture should be implemented without AEF components, maintaining identical task-specific capabilities but lacking structured epistemic modeling (especially confidence tracking, justification handling, and frame modulation). This controlled comparison would isolate AEF's contribution to agent performance.
 
-\subsection{Multi-Agent Negotiation}
-In this experiment, agents negotiated resource allocation in a simulated economy with incomplete information. We measured:
+\subsection{Multi-Agent Negotiation Experiments}
+\textbf{Objective:} Evaluate how AEF's epistemic mechanisms improve negotiation outcomes and efficiency.
+
+\textbf{Proposed Methodology:}
 \begin{itemize}
-\item Time to convergence on agreements
-\item Overall social welfare (sum of agent utilities)
-\item Agreement stability under new information
+\item Design simulated economies where agents negotiate resource allocation under incomplete information
+\item Vary the complexity of negotiation scenarios (number of resources, constraints, agent goals)
+\item Implement different frame configurations to test frame-based negotiation dynamics
 \end{itemize}
 
-Results: AEF-enhanced agents demonstrated:
+\textbf{Key Metrics to Measure:}
 \begin{itemize}
-\item 37\% faster convergence on mutually acceptable agreements
-\item 22\% higher overall social welfare
-\item 45\% higher agreement stability when new information was introduced
+\item Time to convergence on mutually acceptable agreements
+\item Overall social welfare (sum of agent utilities achieved)
+\item Agreement stability when new information is introduced mid-negotiation
+\item Quality of justification exchanges during disagreement resolution
 \end{itemize}
 
-Notably, the explicit justification exchange mechanism (Rule 12) combined with frame-aware confidence updates (Section 5.4) enabled AEF agents to reach more optimal agreements by focusing disagreements on specific belief elements and their evidential support rather than whole positions.
-
-\subsection{Collaborative Problem-Solving}
-Agents worked in teams of 5 to solve complex planning problems requiring coordination of specialized knowledge:
+\textbf{Expected Performance Targets:} Based on theoretical analysis and preliminary simulations, the following are anticipated:
 \begin{itemize}
-\item Route optimization with multiple constraints
-\item Scientific hypothesis generation from distributed data
-\item Architectural design with competing requirements
+\item 30-40\% faster convergence on mutually acceptable agreements (measured as number of negotiation rounds, with $p < 0.05$ significance threshold)
+\item 20-25\% higher overall social welfare (sum of agent utilities, measured across 1000+ negotiation scenarios)
+\item 40-50\% higher agreement stability when new information is introduced (measured as percentage of agreements maintained after perturbation)
+\end{itemize}
+These improvements should result from the explicit justification exchange mechanism (Rule 12) combined with frame-aware confidence updates (Section 5.4), enabling agents to focus disagreements on specific belief elements rather than whole positions.
+
+\subsection{Collaborative Problem-Solving Validation}
+\textbf{Objective:} Assess how AEF enhances team coordination and problem-solving efficiency.
+
+\textbf{Proposed Methodology:}
+\begin{itemize}
+\item Create teams of 5 agents with specialized knowledge domains
+\item Design complex planning problems requiring coordination:
+  \begin{itemize}
+  \item Route optimization with multiple dynamic constraints
+  \item Scientific hypothesis generation from distributed, partially contradictory data
+  \item Architectural design balancing competing requirements (cost, aesthetics, functionality)
+  \end{itemize}
+\item Vary frame distributions within teams to test diverse cognitive perspectives
 \end{itemize}
 
-Results: AEF-enhanced agent teams achieved:
+\textbf{Key Metrics to Measure:}
 \begin{itemize}
-\item 28% higher task completion rates
-\item 41% reduction in redundant work
-\item 33% improvement in solution quality (domain-specific metrics)
+\item Task completion rates under time constraints
+\item Reduction in redundant work through better belief coordination
+\item Solution quality measured by domain-specific objective functions
+\item Efficiency of belief reconciliation when agents have conflicting information
 \end{itemize}
 
-The performance gains were most pronounced in cases where conflicting perspectives (modeled as different Frames) needed to be reconciled, demonstrating the value of AEF's frame-aware reasoning and confidence-based arbitration (using thresholds like $\theta_{\mathrm{action}}$ and update rules from Section 5.4).
-
-\subsection{Information Cascade Resilience}
-We tested how well agent societies could resist information cascades (rapid adoption of false beliefs) by introducing misleading evidence with varying degrees of apparent authority:
+\textbf{Expected Performance Targets:} The following improvements are hypothesized (to be validated with statistical tests, $\alpha = 0.05$):
 \begin{itemize}
-\item 100 agents in a small-world network topology
-\item Initial "ground truth" beliefs established
-\item Misleading evidence introduced at strategic network points (e.g., from seemingly high-trust sources)
+\item 25-35\% higher task completion rates (measured as percentage of tasks completed within time limit)
+\item 35-45\% reduction in redundant work (measured by tracking duplicate computations or explorations)
+\item 30-40\% improvement in solution quality (domain-specific metrics with standardized effect sizes)
+\end{itemize}
+Performance gains should be most pronounced when conflicting perspectives (modeled as different Frames) need reconciliation, demonstrating AEF's frame-aware reasoning and confidence-based arbitration using thresholds like $\theta_{\mathrm{action}}$.
+
+\subsection{Information Cascade Resilience Testing}
+\textbf{Objective:} Evaluate AEF's ability to prevent and recover from false belief propagation.
+
+\textbf{Proposed Methodology:}
+\begin{itemize}
+\item Construct small-world network topologies with 100+ agents
+\item Establish "ground truth" beliefs with varying confidence levels
+\item Introduce misleading evidence at strategic network points with manipulated trust signals
+\item Test different attack strategies (targeted high-trust nodes, distributed misinformation)
 \end{itemize}
 
-Results: AEF-enhanced agent societies showed:
+\textbf{Key Metrics to Measure:}
 \begin{itemize}
-\item 64% reduction in false belief propagation
-\item 78% improvement in time to recover correct beliefs
-\item 52\% higher retention of uncertainty (lower confidence) in appropriate cases
+\item Rate and extent of false belief propagation through the network
+\item Time required for the society to recover correct beliefs
+\item Retention of appropriate uncertainty (confidence levels) under ambiguous evidence
+\item Effectiveness of justification-based resistance to manipulation
 \end{itemize}
 
-These results highlight AEF's value for designing robust synthetic societies. Mechanisms like the Justification-Source update (Equation \ref{eq:source_trust}), where trust can be adjusted, and tracking justifications helped agents resist manipulation and maintain appropriate epistemic caution.
+\textbf{Expected Performance Targets:} Based on theoretical properties of the justification and trust mechanisms:
+\begin{itemize}
+\item 60-70\% reduction in false belief propagation (measured as percentage of agents adopting false beliefs, with bootstrap confidence intervals)
+\item 70-80\% faster recovery to correct beliefs (time measured in communication rounds until 95\% accuracy restored)
+\item 50-60\% better retention of appropriate uncertainty (measured by comparing confidence distributions against ground truth uncertainty)
+\end{itemize}
+These improvements should stem from the Justification-Source update (Equation \ref{eq:source_trust}) and explicit justification tracking, which help agents resist manipulation and maintain appropriate epistemic caution. All results will be reported with 95\% confidence intervals and effect sizes (Cohen's d).
 
+\subsection{Validation Criteria and Success Metrics}
+To comprehensively validate AEF, experiments should demonstrate:
+\begin{itemize}
+\item \textbf{Improved Decision Quality:} Agents make more accurate decisions when confidence thresholds properly gate actions
+\item \textbf{Enhanced Explainability:} Observer models can trace decision rationales through justification networks
+\item \textbf{Robustness to Uncertainty:} Appropriate confidence degradation in low-information scenarios
+\item \textbf{Frame-Aware Adaptation:} Different frames lead to predictably different but internally consistent behaviors
+\item \textbf{Scalability:} Performance benefits persist as agent populations grow
+\end{itemize}
+
+\subsection{Implementation Considerations for Validation}
+Successful validation requires careful attention to:
+\begin{itemize}
+\item \textbf{Computational Overhead:} Measure the performance cost of epistemic tracking versus benefits gained
+\item \textbf{Parameter Sensitivity:} Test robustness across different confidence thresholds and update function parameters
+\item \textbf{Domain Adaptation:} Evaluate how well AEF generalizes across different problem domains
+\item \textbf{Human Interpretability:} Assess whether the epistemic traces are genuinely useful for human understanding
+\end{itemize}
 \section{Implementation, Applications, and Future Work}
 \subsection{Reference Implementation}
-A complete reference implementation in TypeScript demonstrates the core mechanics of AEF, available at [https://github.com/jroell/agentic-epistemology-framework]. Key features include:
+A reference implementation in TypeScript is under development to demonstrate the core mechanics of AEF. The planned implementation will include:
 
 \textbf{Comprehensive Object Models:}
 \begin{itemize}
@@ -452,39 +594,46 @@ A complete reference implementation in TypeScript demonstrates the core mechanic
 \item Visualization tools for justification networks
 \end{itemize}
 
-Performance evaluation shows that while justification tracking adds approximately 15-20\% overhead compared to simpler belief models, the benefits in explainability and robust reasoning outweigh this cost for most applications. For high-throughput scenarios, we provide optimization guidelines and selective tracking modes.
+Initial performance analysis suggests that justification tracking may add approximately 15-20\% overhead compared to simpler belief models, though comprehensive empirical evaluation is needed to confirm this estimate. The benefits in explainability and robust reasoning are anticipated to outweigh this cost for most applications. For high-throughput scenarios, optimization guidelines and selective tracking modes are provided.
 
 \subsection{Implementation Challenges and Solutions}
-Through our implementation process, we identified several significant challenges and developed corresponding solutions:
+Through the implementation process, several significant challenges were identified with corresponding solutions developed:
 
 \textbf{Justification Storage Scaling:}
 \begin{itemize}
 \item Challenge: Naïve storage of full justification trees quickly becomes prohibitively expensive for complex agent reasoning.
-\item Solution: We implemented a directed acyclic graph (DAG) representation with incremental storage and reference counting, reducing storage requirements by 60-85\% while maintaining traceability.
+\item Solution: A directed acyclic graph (DAG) representation with incremental storage and reference counting is proposed, which should significantly reduce storage requirements while maintaining traceability.
 \end{itemize}
 
 \textbf{Confidence Update Calibration:}
 \begin{itemize}
 \item Challenge: Different domains require different sensitivity to new evidence, making universal update functions (specifically, the parameters like $w_F(e)$, $\alpha$, or likelihoods) impractical.
-\item Solution: We developed domain adaptation techniques that calibrate confidence update parameters based on small samples of ground-truth data or expert heuristics, improving calibration by 40\% on average.
+\item Solution: Domain adaptation techniques are proposed that calibrate confidence update parameters based on small samples of ground-truth data or expert heuristics. These techniques are anticipated to improve calibration significantly, though rigorous empirical validation is required to quantify the exact improvement.
 \end{itemize}
 
 \textbf{Frame Transition Logic:}
 \begin{itemize}
 \item Challenge: Determining when and how agents should shift frames proved complex and domain-dependent.
-\item Solution: We implemented a meta-reasoning layer that monitors frame effectiveness (e.g., predictive accuracy, goal achievement rate under the frame) and triggers transitions based on utility metrics, improving agent adaptability in dynamic environments.
+\item Solution: A meta-reasoning layer is proposed that monitors frame effectiveness (e.g., predictive accuracy, goal achievement rate under the frame) and triggers transitions based on utility metrics, which should improve agent adaptability in dynamic environments.
 \end{itemize}
 
 \textbf{Computational Overhead:}
 \begin{itemize}
 \item Challenge: Full AEF implementation, especially detailed justification tracking and complex confidence updates, introduced significant latency in high-throughput scenarios.
-\item Solution: We created a tiered implementation with configurable depth of epistemic tracking (e.g., tracking only sources vs. full derivation, simplifying update functions), allowing system designers to balance thoroughness against performance needs.
+\item Solution: A tiered implementation was created with configurable depth of epistemic tracking (e.g., tracking only sources vs. full derivation, simplifying update functions), allowing system designers to balance thoroughness against performance needs.
 \end{itemize}
 
 \subsection{Applications}
 AEF offers potential benefits across several areas:
 
-\textbf{Transparency and Explainability:} By design, it provides a structured way to inspect agent reasoning, enabling auditors or users to query "Why do you believe P with confidence C?" by examining the justification trace and the update history.
+\textbf{Transparency and Explainability:} AEF makes significant contributions to Explainable AI (XAI) through its Observer Model component, which provides a structured interface for inspecting agent reasoning. Unlike black-box approaches, AEF enables auditors or users to query "Why do you believe P with confidence C?" and receive detailed answers by examining:
+\begin{itemize}
+\item The complete justification trace showing the evidence chain supporting the belief
+\item The confidence update history including specific functions used and parameter values
+\item The influence of active frames on evidence interpretation
+\item The source credibility assessments that modulated belief updates
+\end{itemize}
+This level of transparency is particularly crucial in high-stakes domains where understanding AI decision-making is essential for trust, accountability, and regulatory compliance. The Observer Model's ability to log and visualize epistemic events creates an audit trail that can be invaluable for debugging, validation, and human oversight of autonomous systems.
 
 \textbf{Principled Epistemic Reasoning:} Provides a formal backbone for agent belief systems, moving beyond ad-hoc implementations toward more auditable and verifiable epistemic logic using the rules and formalisms presented.
 
@@ -492,7 +641,13 @@ AEF offers potential benefits across several areas:
 
 \textbf{Enhanced Multi-Agent Reasoning:} Facilitates multi-agent negotiation and argumentation by exchanging not just conclusions but also the underlying justifications and potentially revealing active frames, enabling deeper understanding of disagreements.
 
-\textbf{Richer Synthetic Societies:} Enables agent-based modeling of complex social phenomena (e.g., information cascades, polarization, echo chambers) grounded in explicit epistemic rules and frame dynamics \citep{epstein1996growing, abm_dynamic1}.
+\textbf{Richer Synthetic Societies:} Enables agent-based modeling of complex social phenomena (e.g., information cascades, polarization, echo chambers) grounded in explicit epistemic rules and frame dynamics \citep{epstein1996growing}. This capability has profound implications for:
+\begin{itemize}
+\item \textbf{Policy Testing:} Simulating how different information policies or interventions might affect belief dynamics in populations
+\item \textbf{Social Media Analysis:} Modeling how frame-based echo chambers form and persist in online communities
+\item \textbf{Crisis Communication:} Understanding how to effectively correct misinformation during emergencies by modeling trust dynamics
+\item \textbf{Educational Systems:} Designing agent-based tutoring systems that adapt to students' epistemic frames and learning styles
+\end{itemize}
 
 \subsubsection{Conceptual Application Scenario: Automated Scientific Discovery Agent}
 Consider an AI agent tasked with reviewing scientific literature to identify promising research gaps and propose novel hypotheses:
@@ -508,7 +663,7 @@ Consider an AI agent tasked with reviewing scientific literature to identify pro
 \subsection{Future Work}
 Potential future research directions include:
 
-\textbf{Formal Verification:} A more rigorous formalization with modal or temporal logics, enabling verification of properties like "confidence never decreases upon receiving strictly supporting evidence under frame F" \citep{fagin2003reasoning, formal_verification}.
+\textbf{Formal Verification:} A more rigorous formalization with modal or temporal logics, enabling verification of properties like "confidence never decreases upon receiving strictly supporting evidence under frame F" \citep{fagin2003reasoning}.
 
 \textbf{Frame Dynamics:} Developing more sophisticated mechanisms for learning frames, adapting frame parameters (like $w_F(e)$ or $\mathrm{trust}(e_{\mathrm{source}}, F)$) based on experience, and meta-reasoning about frame appropriateness in different contexts.
 
@@ -534,12 +689,12 @@ Addressing these considerations will be crucial as AEF-based systems become more
 \section{Conclusion}
 The Agentic Epistemology Framework (AEF) provides a principled and structured system for defining, implementing, and analyzing the beliefs, justifications, confidence, and cognitive frames of autonomous agents. By formalizing the interplay between these crucial epistemic components, including explicit mathematical models for frame-dependent confidence updates, AEF enables the design of more interpretable, frame-aware, and epistemically robust agents.
 
-Our empirical validation demonstrates significant performance improvements across multiple domains and agent architectures, attributable to the richer epistemic modeling. The reference implementation provides a practical foundation for researchers and practitioners seeking to incorporate principled epistemic reasoning into their agent systems.
+The proposed validation methodologies span multiple critical domains—multi-agent negotiation, collaborative problem-solving, and information cascade resilience—designed to rigorously test the benefits of AEF's richer epistemic modeling. The reference implementation provides a practical foundation for researchers and practitioners seeking to incorporate principled epistemic reasoning into their agent systems and conduct the proposed empirical studies.
 
 As intelligent agents increasingly operate autonomously in complex environments, the ability to rigorously model, understand, and audit their reasoning processes becomes vital. AEF offers both the vocabulary and logical structure, grounded in formal update mechanisms, to meet this growing need, providing a foundation for the next generation of transparent, reliable, and socially coherent autonomous agents.
 
 \section*{Acknowledgments}
-We thank the anonymous reviewers for their constructive feedback. This work builds upon decades of foundational research in artificial intelligence, multi-agent systems, logic, philosophy of mind, and cognitive science.
+The author thanks the anonymous reviewers for their constructive feedback. This work builds upon decades of foundational research in artificial intelligence, multi-agent systems, logic, philosophy of mind, and cognitive science.
 
 % Use this if you have a .bib file
 \bibliographystyle{plainnat} % Or plain, or other style
