@@ -5,6 +5,7 @@ import { Belief } from '../epistemic/belief';
 import { Goal } from '../action/goal';
 import { Action } from '../action/action';
 import { LLMClient } from './llm-client';
+import { displayMessage, COLORS, createBox } from '../core/cli-formatter';
 
 /**
  * A mock implementation of LLMClient
@@ -25,8 +26,9 @@ export class MockGeminiClient implements LLMClient {
   /**
    * Override the interpretPerceptionData method
    */
-  async interpretPerceptionData(data: any, frame: Frame): Promise<any> {
-    console.log(`[MockGeminiClient] Interpreting data through ${frame.name} frame`);
+  async interpretPerceptionData(data: any, frame: Frame, agentId: string, agentName: string): Promise<any> {
+    const context = `[Agent: ${agentName || agentId}]`;
+    console.log(`[MockGeminiClient] ${context} Interpreting data through ${frame.name} frame`);
     // Return the original data with a frame-specific note
     return {
       ...data,
@@ -68,8 +70,14 @@ export class MockGeminiClient implements LLMClient {
   /**
    * Override the judgeEvidenceStrength method
    */
-  async judgeEvidenceStrength(element: JustificationElement, proposition: string): Promise<number> {
-    console.log(`[MockGeminiClient] Judging evidence strength for: ${proposition}`);
+  async judgeEvidenceStrength(
+    element: JustificationElement, 
+    proposition: string,
+    agentId?: string,
+    agentName?: string
+  ): Promise<number> {
+    const context = agentId ? `[Agent: ${agentName || agentId}]` : '[Mock Agent]';
+    console.log(`[MockGeminiClient] ${context} Judging evidence strength for: ${proposition}`);
     
     // Return different values based on element type
     switch (element.type) {
@@ -91,20 +99,26 @@ export class MockGeminiClient implements LLMClient {
   /**
    * Override the judgeEvidenceSaliency method
    */
-  async judgeEvidenceSaliency(element: JustificationElement, frame: Frame): Promise<number> {
-    console.log(`[MockGeminiClient] Judging evidence saliency with ${frame.name} frame`);
-    
-    // Return frame-specific saliency values
-    if (frame.name === 'Efficiency' && element.type === 'performance') {
-      return 0.9;
-    } else if (frame.name === 'Thoroughness' && element.type === 'detailed') {
-      return 0.9;
-    } else if (frame.name === 'Security' && element.type === 'security') {
-      return 0.9;
-    }
-    
-    return 0.6; // Default saliency
-  }
+  async judgeEvidenceSaliencyForFrame(
+   element: JustificationElement,
+   frame: Frame,
+   proposition: string,
+   agentName: string,
+   context: string,
+ ): Promise<number> {
+   console.log(`[MockGeminiClient] Judging evidence saliency with ${frame.name} frame`);
+
+   // Return frame-specific saliency values
+   if (frame.name === 'Efficiency' && element.type === 'performance') {
+     return 0.9;
+   } else if (frame.name === 'Thoroughness' && element.type === 'detailed') {
+     return 0.9;
+   } else if (frame.name === 'Security' && element.type === 'security') {
+     return 0.9;
+   }
+
+   return 0.6; // Default saliency
+ }
 
   /**
    * Override the judgeSourceTrust method

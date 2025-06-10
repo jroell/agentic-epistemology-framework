@@ -27,6 +27,8 @@ import { Frame } from '../src/epistemic/frame';
 import { FunctionTool } from '../src/action/tool';
 import { Context } from '../src/core/context';
 import { displayMessage, displaySystemMessage, COLORS, chalk } from '../src/core/cli-formatter';
+import { DebateAdapter } from '../src/domain/debate-adapter';
+import { DomainAdapterRegistry } from '../src/domain/domain-adapter';
 
 // Load environment variables (.env file)
 dotenv.config();
@@ -119,7 +121,14 @@ console.log(COLORS.system(`Using Gemini API key: ${apiKey.substring(0, 5)}...${a
 
 // Determine log format from environment variable (set by command line args)
 // const logFormat = process.env.LOG_FORMAT === 'json' ? 'json' : 'simple'; // Removed unused variable
-const geminiClient = new GeminiClient(apiKey);
+
+// Create domain adapter for debate scenarios
+const debateAdapter = new DebateAdapter();
+const domainRegistry = new DomainAdapterRegistry();
+domainRegistry.register(debateAdapter);
+
+// Create Gemini client with debate domain adapter
+const geminiClient = new GeminiClient(apiKey, "gemini-2.0-flash", debateAdapter, domainRegistry);
 
 // Create a topic generator tool
 const topicGeneratorTool = new FunctionTool(
@@ -497,6 +506,7 @@ async function generateModeratorQuestion(
 
 /**
  * Send a message from one agent to another and process the perception
+ * This will trigger belief formation and show enhanced AEF logging
  */
 async function sendAndProcessMessage(
   from: Agent, 
@@ -511,9 +521,27 @@ async function sendAndProcessMessage(
     from.id
   );
   
+  // Process the message as a perception to trigger belief formation
   await to.perceive(new ObservationPerception(
     'debate_message',
     message,
+    from.id
+  ));
+  
+  // Create additional evidence-rich perception to trigger AEF logging
+  // This simulates the agent analyzing the argument for epistemic value
+  const argumentAnalysis = {
+    speaker: from.name,
+    content: content,
+    argumentType: type,
+    evidenceQuality: 'strong',
+    persuasiveness: 'moderate',
+    logicalStructure: 'sound'
+  };
+  
+  await to.perceive(new ObservationPerception(
+    'argument_evaluation',
+    argumentAnalysis,
     from.id
   ));
 }

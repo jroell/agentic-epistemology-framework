@@ -1,5 +1,5 @@
 // src/llm/gemini-client.ts
-import { GoogleGenerativeAI, GenerativeModel, FunctionDeclaration, FunctionCall, Part, FunctionDeclarationSchema, SchemaType, SafetySetting } from "@google/generative-ai"; // Import SafetySetting
+import { GoogleGenerativeAI, GenerativeModel, FunctionDeclaration, FunctionCall, Part, FunctionDeclarationSchema, SchemaType, SafetySetting } from "@google/generative-ai";
 import { Tool } from '../action/tool';
 import { Goal } from '../action/goal';
 import { Belief } from '../epistemic/belief';
@@ -8,7 +8,13 @@ import { JustificationElement } from '../epistemic/justification';
 import { Action, UseTool } from '../action/action';
 import { EntityId } from "../types/common";
 import { LLMClient } from "./llm-client";
-import { displayMessage, COLORS, createBox } from "../core/cli-formatter"; // Import formatter and createBox
+import { displayMessage, COLORS, createBox } from "../core/cli-formatter";
+import { 
+  DomainAdapter, 
+  DomainOperation, 
+  DomainOperationParams, 
+  DomainAdapterRegistry 
+} from '../domain/domain-adapter';
 
 // Use the SDK's FunctionDeclarationSchema directly for parameters
 // Note: We might need to refine this if Tool.parameterSchema doesn't exactly match
@@ -22,19 +28,163 @@ import { displayMessage, COLORS, createBox } from "../core/cli-formatter"; // Im
 export class GeminiClient implements LLMClient {
     private genAI: GoogleGenerativeAI;
     private model: GenerativeModel;
-    private availableToolsMap: Map<EntityId, Tool> = new Map(); // To quickly find tools by ID
+    private availableToolsMap: Map<EntityId, Tool> = new Map();
+    private domainAdapter?: DomainAdapter;
+    private domainRegistry: DomainAdapterRegistry;
 
-    constructor(apiKey: string, modelName = "gemini-2.0-flash") {
+    constructor(
+        apiKey: string, 
+        modelName = "gemini-2.0-flash", 
+        domainAdapter?: DomainAdapter,
+        domainRegistry?: DomainAdapterRegistry
+    ) {
         if (!apiKey) {
             throw new Error("Gemini API key is required.");
         }
         this.genAI = new GoogleGenerativeAI(apiKey);
-        // Initialize the model with system instructions and tool configuration
         this.model = this.genAI.getGenerativeModel({
             model: modelName,
-            // System instruction can be added here if needed globally
-            // systemInstruction: "You are a helpful planning assistant...",
         });
+        
+        // Domain adapter injection
+        this.domainAdapter = domainAdapter;
+        this.domainRegistry = domainRegistry || new DomainAdapterRegistry();
+        
+        // If no domain adapter provided but registry has a default, use it
+        if (!this.domainAdapter && this.domainRegistry) {
+            this.domainAdapter = this.domainRegistry.getDefault();
+        }
+    }
+    
+    /**
+     * Set or change the domain adapter for this client
+     */
+    setDomainAdapter(adapter: DomainAdapter): void {
+        this.domainAdapter = adapter;
+    }
+    
+    /**
+     * Get the current domain adapter
+     */
+    getDomainAdapter(): DomainAdapter | undefined {
+        return this.domainAdapter;
+    }
+    
+    /**
+     * Execute a domain operation using the configured domain adapter.
+     * This is the core method that bridges domain-specific logic with LLM execution.
+     * 
+     * @param operation The domain operation to execute
+     * @param params Parameters for the operation
+     * @param logCategory Category for logging purposes
+     * @returns Promise resolving to the operation result
+     */
+    private async executeWithDomain<T>(
+        operation: DomainOperation,
+        params: DomainOperationParams,
+        logCategory: string
+    ): Promise<T> {
+        const adapter = this.domainAdapter;
+        const contextStr = params.agentId ? `[Agent: ${params.agentName || params.agentId}]` : '[System]';
+        
+        if (!adapter) {
+            displayMessage("GeminiClient", `No domain adapter configured for operation: ${operation}`, COLORS.warning);
+            return this.getDefaultValueForOperation<T>(operation);
+        }
+        
+        if (!adapter.canHandle(operation)) {
+            displayMessage("GeminiClient", `Domain adapter ${adapter.domainId} cannot handle operation: ${operation}`, COLORS.warning);
+            return this.getDefaultValueForOperation<T>(operation);
+        }
+        
+        if (!adapter.validateParams(operation, params)) {
+            displayMessage("GeminiClient", `Invalid parameters for operation ${operation} in domain ${adapter.domainId}`, COLORS.error);
+            return this.getDefaultValueForOperation<T>(operation);
+        }
+        
+        try {
+            // Get domain-specific logging context
+            const loggingContext = adapter.getLoggingContext(operation, params);
+            
+            displayMessage(
+                logCategory,
+                `${contextStr} Executing with ${adapter.domainName} domain\\n` +
+                `Operation: ${operation}\\n` +
+                `Domain: ${adapter.domainId} v${adapter.version}\\n` +
+                `Context: ${JSON.stringify(loggingContext, null, 2)}`,
+                COLORS.info
+            );
+            
+            // Build domain-specific prompt
+            const prompt = adapter.buildPrompt(operation, params);
+            
+            // Execute LLM call
+            const result = await this.model.generateContent(prompt);
+            const response = result.response;
+            const text = response.text().trim();
+            
+            displayMessage(
+                `LLM ${operation.toUpperCase()}`,
+                `${contextStr} Raw LLM Response: "${text}"\\n` +
+                `Domain: ${adapter.domainName}\\n` +
+                `Method: Domain-specific ${operation}`,
+                COLORS.info
+            );
+            
+            // Parse domain-specific response
+            const parseResult = adapter.parseResponse<T>(operation, text, params);
+            
+            if (parseResult.success) {
+                displayMessage(
+                    `${operation.toUpperCase()} RESULT`,
+                    `${contextStr} Success: ${this.formatResultForLogging(parseResult.data)}\\n` +
+                    `Domain: ${adapter.domainName}\\n` +
+                    `Metadata: ${JSON.stringify(parseResult.metadata || {}, null, 2)}`,
+                    COLORS.success
+                );
+                return parseResult.data;
+            } else {
+                displayMessage("GeminiClient", `Domain parsing failed: ${parseResult.error}`, COLORS.warning);
+                return this.getDefaultValueForOperation<T>(operation);
+            }
+            
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            displayMessage("GeminiClient", `Error in domain operation ${operation}: ${errorMessage}`, COLORS.error);
+            return this.getDefaultValueForOperation<T>(operation);
+        }
+    }
+    
+    /**
+     * Get default value for an operation when domain adapter fails
+     */
+    private getDefaultValueForOperation<T>(operation: DomainOperation): T {
+        switch (operation) {
+            case DomainOperation.EXTRACT_PROPOSITIONS:
+                return [] as T;
+            case DomainOperation.SCORE_RELEVANCE:
+            case DomainOperation.JUDGE_EVIDENCE_STRENGTH:
+            case DomainOperation.JUDGE_EVIDENCE_SALIENCY:
+                return 0.5 as T;
+            case DomainOperation.EXTRACT_CONTEXT:
+                return 'Generic context' as T;
+            default:
+                return undefined as T;
+        }
+    }
+    
+    /**
+     * Format result for logging display
+     */
+    private formatResultForLogging(result: unknown): string {
+        if (Array.isArray(result)) {
+            return `${result.length} items: [${result.slice(0, 3).join(', ')}${result.length > 3 ? '...' : ''}]`;
+        } else if (typeof result === 'number') {
+            return result.toFixed(3);
+        } else if (typeof result === 'string') {
+            return result.length > 100 ? result.substring(0, 100) + '...' : result;
+        }
+        return String(result);
     }
 
     /**
@@ -230,26 +380,55 @@ export class GeminiClient implements LLMClient {
      * @param frame The agent's current cognitive frame.
      * @returns A promise resolving to a saliency score (0-1), or a default (e.g., 0.5) on error.
      */
-    async judgeEvidenceSaliency(element: JustificationElement, frame: Frame): Promise<number> {
-        // Use displayMessage for internal log
-        displayMessage("GeminiClient", `Judging evidence saliency for frame: "${frame.name}"`, COLORS.info);
-        const prompt = this.buildEvidenceSaliencyPrompt(element, frame);
+    async judgeEvidenceSaliencyForFrame(
+        element: JustificationElement,
+        frame: Frame,
+        proposition: string,
+        agentName: string,
+        context: string,
+    ): Promise<number> {
+        const agentContext = agentName ? `[Agent: ${agentName}]` : '[Unknown Agent]';
+        const evidenceType = element.constructor.name;
+        const evidenceContent = this.getEvidencePreview(element);
+        
+        displayMessage(
+            "FRAME SALIENCY EVALUATION CONTEXT",
+            `${agentContext} Evaluating evidence saliency for frame\n` +
+            `Frame: "${frame.name}" (${frame.description})\n` +
+            `Proposition: "${proposition}"\n` +
+            `Evidence Type: ${evidenceType}\n` +
+            `Evidence Preview: ${evidenceContent}\n` +
+            `Agent Context: ${context}\n` +
+            `Purpose: Determining w_F(e) for Paper Section 5.4.3.A`,
+            COLORS.info
+        );
+        const prompt = this.buildEvidenceSaliencyPrompt(element, frame, proposition, agentName, context);
         const defaultValue = 0.5; // Default saliency on error or ambiguous response
 
         try {
             const result = await this.model.generateContent(prompt);
             const response = result.response;
             const text = response.text().trim();
-            // Use displayMessage for internal log
-            displayMessage("GeminiClient", `Raw evidence saliency judgment response: "${text}"`, COLORS.info);
+            displayMessage(
+                "LLM FRAME SALIENCY JUDGMENT",
+                `${agentContext} LLM Response: "${text}"\n` +
+                `Frame Perspective: How salient is this evidence given the ${frame.name} frame?\n` +
+                `Scale: 0.0 (irrelevant to frame) to 1.0 (highly salient to frame)`,
+                COLORS.info
+            );
 
             // Stricter parsing
             const scoreRegex = /^([0](?:\.\d+)?|1(?:\.0+)?)$/;
             if (scoreRegex.test(text)) {
                 const score = parseFloat(text);
                 if (!isNaN(score) && score >= 0 && score <= 1) {
-                     // Use displayMessage for internal log
-                     displayMessage("GeminiClient", `Parsed saliency score: ${score}`, COLORS.info);
+                    displayMessage(
+                        "FRAME SALIENCY RESULT",
+                        `${agentContext} Final Saliency Score w_F(e): ${score}\n` +
+                        `Frame Impact: ${this.interpretSaliencyScore(score, frame.name)}\n` +
+                        `Mathematical Role: Will be used as w_F(e) in equation conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e,P)`,
+                        COLORS.success
+                    );
                     return score;
                 }
             }
@@ -270,11 +449,29 @@ export class GeminiClient implements LLMClient {
      * Asks Gemini to judge the strength of a piece of evidence relative to a proposition.
      * @param element The justification element representing the evidence.
      * @param proposition The proposition being evaluated.
+     * @param agentId Optional agent ID for enhanced context logging
+     * @param agentName Optional agent name for enhanced context logging
      * @returns A promise resolving to a confidence score (0-1), or a default (e.g., 0.5) on error.
      */
-    async judgeEvidenceStrength(element: JustificationElement, proposition: string): Promise<number> {
-        // Use displayMessage for internal log
-        displayMessage("GeminiClient", `Judging evidence strength for proposition: "${proposition}"`, COLORS.info);
+    async judgeEvidenceStrength(
+        element: JustificationElement, 
+        proposition: string,
+        agentId?: string,
+        agentName?: string
+    ): Promise<number> {
+        const context = agentId ? `[Agent: ${agentName || agentId}]` : '[Unknown Agent]';
+        const evidenceType = element.constructor.name;
+        const evidenceContent = this.getEvidencePreview(element);
+        
+        displayMessage(
+            "EVIDENCE EVALUATION CONTEXT", 
+            `${context} Evaluating evidence strength\n` +
+            `Proposition: "${proposition}"\n` +
+            `Evidence Type: ${evidenceType}\n` +
+            `Evidence Preview: ${evidenceContent}\n` +
+            `Evaluation Trigger: Belief formation/update process`, 
+            COLORS.info
+        );
         const prompt = this.buildEvidenceStrengthPrompt(element, proposition);
         const defaultValue = 0.5; // Default confidence on error or ambiguous response
 
@@ -282,16 +479,26 @@ export class GeminiClient implements LLMClient {
             const result = await this.model.generateContent(prompt); // Simple text prompt for now
             const response = result.response;
             const text = response.text().trim();
-            // Use displayMessage for internal log
-            displayMessage("GeminiClient", `Raw evidence strength judgment response: "${text}"`, COLORS.info);
+            displayMessage(
+                "LLM EVIDENCE STRENGTH JUDGMENT", 
+                `${context} LLM Response: "${text}"\n` +
+                `Evaluation Criteria: How strongly does this evidence support the proposition?\n` +
+                `Scale: 0.0 (contradicts) to 1.0 (strongly supports)`,
+                COLORS.info
+            );
 
             // Stricter parsing
             const scoreRegex = /^([0](?:\.\d+)?|1(?:\.0+)?)$/;
             if (scoreRegex.test(text)) {
                  const score = parseFloat(text);
                  if (!isNaN(score) && score >= 0 && score <= 1) {
-                    // Use displayMessage for internal log
-                    displayMessage("GeminiClient", `Parsed strength score: ${score}`, COLORS.info);
+                    displayMessage(
+                        "EVIDENCE STRENGTH RESULT", 
+                        `${context} Final Strength Score: ${score}\n` +
+                        `Interpretation: ${this.interpretStrengthScore(score)}\n` +
+                        `Next Step: Will be used in confidence update formula (Paper Section 5.4.3)`,
+                        COLORS.success
+                    );
                     return score;
                 }
             }
@@ -372,24 +579,26 @@ export class GeminiClient implements LLMClient {
     /**
      * Builds the prompt for the judgeEvidenceSaliency call.
      */
-    private buildEvidenceSaliencyPrompt(element: JustificationElement, frame: Frame): string {
+    private buildEvidenceSaliencyPrompt(
+        element: JustificationElement,
+        frame: Frame,
+        proposition: string,
+        agentName: string,
+        context: string,
+    ): string {
         const evidenceContent = typeof element.content === 'string'
             ? element.content
             : JSON.stringify(element.content);
 
-        // Enhanced prompt emphasizing frame perspective
-        let prompt = `You are evaluating evidence for an agent whose current cognitive frame is "${frame.name}".\n`;
-        prompt += `This frame prioritizes: "${frame.description}".\n\n`;
-        prompt += `Critically evaluate ONLY the SALIENCY (relevance and importance) of the following piece of evidence *specifically from the perspective of the ${frame.name} frame*. How much attention should the agent pay to this evidence given its current frame?\n\n`;
-        prompt += `Evidence Details:\n`;
+        let prompt = `Given your role as **${agentName}** with the **${frame.name}** frame (${frame.description}), how salient (relevant, important, and central) is the following proposition to your current arguments and goals? A highly salient proposition is one you would strongly focus on or emphasize.\n\n`;
+        prompt += `**Debate Context:**\n${context}\n\n`;
+        prompt += `**Proposition to Evaluate:** "${proposition}"\n\n`;
+        prompt += `**Evidence for Proposition:**\n`;
         prompt += `- Type: ${element.type}\n`;
         prompt += `- Source: ${element.source}\n`;
         prompt += `- Content: ${evidenceContent}\n\n`;
-        prompt += `Instructions:\n`;
-        prompt += `Return ONLY a single numerical score between 0.0 and 1.0.\n`;
-        prompt += ` - 1.0 means the evidence is highly salient and important for this frame.\n`;
-        prompt += ` - 0.0 means the evidence is irrelevant or should be ignored by this frame.\n`;
-        prompt += ` - 0.5 means the evidence has moderate or ambiguous saliency.\n`;
+        prompt += `**Instructions:**\n`;
+        prompt += `Respond with only a single floating-point number from 0.0 (not salient) to 1.0 (extremely salient).\n`;
         prompt += `Do not include any explanation, units, or other text. Just the number.`;
 
         return prompt;
@@ -420,10 +629,10 @@ export class GeminiClient implements LLMClient {
      * @param frame The agent's current cognitive frame.
      * @returns A promise resolving to the interpreted data (structure TBD, maybe string summary for now).
      */
-    async interpretPerceptionData(perceptionData: unknown, frame: Frame): Promise<unknown> { // Use unknown instead of any
+    async interpretPerceptionData(perceptionData: unknown, frame: Frame, agentId: string, agentName: string): Promise<unknown> { // Use unknown instead of any
         // Use displayMessage for internal log
         displayMessage("GeminiClient", `Interpreting perception data for frame: "${frame.name}"`, COLORS.info);
-        const prompt = this.buildInterpretPerceptionPrompt(perceptionData, frame);
+        const prompt = this.buildInterpretPerceptionPrompt(perceptionData, frame, agentId, agentName);
         // Default value might be the original data or a simple string representation
         const defaultValue = `Uninterpreted data: ${JSON.stringify(perceptionData)}`;
 
@@ -433,7 +642,7 @@ export class GeminiClient implements LLMClient {
             const text = response.text().trim() || defaultValue;
 
             // Log interpreted perception in a simple box using the new color
-            const headerInterpretation = `🧠 INTERNAL INTERPRETATION (Frame: ${frame.name}) 🧠`;
+            const headerInterpretation = `🧠 INTERNAL INTERPRETATION (Agent: ${agentName}, Frame: ${frame.name}) 🧠`;
             // Use createBox with magenta color
             console.log(`\n${COLORS.internalInterpretation(headerInterpretation)}`);
             console.log(createBox(text, COLORS.internalInterpretation));
@@ -524,21 +733,19 @@ export class GeminiClient implements LLMClient {
   /**
    * Builds the prompt for the interpretPerceptionData call.
    */
-  private buildInterpretPerceptionPrompt(perceptionData: unknown, frame: Frame): string { // Use unknown instead of any
-         const dataString = typeof perceptionData === 'string'
-            ? perceptionData
-            : JSON.stringify(perceptionData);
+  private buildInterpretPerceptionPrompt(perceptionData: unknown, frame: Frame, agentId: string, agentName: string): string { // Use unknown instead of any
+    const perceptionContent = typeof perceptionData === 'string'
+        ? perceptionData
+        : JSON.stringify(perceptionData, null, 2);
 
-        let prompt = `You are an agent operating under the cognitive frame "${frame.name}".\n`;
-        prompt += `Frame Description: "${frame.description}".\n\n`;
-        prompt += `The following data was just perceived:\n\`\`\`\n${dataString}\n\`\`\`\n\n`;
-        prompt += `Instructions:\n`;
-        prompt += `Interpret this data based on your current frame. Focus on the aspects most relevant to your frame's priorities.\n`;
-        prompt += `Provide a concise summary or reinterpretation of the data. If the data contains multiple pieces of information, highlight or extract the most salient parts according to your frame.\n`;
-        // Optional: Could ask for structured output later (e.g., JSON)
+    let prompt = `You are ${agentName} (ID: ${agentId}), an AI agent analyzing an event. Your current cognitive frame is "${frame.name}," which means you prioritize "${frame.description}."\n\n`;
+    prompt += `The following event has been perceived:\n---\n${perceptionContent}\n---\n\n`;
+    prompt += `Instructions:\n`;
+    prompt += `Based on your identity and current frame, write a brief, first-person internal monologue summarizing your interpretation of this event. What does it mean to you? What is the key takeaway?\n`;
+    prompt += `Your response should be only the monologue, without any extra formatting or conversational text.`;
 
-        return prompt;
-    }
+    return prompt;
+  }
 
      /**
      * Builds the prompt for the extractRelevantPropositions call.
@@ -558,5 +765,101 @@ export class GeminiClient implements LLMClient {
         prompt += `Do not include numbering, bullet points, or any explanation.`;
 
         return prompt;
+    }
+    
+    /**
+     * Get a preview of evidence content for logging
+     */
+    private getEvidencePreview(element: JustificationElement): string {
+        const content = element.toString();
+        return content.length > 100 ? content.substring(0, 100) + '...' : content;
+    }
+    
+    /**
+     * Interpret strength score for human-readable logging
+     */
+    private interpretStrengthScore(score: number): string {
+        if (score >= 0.8) return 'Strong support for proposition';
+        if (score >= 0.6) return 'Moderate support for proposition';
+        if (score >= 0.4) return 'Weak support for proposition';
+        if (score >= 0.2) return 'Weak contradiction of proposition';
+        return 'Strong contradiction of proposition';
+    }
+    
+    /**
+     * Interpret saliency score for human-readable logging
+     */
+    private interpretSaliencyScore(score: number, frameName: string): string {
+        if (score >= 0.8) return `Highly salient to ${frameName} frame - major influence on confidence`;
+        if (score >= 0.6) return `Moderately salient to ${frameName} frame - significant influence`;
+        if (score >= 0.4) return `Somewhat salient to ${frameName} frame - minor influence`;
+        if (score >= 0.2) return `Low salience to ${frameName} frame - minimal influence`;
+        return `Not salient to ${frameName} frame - evidence will be largely ignored`;
+    }
+
+    /**
+     * Extract propositions from content using domain adapter.
+     * Maintains backward compatibility while using the new domain architecture.
+     * 
+     * @param content The original content to analyze
+     * @param context Optional context about the discussion topic
+     * @param agentId Optional agent ID for logging
+     * @param agentName Optional agent name for logging  
+     * @returns Promise resolving to array of propositions
+     */
+    async extractFactualPropositions(
+        content: unknown,
+        context?: string,
+        agentId?: string,
+        agentName?: string
+    ): Promise<string[]> {
+        return this.executeWithDomain<string[]>(
+            DomainOperation.EXTRACT_PROPOSITIONS,
+            { content, context, agentId, agentName },
+            'FACTUAL PROPOSITION EXTRACTION'
+        );
+    }
+
+    /**
+     * Score the relevance of a proposition to a specific topic or context using domain adapter.
+     * Uses LLM to determine relevance without hardcoded keywords.
+     * 
+     * @param proposition The proposition to evaluate
+     * @param context The topic or context  
+     * @param agentId Optional agent ID for logging
+     * @param agentName Optional agent name for logging
+     * @returns Promise resolving to relevance score (0-1)
+     */
+    async scorePropositionRelevance(
+        proposition: string,
+        context: string,
+        agentId?: string,
+        agentName?: string
+    ): Promise<number> {
+        return this.executeWithDomain<number>(
+            DomainOperation.SCORE_RELEVANCE,
+            { proposition, context, agentId, agentName },
+            'PROPOSITION RELEVANCE SCORING'
+        );
+    }
+
+    /**
+     * Extract topic/context from agent context using domain adapter (no hardcoded keywords)
+     * 
+     * @param contextStr The agent's current context as string
+     * @param agentId Optional agent ID for logging
+     * @param agentName Optional agent name for logging
+     * @returns Promise resolving to extracted context
+     */
+    async extractDebateTopicFromContext(
+        contextStr: string,
+        agentId?: string,
+        agentName?: string
+    ): Promise<string> {
+        return this.executeWithDomain<string>(
+            DomainOperation.EXTRACT_CONTEXT,
+            { content: contextStr, agentId, agentName },
+            'CONTEXT EXTRACTION'
+        );
     }
 }

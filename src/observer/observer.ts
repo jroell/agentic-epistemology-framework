@@ -10,7 +10,12 @@ import { Message } from '../action/message';
 import {
   EventType,
   AnyEvent,
-  EventFactory
+  EventFactory,
+  ConfidenceThresholdCheckEvent,
+  BeliefRevisionChainEvent,
+  MathematicalFormalismEvent,
+  FrameSwitchingDetectionEvent,
+  AEFParameterDetailsEvent
 } from './event-types';
 
 /**
@@ -28,7 +33,7 @@ export interface Observer {
   /**
    * Log a belief update event
    */
-  logBeliefUpdate(entityId: EntityId, oldBelief: Belief, newBelief: Belief): void;
+  logBeliefUpdate(entityId: EntityId, oldBelief: Belief, newBelief: Belief, strength: number, saliency: number, agentName?: string): void;
   
   /**
    * Log a belief rejection event
@@ -157,6 +162,69 @@ export interface Observer {
     belief: Belief, 
     goal: Goal
   ): void;
+
+  /**
+   * Log a confidence threshold check event (θ_action validation)
+   */
+  logConfidenceThresholdCheck(
+    entityId: EntityId,
+    belief: Belief,
+    threshold: number,
+    thresholdType: 'action' | 'conflict' | 'communication' | 'memory',
+    passed: boolean,
+    action?: Action,
+    context?: string
+  ): void;
+
+  /**
+   * Log belief revision chain tracking
+   */
+  logBeliefRevisionChain(
+    entityId: EntityId,
+    proposition: string,
+    revisionHistory: Array<{
+      timestamp: number;
+      confidence: number;
+      reason: string;
+      evidence?: string;
+    }>,
+    currentConfidence: number
+  ): void;
+
+  /**
+   * Log mathematical formalism application (Section 5.4.3)
+   */
+  logMathematicalFormalism(
+    entityId: EntityId,
+    equation: string,
+    section: string,
+    parameters: Record<string, number>,
+    oldValue: number,
+    newValue: number,
+    context: string
+  ): void;
+
+  /**
+   * Log frame switching detection
+   */
+  logFrameSwitchingDetection(
+    entityId: EntityId,
+    previousFrame: Frame,
+    newFrame: Frame,
+    trigger: string,
+    reasoningModeChange: string,
+    confidenceImpact?: number
+  ): void;
+
+  /**
+   * Log comprehensive AEF parameter details
+   */
+  logAEFParameterDetails(
+    entityId: EntityId,
+    category: string,
+    parameters: Record<string, any>,
+    description: string
+  ): void;
   
   /**
    * Get all events for an entity
@@ -237,8 +305,8 @@ export class BaseObserver implements Observer {
   /**
    * Log a belief update event
    */
-  logBeliefUpdate(entityId: EntityId, oldBelief: Belief, newBelief: Belief): void {
-    const event = EventFactory.createBeliefUpdateEvent(entityId, oldBelief, newBelief);
+  logBeliefUpdate(entityId: EntityId, oldBelief: Belief, newBelief: Belief, strength: number, saliency: number, agentName?: string): void {
+    const event = EventFactory.createBeliefUpdateEvent(entityId, oldBelief, newBelief, strength, saliency, agentName);
     this.processEvent(event);
   }
 
@@ -443,6 +511,94 @@ export class BaseObserver implements Observer {
       goal, 
       requiredConfidence, 
       reason
+    );
+    this.processEvent(event);
+  }
+
+  /**
+   * Log a confidence threshold check event (θ_action validation)
+   */
+  logConfidenceThresholdCheck(
+    entityId: EntityId,
+    belief: Belief,
+    threshold: number,
+    thresholdType: 'action' | 'conflict' | 'communication' | 'memory',
+    passed: boolean,
+    action?: Action,
+    context?: string
+  ): void {
+    const event = EventFactory.createConfidenceThresholdCheckEvent(
+      entityId, belief, threshold, thresholdType, passed, action, context
+    );
+    this.processEvent(event);
+  }
+
+  /**
+   * Log belief revision chain tracking
+   */
+  logBeliefRevisionChain(
+    entityId: EntityId,
+    proposition: string,
+    revisionHistory: Array<{
+      timestamp: number;
+      confidence: number;
+      reason: string;
+      evidence?: string;
+    }>,
+    currentConfidence: number
+  ): void {
+    const event = EventFactory.createBeliefRevisionChainEvent(
+      entityId, proposition, revisionHistory, currentConfidence
+    );
+    this.processEvent(event);
+  }
+
+  /**
+   * Log mathematical formalism application (Section 5.4.3)
+   */
+  logMathematicalFormalism(
+    entityId: EntityId,
+    equation: string,
+    section: string,
+    parameters: Record<string, number>,
+    oldValue: number,
+    newValue: number,
+    context: string
+  ): void {
+    const event = EventFactory.createMathematicalFormalismEvent(
+      entityId, equation, section, parameters, oldValue, newValue, context
+    );
+    this.processEvent(event);
+  }
+
+  /**
+   * Log frame switching detection
+   */
+  logFrameSwitchingDetection(
+    entityId: EntityId,
+    previousFrame: Frame,
+    newFrame: Frame,
+    trigger: string,
+    reasoningModeChange: string,
+    confidenceImpact?: number
+  ): void {
+    const event = EventFactory.createFrameSwitchingDetectionEvent(
+      entityId, previousFrame, newFrame, trigger, reasoningModeChange, confidenceImpact
+    );
+    this.processEvent(event);
+  }
+
+  /**
+   * Log comprehensive AEF parameter details
+   */
+  logAEFParameterDetails(
+    entityId: EntityId,
+    category: string,
+    parameters: Record<string, any>,
+    description: string
+  ): void {
+    const event = EventFactory.createAEFParameterDetailsEvent(
+      entityId, category, parameters, description
     );
     this.processEvent(event);
   }

@@ -27,6 +27,7 @@ export enum EventType {
   
   // Frame events
   FrameChange = 'frame_change',
+  FrameSwitchingDetection = 'frame_switching_detection',
   
   // Goal events
   GoalAdoption = 'goal_adoption',
@@ -54,6 +55,12 @@ export enum EventType {
   
   // Confidence events
   InsufficientConfidence = 'insufficient_confidence',
+  ConfidenceThresholdCheck = 'confidence_threshold_check',
+  BeliefRevisionChain = 'belief_revision_chain',
+  MathematicalFormulism = 'mathematical_formalism',
+  
+  // AEF Parameter Logging events
+  AEFParameterDetails = 'aef_parameter_details',
   
   // General events
   Log = 'log',
@@ -100,6 +107,9 @@ export interface BeliefUpdateEvent extends Event {
   oldBelief: Belief;
   newBelief: Belief;
   confidenceDelta: number;
+  strength: number;
+  saliency: number;
+  agentName?: string;
 }
 
 /**
@@ -307,6 +317,69 @@ export interface InsufficientConfidenceEvent extends Event {
 }
 
 /**
+ * Event for confidence threshold check (θ_action)
+ */
+export interface ConfidenceThresholdCheckEvent extends Event {
+  type: EventType.ConfidenceThresholdCheck;
+  belief: Belief;
+  threshold: number;
+  thresholdType: 'action' | 'conflict' | 'communication' | 'memory';
+  passed: boolean;
+  action?: Action;
+  context?: string;
+}
+
+/**
+ * Event for belief revision chain tracking
+ */
+export interface BeliefRevisionChainEvent extends Event {
+  type: EventType.BeliefRevisionChain;
+  proposition: string;
+  revisionHistory: Array<{
+    timestamp: number;
+    confidence: number;
+    reason: string;
+    evidence?: string;
+  }>;
+  currentConfidence: number;
+}
+
+/**
+ * Event for mathematical formalism application
+ */
+export interface MathematicalFormalismEvent extends Event {
+  type: EventType.MathematicalFormulism;
+  equation: string;
+  section: string; // e.g., "5.4.3.A", "5.4.3.B", "5.4.3.C"
+  parameters: Record<string, number>;
+  oldValue: number;
+  newValue: number;
+  context: string;
+}
+
+/**
+ * Event for comprehensive AEF parameter logging
+ */
+export interface AEFParameterDetailsEvent extends Event {
+  type: EventType.AEFParameterDetails;
+  category: string; // e.g., 'PROPOSITION_EXTRACTION', 'BELIEF_UPDATE_START', etc.
+  parameters: Record<string, any>; // All relevant AEF parameters
+  description: string; // Human-readable description
+}
+
+/**
+ * Event for frame switching detection
+ */
+export interface FrameSwitchingDetectionEvent extends Event {
+  type: EventType.FrameSwitchingDetection;
+  previousFrame: Frame;
+  newFrame: Frame;
+  trigger: string;
+  reasoningModeChange: string;
+  confidenceImpact?: number;
+}
+
+/**
  * Event for log
  */
 export interface LogEvent extends Event {
@@ -356,6 +429,7 @@ export type AnyEvent =
   | JustificationExchangeEvent
   | ConflictResolutionEvent
   | FrameChangeEvent
+  | FrameSwitchingDetectionEvent
   | GoalAdoptionEvent
   | GoalCompletionEvent
   | GoalFailureEvent
@@ -373,6 +447,10 @@ export type AnyEvent =
   | MessageSentEvent
   | MessageReceivedEvent
   | InsufficientConfidenceEvent
+  | ConfidenceThresholdCheckEvent
+  | BeliefRevisionChainEvent
+  | MathematicalFormalismEvent
+  | AEFParameterDetailsEvent
   | LogEvent
   | ErrorEvent
   | WarningEvent
@@ -400,7 +478,10 @@ export class EventFactory {
   static createBeliefUpdateEvent(
     entityId: EntityId,
     oldBelief: Belief,
-    newBelief: Belief
+    newBelief: Belief,
+    strength: number,
+    saliency: number,
+    agentName?: string
   ): BeliefUpdateEvent {
     return {
       type: EventType.BeliefUpdate,
@@ -408,7 +489,10 @@ export class EventFactory {
       entityId,
       oldBelief,
       newBelief,
-      confidenceDelta: newBelief.confidence - oldBelief.confidence
+      confidenceDelta: newBelief.confidence - oldBelief.confidence,
+      strength,
+      saliency,
+      agentName
     };
   }
 
@@ -804,6 +888,122 @@ export class EventFactory {
       entityId,
       message,
       data
+    };
+  }
+
+  /**
+   * Create a confidence threshold check event
+   */
+  static createConfidenceThresholdCheckEvent(
+    entityId: EntityId,
+    belief: Belief,
+    threshold: number,
+    thresholdType: 'action' | 'conflict' | 'communication' | 'memory',
+    passed: boolean,
+    action?: Action,
+    context?: string
+  ): ConfidenceThresholdCheckEvent {
+    return {
+      type: EventType.ConfidenceThresholdCheck,
+      timestamp: Date.now(),
+      entityId,
+      belief,
+      threshold,
+      thresholdType,
+      passed,
+      action,
+      context
+    };
+  }
+
+  /**
+   * Create a belief revision chain event
+   */
+  static createBeliefRevisionChainEvent(
+    entityId: EntityId,
+    proposition: string,
+    revisionHistory: Array<{
+      timestamp: number;
+      confidence: number;
+      reason: string;
+      evidence?: string;
+    }>,
+    currentConfidence: number
+  ): BeliefRevisionChainEvent {
+    return {
+      type: EventType.BeliefRevisionChain,
+      timestamp: Date.now(),
+      entityId,
+      proposition,
+      revisionHistory,
+      currentConfidence
+    };
+  }
+
+  /**
+   * Create a mathematical formalism event
+   */
+  static createMathematicalFormalismEvent(
+    entityId: EntityId,
+    equation: string,
+    section: string,
+    parameters: Record<string, number>,
+    oldValue: number,
+    newValue: number,
+    context: string
+  ): MathematicalFormalismEvent {
+    return {
+      type: EventType.MathematicalFormulism,
+      timestamp: Date.now(),
+      entityId,
+      equation,
+      section,
+      parameters,
+      oldValue,
+      newValue,
+      context
+    };
+  }
+
+  /**
+   * Create a frame switching detection event
+   */
+  static createFrameSwitchingDetectionEvent(
+    entityId: EntityId,
+    previousFrame: Frame,
+    newFrame: Frame,
+    trigger: string,
+    reasoningModeChange: string,
+    confidenceImpact?: number
+  ): FrameSwitchingDetectionEvent {
+    return {
+      type: EventType.FrameSwitchingDetection,
+      timestamp: Date.now(),
+      entityId,
+      previousFrame,
+      newFrame,
+      trigger,
+      reasoningModeChange,
+      confidenceImpact
+    };
+  }
+
+  /**
+   * Create an AEF parameter details event
+   */
+  static createAEFParameterDetailsEvent(
+    entityId: EntityId,
+    category: string,
+    parameters: Record<string, any>,
+    description: string
+  ): AEFParameterDetailsEvent {
+    return {
+      type: EventType.AEFParameterDetails,
+      timestamp: Date.now(),
+      entityId,
+      category,
+      parameters,
+      description
     };
   }
 }

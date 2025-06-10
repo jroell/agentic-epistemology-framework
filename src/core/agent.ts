@@ -9,7 +9,7 @@ import { DefaultObserver } from '../observer/default-observer';
 import { Registry } from './registry';
 import { Context, ContextElement } from './context';
 import { Perception, ToolResultPerception } from './perception';
-import { Justification, JustificationElement, ExternalJustificationElement } from '../epistemic/justification';
+import { Justification, JustificationElement, ExternalJustificationElement, InternalReasoningJustificationElement } from '../epistemic/justification';
 import { Goal } from '../action/goal';
 import { Plan } from '../action/plan';
 import { Action, UseTool, SendMessage } from '../action/action';
@@ -62,6 +62,16 @@ export class Agent {
    * Map of beliefs held by the agent
    */
   private beliefs: Map<string, Belief> = new Map();
+  
+  /**
+   * Belief revision history tracking for each proposition
+   */
+  private beliefRevisionHistory: Map<string, Array<{
+    timestamp: number;
+    confidence: number;
+    reason: string;
+    evidence?: string;
+  }>> = new Map();
   
   /**
    * Agent's memory system
@@ -155,63 +165,191 @@ private confidenceThresholds: ConfidenceThresholds;
   async perceive(perception: Perception): Promise<void> { // Changed to async
     this.observer.logPerception(this.id, perception);
     this.context.addElements(perception.getContextualElements());
+    
+    // Store original perception content before interpretation
+    const originalPerceptionContent = perception.data;
+    
     // Call async interpretPerception and pass geminiClient
-    const interpretedPerception = await this.frame.interpretPerception(perception, this.llmClient);
-    await this.updateBeliefs(interpretedPerception); // Await belief update
+    const interpretedPerception = await this.frame.interpretPerception(perception, this.llmClient, this.id, this.name || this.id);
+    
+    // Update beliefs using ORIGINAL content, not interpreted thoughts
+    // This is the core fix - beliefs should form on factual content, not tactical reasoning
+    await this.updateBeliefs(interpretedPerception, originalPerceptionContent); // Pass both
   }
 
   /**
    * Update beliefs based on new information from a perception
    * 
-   * @param perception The perception containing new information
+   * @param perception The interpreted perception (contains tactical thoughts)  
+   * @param originalContent The original perception content (for factual proposition extraction)
    */
-  private async updateBeliefs(perception: Perception): Promise<void> { 
-    // Call async getRelevantPropositions and pass geminiClient
-    const relevantPropositions = await this.frame.getRelevantPropositions(perception, this.llmClient);
+  private async updateBeliefs(perception: Perception, originalContent: unknown): Promise<void> {
+    // Get debate context for relevance scoring (LLM-based, no hardcoded keywords)
+    const debateContext = await this.extractDebateContext();
+    
+    // Phase 1: Extract FACTUAL propositions from original content (not interpreted thoughts)
+    // This is the core fix - we analyze the original debate content, not tactical interpretations
+    const factualPropositions = await (this.llmClient as any).extractFactualPropositions(
+      originalContent,
+      debateContext,
+      this.id,
+      this.name
+    );
 
-    // Use Promise.all to handle async updates concurrently
-    await Promise.all(relevantPropositions.map(async proposition => { // Changed to async map
-      const existingBelief = this.beliefs.get(proposition);
+    this.observer.logAEFParameterDetails(
+      this.id,
+      'PROPOSITION_EXTRACTION',
+      {
+        originalContentType: typeof originalContent,
+        interpretedContentType: typeof perception.data,
+        extractedPropositions: factualPropositions,
+        extractionMethod: 'LLM-based factual analysis',
+        sourceContent: this.getContentPreview(originalContent),
+        frameUsed: this.frame.name
+      },
+      `Extracted ${factualPropositions.length} factual propositions from original content`
+    );
+
+    // Phase 2: Filter propositions by relevance to debate context (LLM-based, no keywords)
+    const relevantPropositions: Array<{proposition: string, relevanceScore: number}> = [];
+    
+    for (const proposition of factualPropositions) {
+      const relevanceScore = await (this.llmClient as any).scorePropositionRelevance(
+        proposition,
+        debateContext,
+        this.id,
+        this.name
+      );
+      
+      // Include propositions with relevance score >= 0.3
+      if (relevanceScore >= 0.3) {
+        relevantPropositions.push({ proposition, relevanceScore });
+      }
+    }
+
+    this.observer.logAEFParameterDetails(
+      this.id,
+      'RELEVANCE_FILTERING',
+      {
+        totalPropositions: factualPropositions.length,
+        relevantPropositions: relevantPropositions.length,
+        filterThreshold: 0.3,
+        filteredOut: factualPropositions.length - relevantPropositions.length,
+        debateContext: debateContext,
+        filteringMethod: 'LLM-based semantic relevance (no keyword matching)'
+      },
+      `Filtered to ${relevantPropositions.length} relevant propositions`
+    );
+
+    // Phase 3: Process each relevant proposition for belief formation
+    for (const {proposition, relevanceScore} of relevantPropositions) {
       const newJustificationElements = perception.getJustificationElements(proposition);
+      if (newJustificationElements.length === 0) continue;
 
-      if (existingBelief) {
-        // Call the async computeUpdatedConfidence
-        const updatedConfidence = await this.computeUpdatedConfidence( 
-          existingBelief,
-          newJustificationElements,
-          this.frame
+      // We process each piece of evidence sequentially for now.
+      for (const evidence of newJustificationElements) {
+        // Get the most current belief state before the update
+        const originalBelief = this.beliefs.get(proposition)?.clone() ?? new Belief(proposition, 0.5, new Justification());
+        const conf_old = originalBelief.confidence;
+
+        // Log comprehensive AEF parameters BEFORE update
+        this.observer.logAEFParameterDetails(
+          this.id,
+          'BELIEF_UPDATE_START',
+          {
+            proposition: proposition,
+            currentConfidence: conf_old,
+            evidenceType: evidence.constructor.name,
+            evidenceSource: evidence.source,
+            agentFrame: this.frame.name,
+            relevanceScore: relevanceScore,
+            justificationElementsCount: originalBelief.justification.elements?.length || 0
+          },
+          `Starting belief update process for: ${proposition}`
         );
 
+        // 2a. Judge Evidence Strength: C(e, P)
+        const strength = await this.llmClient.judgeEvidenceStrength(
+          evidence, 
+          proposition,
+          this.id,
+          this.name
+        );
+
+        // 2b. Judge Saliency: w_F(e)
+        const saliency = await this.llmClient.judgeEvidenceSaliencyForFrame(
+          evidence,
+          this.frame,
+          proposition,
+          this.name || this.id,
+          this.context.toString()
+        );
+
+        // 2c. Apply Update Formula (Paper Section 5.4.3.A - Frame-Weighted Update)
+        const conf_new = (1 - saliency) * conf_old + saliency * strength;
+        
+        // Log mathematical formalism application
+        this.observer.logMathematicalFormalism(
+          this.id,
+          'conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e, P)',
+          '5.4.3.A',
+          {
+            'w_F(e)': saliency,
+            'conf_old': conf_old,
+            'C(e,P)': strength
+          },
+          conf_old,
+          conf_new,
+          `Frame-weighted update for proposition: ${proposition}`
+        );
+
+        // 2d. Update Belief
+        const oldJustificationElements = originalBelief.justification.elements ?? [];
         const updatedJustification = new Justification([
-          ...existingBelief.justification.elements,
-          ...newJustificationElements
+          ...oldJustificationElements,
+          evidence,
+          // Add a justification element for the update process itself
+          new InternalReasoningJustificationElement(
+            this.id,
+            `Confidence updated based on new evidence. Strength: ${strength.toFixed(2)}, Saliency: ${saliency.toFixed(2)}`
+          )
         ]);
 
-        const updatedBelief = new Belief(
+        const newBelief = new Belief(
           proposition,
-          updatedConfidence,
+          conf_new,
           updatedJustification
         );
 
-        this.beliefs.set(proposition, updatedBelief);
-        this.memory.storeEntity(updatedBelief);
-        this.observer.logBeliefUpdate(this.id, existingBelief, updatedBelief);
-      } else if (newJustificationElements.length > 0) {
-        // Call async computeInitialConfidence and pass geminiClient
-        const initialConfidence = await this.frame.computeInitialConfidence(
-          proposition,
-          newJustificationElements,
-          this.llmClient
-        );
-
-        const justification = new Justification(newJustificationElements);
-        const newBelief = new Belief(proposition, initialConfidence, justification);
-        
         this.beliefs.set(proposition, newBelief);
         this.memory.storeEntity(newBelief);
-        this.observer.logBeliefFormation(this.id, newBelief);
+
+        // Log comprehensive AEF parameters AFTER update
+        this.observer.logAEFParameterDetails(
+          this.id,
+          'BELIEF_UPDATE_COMPLETE',
+          {
+            proposition: proposition,
+            oldConfidence: conf_old,
+            newConfidence: conf_new,
+            confidenceChange: conf_new - conf_old,
+            evidenceStrength: strength,
+            frameSaliency: saliency,
+            relevanceScore: relevanceScore,
+            justificationElementsAfter: updatedJustification.elements?.length || 0,
+            updateMethod: 'Frame-weighted LLM-based update',
+            mathFormula: 'conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e,P)'
+          },
+          `Completed belief update: ${proposition} confidence ${conf_old.toFixed(3)} → ${conf_new.toFixed(3)}`
+        );
+
+        // 2e. Log the Update
+        this.observer.logBeliefUpdate(this.id, originalBelief, newBelief, strength, saliency, this.name);
+        
+        // Track belief revision history
+        this.trackBeliefRevision(proposition, conf_new, `Evidence-based update: strength=${strength.toFixed(3)}, saliency=${saliency.toFixed(3)}`, evidence.toString());
       }
-    })); // End Promise.all map
+    }
   }
 
   /**
@@ -248,7 +386,19 @@ private confidenceThresholds: ConfidenceThresholds;
     const relevantBeliefs = await this.getRelevantBeliefs(goal); 
 
     for (const belief of relevantBeliefs) {
-      if (belief.confidence < this.confidenceThresholds.action) {
+      // Log confidence threshold check (θ_action from paper Section 5.2)
+      const passed = belief.confidence >= this.confidenceThresholds.action;
+      this.observer.logConfidenceThresholdCheck(
+        this.id,
+        belief,
+        this.confidenceThresholds.action,
+        'action',
+        passed,
+        undefined,
+        `Planning for goal: ${goal.description}`
+      );
+      
+      if (!passed) {
         this.observer.logInsufficientConfidence(this.id, belief, goal);
         return null;
       }
@@ -357,6 +507,18 @@ private confidenceThresholds: ConfidenceThresholds;
         const currentBelief = this.beliefs.get(belief.proposition);
 
         if (!currentBelief || currentBelief.confidence < this.confidenceThresholds.action) {
+          // Log threshold check during execution
+          if (currentBelief) {
+            this.observer.logConfidenceThresholdCheck(
+              this.id,
+              currentBelief,
+              this.confidenceThresholds.action,
+              'action',
+              false,
+              action,
+              `Pre-execution check for action: ${action.toString()}`
+            );
+          }
           // Belief confidence has changed, abort plan execution
           // Pass action description or ID instead of the object
           this.observer.logPlanAbort(this.id, plan, `Action failed pre-check: ${action.toString()}`);
@@ -566,7 +728,9 @@ private confidenceThresholds: ConfidenceThresholds;
       
       this.beliefs.set(proposition, updatedBelief);
       this.memory.storeEntity(updatedBelief);
-      this.observer.logBeliefUpdate(this.id, currentBelief, updatedBelief);
+      const strength = Math.abs(updatedBelief.confidence - currentBelief.confidence);
+      const saliency = 1; // Default saliency
+      this.observer.logBeliefUpdate(this.id, currentBelief, updatedBelief, strength, saliency);
     }
   }
 
@@ -575,11 +739,21 @@ private confidenceThresholds: ConfidenceThresholds;
    * 
    * @param newFrame The new frame to set
    */
-  setFrame(newFrame: Frame): void {
+  setFrame(newFrame: Frame, trigger: string = 'Manual frame change'): void {
     const oldFrame = this.frame;
     this.frame = newFrame;
 
     this.observer.logFrameChange(this.id, oldFrame, newFrame);
+    
+    // Enhanced frame switching detection (Paper Section 5)
+    const reasoningModeChange = this.detectReasoningModeChange(oldFrame, newFrame);
+    this.observer.logFrameSwitchingDetection(
+      this.id,
+      oldFrame,
+      newFrame,
+      trigger,
+      reasoningModeChange
+    );
 
     // Potentially update belief confidences based on new frame
     this.recomputeBeliefConfidences();
@@ -609,7 +783,17 @@ private confidenceThresholds: ConfidenceThresholds;
         
         this.beliefs.set(proposition, updatedBelief);
         this.memory.storeEntity(updatedBelief);
-        this.observer.logBeliefUpdate(this.id, belief, updatedBelief);
+        const strength = Math.abs(updatedBelief.confidence - belief.confidence);
+        const saliency = 1; // Default saliency
+        this.observer.logBeliefUpdate(this.id, belief, updatedBelief, strength, saliency);
+        
+        // Track belief revision due to frame change
+        this.trackBeliefRevision(
+          proposition, 
+          newConfidence, 
+          `Frame-based recomputation: ${this.frame.id}`,
+          `Previous frame: ${this.frame.id}`
+        );
       }
     })); // End Promise.all map
   }
@@ -658,4 +842,103 @@ private confidenceThresholds: ConfidenceThresholds;
    * Frame backing property
    */
   private _frame: Frame;
+  
+  /**
+   * Track belief revision for a proposition
+   */
+  private trackBeliefRevision(
+    proposition: string, 
+    confidence: number, 
+    reason: string, 
+    evidence?: string
+  ): void {
+    if (!this.beliefRevisionHistory.has(proposition)) {
+      this.beliefRevisionHistory.set(proposition, []);
+    }
+    
+    const history = this.beliefRevisionHistory.get(proposition)!;
+    history.push({
+      timestamp: Date.now(),
+      confidence,
+      reason,
+      evidence
+    });
+    
+    // Log belief revision chain event
+    this.observer.logBeliefRevisionChain(
+      this.id,
+      proposition,
+      history,
+      confidence
+    );
+  }
+  
+  /**
+   * Detect reasoning mode change between frames
+   */
+  private detectReasoningModeChange(oldFrame: Frame, newFrame: Frame): string {
+    const oldType = this.getFrameReasoningType(oldFrame);
+    const newType = this.getFrameReasoningType(newFrame);
+    
+    if (oldType === newType) {
+      return `Same reasoning mode (${oldType}) but different parameters`;
+    }
+    
+    return `Reasoning mode change: ${oldType} → ${newType}`;
+  }
+  
+  /**
+   * Classify frame reasoning type for detection
+   */
+  private getFrameReasoningType(frame: Frame): string {
+    const frameId = frame.id.toLowerCase();
+    
+    if (frameId.includes('efficiency')) return 'performance-oriented';
+    if (frameId.includes('thoroughness')) return 'detail-oriented';
+    if (frameId.includes('security')) return 'risk-oriented';
+    if (frameId.includes('pro') || frameId.includes('debate')) return 'advocacy-oriented';
+    if (frameId.includes('con') || frameId.includes('critical')) return 'critical-oriented';
+    if (frameId.includes('judge')) return 'evaluation-oriented';
+    
+    return 'general-reasoning';
+  }
+  
+  /**
+   * Extract debate context from agent's current context and memory using LLM
+   * Used for LLM-based relevance scoring (no hardcoded keywords)
+   */
+  private async extractDebateContext(): Promise<string> {
+    // Get current context as string
+    const contextStr = this.context.toString();
+    
+    // If context is too short, use fallback
+    if (contextStr.length < 20) {
+      return `${this.frame.name} frame discussion involving ${this.name}`;
+    }
+    
+    try {
+      // Use LLM to extract debate topic/context without hardcoded keywords
+      const extractedContext = await (this.llmClient as any).extractDebateTopicFromContext(
+        contextStr,
+        this.id,
+        this.name
+      );
+      
+      return extractedContext || `${this.frame.name} frame discussion involving ${this.name}`;
+    } catch (error) {
+      // Fallback on LLM error
+      return `${this.frame.name} frame discussion involving ${this.name}`;
+    }
+  }
+  
+  /**
+   * Get a preview of content for logging (truncated if too long)
+   */
+  private getContentPreview(content: unknown): string {
+    const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+    if (contentStr.length <= 200) {
+      return contentStr;
+    }
+    return contentStr.substring(0, 200) + '...';
+  }
 }

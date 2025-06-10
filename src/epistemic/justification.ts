@@ -407,3 +407,36 @@ export class ExternalJustificationElement extends JustificationElement {
     return `External justification from ${this.source} using frame ${this.sourceFrameId}`;
   }
 }
+
+/**
+ * Justification element based on an agent's internal reasoning process.
+ */
+export class InternalReasoningJustificationElement extends JustificationElement {
+  /**
+   * Create a new internal reasoning justification element.
+   * @param source The ID of the agent performing the reasoning.
+   * @param reasoning A description of the reasoning process.
+   * @param id Optional ID.
+   */
+  constructor(source: string, reasoning: string, id?: string) {
+    super('internal_reasoning', source, reasoning, id);
+  }
+
+  /**
+   * Create a deep copy of this element.
+   */
+  clone(): InternalReasoningJustificationElement {
+    return new InternalReasoningJustificationElement(
+      this.source,
+      this.content,
+      this.id
+    );
+  }
+
+  /**
+   * Create a string representation of the element.
+   */
+  toString(): string {
+    return `Internal reasoning by ${this.source}: "${this.content}"`;
+  }
+}

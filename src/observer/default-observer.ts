@@ -5,6 +5,7 @@ import { BaseObserver, Observer } from './observer';
 import { EventType, AnyEvent } from './event-types';
 import { Perception, ObservationPerception, MessagePerception, ToolResultPerception } from '../core/perception'; // Import specific types
 import { displayMessage, COLORS } from '../core/cli-formatter'; // Import shared formatter
+import { InternalReasoningJustificationElement } from '../epistemic/justification';
 
 /**
  * Default observer implementation with enhanced logging capabilities
@@ -114,20 +115,58 @@ export class DefaultObserver extends BaseObserver implements Observer {
           confidence: event.belief.confidence
         };
         break;
-      case EventType.BeliefUpdate:
-        jsonData = {
-          type: 'belief_update',
-          oldProposition: event.oldBelief.proposition,
-          newProposition: event.newBelief.proposition,
-          oldConfidence: event.oldBelief.confidence,
-          newConfidence: event.newBelief.confidence
-        };
-        break;
+      case EventType.BeliefUpdate: {
+        const agentName = event.agentName || event.entityId;
+        const title = `[BELIEF UPDATE] (Agent: ${agentName})`;
+        const message = `  Proposition: "${event.newBelief.proposition}"\n  Confidence: ${event.oldBelief.confidence.toFixed(2)} -> ${event.newBelief.confidence.toFixed(2)} (Strength: ${event.strength.toFixed(2)}, Saliency: ${event.saliency.toFixed(2)})`;
+        displayMessage(title, message, COLORS.info);
+        return; // Return to prevent default JSON logging
+      }
       case EventType.FrameChange:
         jsonData = {
           type: 'frame_change',
           oldFrame: event.oldFrame.name,
           newFrame: event.newFrame.name
+        };
+        break;
+      case EventType.ConfidenceThresholdCheck:
+        jsonData = {
+          type: 'confidence_threshold_check',
+          proposition: event.belief.proposition,
+          confidence: event.belief.confidence,
+          threshold: event.threshold,
+          thresholdType: event.thresholdType,
+          passed: event.passed,
+          context: event.context
+        };
+        break;
+      case EventType.BeliefRevisionChain:
+        jsonData = {
+          type: 'belief_revision_chain',
+          proposition: event.proposition,
+          revisionCount: event.revisionHistory.length,
+          currentConfidence: event.currentConfidence,
+          latestRevision: event.revisionHistory[event.revisionHistory.length - 1]
+        };
+        break;
+      case EventType.MathematicalFormulism:
+        jsonData = {
+          type: 'mathematical_formalism',
+          equation: event.equation,
+          section: event.section,
+          parameters: event.parameters,
+          confidenceChange: `${event.oldValue.toFixed(3)} -> ${event.newValue.toFixed(3)}`,
+          context: event.context
+        };
+        break;
+      case EventType.FrameSwitchingDetection:
+        jsonData = {
+          type: 'frame_switching_detection',
+          previousFrame: event.previousFrame.id,
+          newFrame: event.newFrame.id,
+          trigger: event.trigger,
+          reasoningModeChange: event.reasoningModeChange,
+          confidenceImpact: event.confidenceImpact
         };
         break;
       case EventType.PlanExecution:
@@ -232,6 +271,10 @@ export class DefaultObserver extends BaseObserver implements Observer {
       case EventType.ConflictDetection:
       case EventType.ConflictResolution:
       case EventType.FrameChange:
+      case EventType.FrameSwitchingDetection:
+      case EventType.ConfidenceThresholdCheck:
+      case EventType.BeliefRevisionChain:
+      case EventType.MathematicalFormulism:
       case EventType.GoalAdoption:
       case EventType.GoalCompletion:
       case EventType.PlanCreation:

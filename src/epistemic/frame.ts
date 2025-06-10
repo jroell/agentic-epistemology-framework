@@ -54,8 +54,10 @@ export interface Frame {
    * @returns Promise resolving to the interpreted perception
    */
   interpretPerception(
-    perception: Perception, 
-    llmClient: LLMClient
+    perception: Perception,
+    llmClient: LLMClient,
+    agentId: string,
+    agentName: string,
   ): Promise<Perception>;
 
   /**
@@ -164,11 +166,13 @@ export abstract class BaseFrame implements Frame {
 
   async interpretPerception(
     perception: Perception,
-    llmClient: LLMClient
+    llmClient: LLMClient,
+    agentId: string,
+    agentName: string,
   ): Promise<Perception> {
     try {
       // Default implementation - use LLM to interpret based on frame
-      const interpretedData = await llmClient.interpretPerceptionData(perception.data, this);
+      const interpretedData = await llmClient.interpretPerceptionData(perception.data, this, agentId, agentName);
       perception.data = interpretedData;
       return perception;
     } catch (error) {
@@ -320,7 +324,7 @@ export abstract class BaseFrame implements Frame {
     llmClient: LLMClient
   ): Promise<number> {
     // Default implementation - use LLM to judge evidence saliency
-    return llmClient.judgeEvidenceSaliency(element, this);
+    return (llmClient as any).judgeEvidenceSaliencyForFrame(element, this, undefined, undefined, undefined);
   }
 }
 

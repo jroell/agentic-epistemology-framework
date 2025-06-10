@@ -16,9 +16,11 @@ export interface LLMClient {
    * Interpret perception data through a specific frame
    * @param data The perception data to interpret
    * @param frame The cognitive frame to use for interpretation
+   * @param agentId The ID of the agent interpreting the perception
+   * @param agentName The name of the agent interpreting the perception
    * @returns Promise resolving to the interpreted data
    */
-  interpretPerceptionData(data: any, frame: Frame): Promise<any>;
+  interpretPerceptionData(data: any, frame: Frame, agentId: string, agentName: string): Promise<any>;
   
   /**
    * Extract relevant propositions from content using a specific frame
@@ -32,9 +34,16 @@ export interface LLMClient {
    * Judge the strength of evidence for a proposition
    * @param element The justification element to evaluate
    * @param proposition The proposition being evaluated
+   * @param agentId Optional agent ID for enhanced context logging
+   * @param agentName Optional agent name for enhanced context logging
    * @returns Promise resolving to a confidence score between 0 and 1
    */
-  judgeEvidenceStrength(element: JustificationElement, proposition: string): Promise<number>;
+  judgeEvidenceStrength(
+    element: JustificationElement, 
+    proposition: string,
+    agentId?: string,
+    agentName?: string
+  ): Promise<number>;
   
   /**
    * Judge the saliency of evidence based on a frame
@@ -42,7 +51,13 @@ export interface LLMClient {
    * @param frame The cognitive frame to use for evaluation
    * @returns Promise resolving to a saliency score between 0 and 1
    */
-  judgeEvidenceSaliency(element: JustificationElement, frame: Frame): Promise<number>;
+  judgeEvidenceSaliencyForFrame(
+   element: JustificationElement,
+   frame: Frame,
+   proposition: string,
+   agentName: string,
+   context: string,
+ ): Promise<number>;
   
   /**
    * Judge the trustworthiness of a source based on a frame
