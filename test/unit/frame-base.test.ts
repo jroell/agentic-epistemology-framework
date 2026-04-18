@@ -32,9 +32,10 @@ import {
   TEST_EVIDENCE, 
   TEST_CONTEXTS 
 } from '../fixtures/test-data';
-import { 
-  assertValidConfidence, 
-  assertConfidenceEqual, 
+import {
+  assertValidConfidence,
+  assertConfidenceEqual,
+  assertValidCompatibility,
   assertFrameImplementsInterface,
   testFrameRegistry,
   cleanupFrameRegistry,
@@ -298,23 +299,29 @@ describe('Frame Base Implementations', () => {
       
       const evidence = [createTestEvidence('performance', 'test data', 'test_source')];
       const result = await frame.updateConfidenceForEvidence(0.5, evidence, 'test');
-      
+
       assertValidConfidence(result);
-      
-      // Should have called LLM methods to calculate context
-      assertLLMCalled(mockLLM, 'judgeEvidenceSaliency', 1);
+
+      // Should have called LLM methods to calculate context.
+      // judgeEvidenceSaliency is called twice: once for evidence weighting,
+      // and once for the frame-aware source trust probe performed by the
+      // LearnedSourceTrustEvaluator on first evaluation of a source.
+      assertLLMCalled(mockLLM, 'judgeEvidenceSaliency', 2);
       assertLLMCalled(mockLLM, 'judgeEvidenceStrength', 1);
     });
 
     it('should interpret perceptions through frame lens', async () => {
       const interpretation = 'Frame-specific interpretation of perception';
       mockLLM.setInterpretation('test-composable_test data', interpretation);
-      
-      const perception = new Perception('test data', 'message', 'test_source');
+
+      // Perception constructor is (id, data, source); the mock looks up
+      // interpretations by `${frameType}_${data}`, so the data must be the
+      // string that was registered under the 'test-composable_test data' key.
+      const perception = new Perception('perception-1', 'test data', 'test_source');
       const agentContext = createTestAgentContext();
-      
+
       const interpretedPerception = await frame.interpretPerception(perception, agentContext);
-      
+
       expect(interpretedPerception.data).toBe(interpretation);
       assertLLMCalled(mockLLM, 'interpretPerceptionData', 1);
     });

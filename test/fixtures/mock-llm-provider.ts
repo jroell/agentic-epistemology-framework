@@ -55,14 +55,20 @@ export class MockLLMProvider implements ILLMProvider {
 
     await this.simulateLatency();
 
-    // Create key for lookup
-    const key = `${evidence.type}_${proposition}_${evidence.content || ''}`;
-    
-    // Return configured response or default
-    const strength = this.config.evidenceStrengthMap.get(key) ?? 
-                    this.config.evidenceStrengthMap.get(evidence.type) ??
-                    this.config.evidenceStrengthMap.get(proposition) ??
-                    this.config.defaultStrength;
+    const contentStr = typeof evidence.content === 'string'
+      ? evidence.content
+      : JSON.stringify(evidence.content ?? '');
+
+    // Tests sometimes configure strength by content-based keys such as
+    //   `${content}_${proposition}` or just the content tag on its own.
+    const strength =
+      this.config.evidenceStrengthMap.get(`${evidence.type}_${proposition}_${contentStr}`) ??
+      this.config.evidenceStrengthMap.get(`${evidence.type}_${proposition}`) ??
+      this.config.evidenceStrengthMap.get(`${contentStr}_${proposition}`) ??
+      this.config.evidenceStrengthMap.get(contentStr) ??
+      this.config.evidenceStrengthMap.get(evidence.type) ??
+      this.config.evidenceStrengthMap.get(proposition) ??
+      this.config.defaultStrength;
 
     return Math.max(0, Math.min(1, strength));
   }
@@ -83,14 +89,19 @@ export class MockLLMProvider implements ILLMProvider {
 
     await this.simulateLatency();
 
-    // Create key for lookup
-    const key = `${frame.frameType}_${evidence.type}_${evidence.content || ''}`;
-    
-    // Return configured response or default
-    const saliency = this.config.evidenceSaliencyMap.get(key) ?? 
-                    this.config.evidenceSaliencyMap.get(`${frame.frameType}_${evidence.type}`) ??
-                    this.config.evidenceSaliencyMap.get(frame.frameType) ??
-                    this.config.defaultSaliency;
+    const contentStr = typeof evidence.content === 'string'
+      ? evidence.content
+      : JSON.stringify(evidence.content ?? '');
+
+    // Create keys for lookup. Tests configure saliency by either
+    //   `${frame.frameType}_${content}` (where content is a semantic tag like 'performance')
+    // or the more specific form `${frame.frameType}_${evidence.type}_${content}`.
+    const saliency =
+      this.config.evidenceSaliencyMap.get(`${frame.frameType}_${evidence.type}_${contentStr}`) ??
+      this.config.evidenceSaliencyMap.get(`${frame.frameType}_${evidence.type}`) ??
+      this.config.evidenceSaliencyMap.get(`${frame.frameType}_${contentStr}`) ??
+      this.config.evidenceSaliencyMap.get(frame.frameType) ??
+      this.config.defaultSaliency;
 
     return Math.max(0, Math.min(1, saliency));
   }

@@ -105,16 +105,23 @@ export {
 // SYSTEM INITIALIZATION
 // ============================================================================
 
+import { registerAllFrameTypes as _registerAllFrameTypes } from './solid-frames';
+import { FrameRegistry as _FrameRegistry } from './frame-base';
+import { UpdateStrategyFactory as _UpdateStrategyFactory } from './frame-strategies';
+
 /**
  * Initialize the SOLID frame system with all default frame types
  * Call this once at application startup
  */
 export function initializeFrameSystem(): void {
   try {
-    const { registerAllFrameTypes } = require('./solid-frames');
-    registerAllFrameTypes();
-    console.log('✅ AEF Frame System initialized successfully');
+    _registerAllFrameTypes();
+    if (process.env.AEF_SILENT !== '1') {
+      // eslint-disable-next-line no-console
+      console.log('✅ AEF Frame System initialized successfully');
+    }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.warn('⚠️  Frame system initialization failed:', error);
   }
 }
@@ -128,33 +135,20 @@ export function getFrameSystemInfo(): {
   mathematicalFormalism: string[];
   solidPrinciples: string[];
 } {
-  try {
-    const { FrameRegistry } = require('./frame-base');
-    const { UpdateStrategyFactory } = require('./frame-strategies');
-    
-    return {
-      availableFrameTypes: FrameRegistry.getAvailableFrameTypes(),
-      availableUpdateStrategies: UpdateStrategyFactory.getAvailableStrategies(),
-      mathematicalFormalism: [
-        'Frame-Weighted Update: conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e,P)',
-        'Source-Trust Update: conf_new = (1 - α) * conf_old + α * trust(e_source, F)',
-        'Bayesian Update: P(P|e) = P(e|P) * conf_old / [P(e|P) * conf_old + P(e|¬P) * (1 - conf_old)]'
-      ],
-      solidPrinciples: [
-        'Single Responsibility: Each interface has one focused purpose',
-        'Open/Closed: New frames can be added without modifying existing code',
-        'Liskov Substitution: All frames are truly interchangeable',
-        'Interface Segregation: Frames implement only needed capabilities',
-        'Dependency Inversion: Depends on abstractions, not concrete implementations'
-      ]
-    };
-  } catch (error) {
-    console.warn('Frame system info unavailable:', error);
-    return {
-      availableFrameTypes: [],
-      availableUpdateStrategies: [],
-      mathematicalFormalism: [],
-      solidPrinciples: []
-    };
-  }
+  return {
+    availableFrameTypes: _FrameRegistry.getAvailableFrameTypes(),
+    availableUpdateStrategies: _UpdateStrategyFactory.getAvailableStrategies(),
+    mathematicalFormalism: [
+      'Frame-Weighted Update: conf_new = (1 - w_F(e)) * conf_old + w_F(e) * C(e,P)',
+      'Source-Trust Update: conf_new = (1 - α) * conf_old + α * trust(e_source, F)',
+      'Bayesian Update: P(P|e) = P(e|P) * conf_old / [P(e|P) * conf_old + P(e|¬P) * (1 - conf_old)]'
+    ],
+    solidPrinciples: [
+      'Single Responsibility: Each interface has one focused purpose',
+      'Open/Closed: New frames can be added without modifying existing code',
+      'Liskov Substitution: All frames are truly interchangeable',
+      'Interface Segregation: Frames implement only needed capabilities',
+      'Dependency Inversion: Depends on abstractions, not concrete implementations'
+    ]
+  };
 }

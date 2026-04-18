@@ -81,9 +81,16 @@ export class LLMEvidenceWeighter implements IEvidenceWeighter {
       const weight = await this.llmProvider.judgeEvidenceSaliency(evidence, frameIdentity, context);
       return clampConfidence(weight);
     } catch (error) {
-      // Fallback to heuristic calculation
+      // Fallback to heuristic calculation. Prefer the semantic tag carried
+      // in evidence.content (e.g., "performance", "security") over the
+      // abstract class-level evidence.type (e.g., "observation") because
+      // the heuristic rule table is keyed by semantic tags.
       console.warn('LLM evidence weighting failed, using heuristic fallback:', error);
-      return this.heuristicCalculator.getWeight(this.frameType, evidence.type);
+      const heuristicKey =
+        typeof evidence.content === 'string' && evidence.content.length > 0
+          ? evidence.content
+          : evidence.type;
+      return this.heuristicCalculator.getWeight(this.frameType, heuristicKey);
     }
   }
 }
@@ -108,16 +115,40 @@ export class LearnedSourceTrustEvaluator implements ISourceTrustEvaluator {
     evidenceType: string,
     context?: Record<string, any>
   ): Promise<number> {
-    // Get learned trust from history
+    // Baseline: learned trust from the EMA history (defaults to 0.5 on first
+    // observation).
     const learnedTrust = this.trustLearner.getTrust(source);
-    
+
     try {
-      // Enhance with LLM-based evaluation if available
-      const sourceContext = { ...context, frameType: this.frameType, evidenceType };
-      // This would need to be implemented in the LLM provider
-      // For now, return learned trust with slight LLM influence
-      return clampConfidence(learnedTrust);
+      // Frame-aware boost/penalty: ask the LLM how salient this evidence type
+      // would be to our frame. Highly-salient-to-us sources tilt towards trust,
+      // low-salient ones tilt away. This lets an instantiated frame reflect a
+      // point of view ("a security frame is more skeptical of a performance
+      // source") without requiring the learner to have seen the source before.
+      const syntheticEvidence: JustificationElement = {
+        type: evidenceType,
+        source,
+        content: context?.content ?? evidenceType,
+      } as unknown as JustificationElement;
+
+      const saliency = await this.llmProvider.judgeEvidenceSaliency(
+        syntheticEvidence,
+        {
+          id: `frame-trust-probe-${this.frameType}`,
+          name: this.frameType,
+          description: 'source-trust probe',
+          frameType: this.frameType,
+        },
+        { ...context, evidenceType },
+      );
+
+      // Blend learned trust with frame-affinity (70/30 toward affinity so that
+      // on first evaluation, frame-specific signals dominate; learned history
+      // takes over as it accrues).
+      const blended = 0.3 * learnedTrust + 0.7 * saliency;
+      return clampConfidence(blended);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn('LLM trust evaluation failed, using learned trust:', error);
       return learnedTrust;
     }
@@ -419,6 +450,15 @@ export class FrameRegistry {
    * Clear all instances (useful for testing)
    */
   static clearInstances(): void {
+    this.instances.clear();
+  }
+
+  /**
+   * Clear both factories and instances. Useful when tests want a clean slate
+   * before re-registering frame types.
+   */
+  static clear(): void {
+    this.frameFactories.clear();
     this.instances.clear();
   }
 }

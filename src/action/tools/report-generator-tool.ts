@@ -1,7 +1,7 @@
 import { FunctionTool } from '../tool';
 import { Capability } from '../capability';
 import { Context } from '../../core/context';
-import { SchemaType } from '@google/generative-ai';
+import { SchemaType } from './schema-types';
 
 export class ReportGeneratorTool extends FunctionTool {
   constructor() {

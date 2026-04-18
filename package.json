@@ -1,43 +1,60 @@
 {
   "name": "agentic-epistemology-framework",
-  "version": "1.0.0",
-  "description": "A TypeScript reference implementation of the Agentic Epistemology Framework (AEF)",
+  "version": "2.0.0",
+  "description": "TypeScript reference implementation of the Agentic Epistemology Framework (AEF). Provider-agnostic via the Vercel AI SDK with OpenRouter by default.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
-    "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "clean": "rm -rf dist",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
     "docs": "typedoc --out docs src",
-    "clean": "rimraf dist",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
     "agent",
     "epistemology",
     "ai",
+    "ai-sdk",
+    "openrouter",
     "reasoning",
     "belief",
     "multi-agent",
-    "frame"
+    "frame",
+    "vercel-ai-sdk"
   ],
-  "author": "Your Name",
+  "author": "Jason Roell",
   "license": "MIT",
+  "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.0",
+    "@ai-sdk/google": "^2.0.0",
+    "@ai-sdk/openai": "^2.0.0",
+    "@openrouter/ai-sdk-provider": "^1.0.0",
+    "ai": "^5.0.0",
+    "chalk": "^5.4.1",
+    "dotenv": "^16.5.0",
+    "zod": "^3.23.8"
+  },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.11",
-    "@typescript-eslint/eslint-plugin": "^5.57.1",
-    "@typescript-eslint/parser": "^5.57.1",
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "@vitest/coverage-v8": "^3.2.2",
     "@vitest/ui": "^3.2.2",
-    "eslint": "^8.37.0",
-    "jest": "^29.5.0",
-    "prettier": "^2.8.7",
-    "rimraf": "^4.4.1",
-    "ts-jest": "^29.1.0",
-    "ts-node": "^10.9.2",
-    "typedoc": "^0.24.4",
-    "typescript": "^5.0.4",
+    "eslint": "^9.17.0",
+    "msw": "^2.13.4",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typedoc": "^0.27.6",
+    "typescript": "^5.8.2",
     "vitest": "^3.2.2"
   },
   "files": [
@@ -50,14 +67,6 @@
     "url": "https://github.com/jroell/agentic-epistemology-framework.git"
   },
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "dependencies": {
-    "@google/generative-ai": "^0.24.0",
-    "@types/react": "^19.1.2",
-    "chalk": "^5.4.1",
-    "dotenv": "^16.5.0",
-    "ink": "^5.2.0",
-    "react": "^18.3.1"
+    "node": ">=22.0.0"
   }
 }

@@ -30,6 +30,9 @@ yarn-error.log*
 # Coverage directory
 coverage/
 
+# Vitest HTML reporter output
+html/
+
 # Temporary files
 temp/
 tmp/

@@ -1,22 +1,29 @@
 # Agentic Epistemology Framework (AEF)
 
-A TypeScript reference implementation of the Agentic Epistemology Framework as described in the paper "Agentic Epistemology: A Structured Framework for Reasoning in Autonomous Agents and Synthetic Societies".
+A TypeScript reference implementation of the Agentic Epistemology Framework from the paper *"Agentic Epistemology: A Structured Framework for Reasoning in Autonomous Agents and Synthetic Societies."*
+
+> **v2.0 refactor note.** The framework is now provider-agnostic. All LLM calls go through the [Vercel AI SDK](https://ai-sdk.dev) (`ai@^5`) and default to [OpenRouter](https://openrouter.ai), which means you can swap between Claude, GPT, Gemini, Llama, or a local gateway by changing a single config line. The legacy `GeminiClient` still works as a thin backwards-compat shim on top of the new `AiSdkClient`.
 
 ## Overview
 
-The Agentic Epistemology Framework (AEF) provides a principled approach to modeling the epistemic dimensions of autonomous agents - how they form and justify beliefs, manage uncertainty, revise knowledge, and resolve conflicts. This implementation serves as a reference for researchers and practitioners seeking to incorporate epistemic reasoning into agent architectures.
+AEF provides a principled way to model the epistemic dimensions of autonomous agents: how they form and justify beliefs, manage uncertainty, revise knowledge, and resolve conflicts. This implementation is a reference for researchers and practitioners who want to bolt epistemic reasoning onto an agent architecture.
 
 ## Key Features
 
-- **Epistemic Modeling**: Explicit representation of beliefs, justifications, confidence levels, and frames.
-- **Frame-Based Reasoning**: Support for different cognitive perspectives that influence belief formation and update.
-- **Multi-Agent Interactions**: Mechanisms for conflict detection and resolution through justification exchange.
-- **Observer Pattern**: Comprehensive tracing of epistemic events for transparency and debugging.
-- **Modular Architecture**: Flexible, extensible components that can be integrated into various agent architectures.
+- **Epistemic Modeling**: Explicit beliefs, justifications, confidence levels, frames.
+- **Frame-Based Reasoning**: Cognitive perspectives that shape how evidence is weighed.
+- **Multi-Agent Interactions**: Conflict detection and justification exchange.
+- **Observer Pattern**: Traceable epistemic events for debugging and transparency.
+- **Provider-Agnostic LLM Layer**: Swap OpenRouter / OpenAI / Anthropic / Google in one line.
+- **Modular Architecture**: Compose components into whatever agent setup you need.
+
+## Requirements
+
+- Node.js **>= 22**
+- npm, pnpm, or yarn
+- An API key for at least one LLM provider (OpenRouter is the simplest: it fronts them all)
 
 ## Installation
-
-Currently, this is a reference implementation. To use it, clone the repository and build the project:
 
 ```bash
 git clone https://github.com/jroell/agentic-epistemology-framework.git
@@ -25,242 +32,230 @@ npm install
 npm run build
 ```
 
-## Getting Started
+## Environment Setup
 
-Clone the repository and run the Debate Simulation using ts-node:
+Copy the template and drop in a key for whichever provider you want to use:
 
-### macOS / Linux
 ```bash
-cd agentic-epistemology-framework
-npx ts-node examples/debate-simulation.ts
+cp .env.example .env
 ```
 
-### Windows (PowerShell)
-```powershell
-cd agentic-epistemology-framework
-npx ts-node examples/debate-simulation.ts
+OpenRouter is the default and is the easiest path because one key gives you access to every supported model. Set any of the following in `.env` as needed:
+
+```
+# Recommended: OpenRouter (one key, all providers)
+OPENROUTER_API_KEY=sk-or-...
+
+# Optional override: pick any OpenRouter model slug
+AEF_DEFAULT_MODEL=anthropic/claude-sonnet-4
+
+# Optional: attribution headers shown on openrouter.ai
+OPENROUTER_SITE_URL=https://your.app
+OPENROUTER_SITE_NAME=Your App
+
+# Or go direct to a single provider
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_GENERATIVE_AI_API_KEY=...   # legacy GEMINI_API_KEY also works
+```
+
+## Quickstart
+
+### Default: OpenRouter + Claude Sonnet
+
+```ts
+import { createDefaultAgent } from 'agentic-epistemology-framework';
+
+// Uses OPENROUTER_API_KEY + AEF_DEFAULT_MODEL (falls back to anthropic/claude-sonnet-4)
+const agent = createDefaultAgent('agent_1', 'ResearchAgent');
+```
+
+### Pick a specific provider / model
+
+```ts
+import { AiSdkClient, createLanguageModel, createDefaultAgent } from 'agentic-epistemology-framework';
+
+const model = createLanguageModel({
+  provider: 'openrouter',
+  model: 'openai/gpt-4.1-mini',
+});
+
+const agent = createDefaultAgent('agent_1', 'ResearchAgent', {
+  llmClient: new AiSdkClient({ model }),
+});
+```
+
+Switch the provider without touching anything else:
+
+```ts
+// Anthropic direct
+const model = createLanguageModel({ provider: 'anthropic', model: 'claude-sonnet-4-20250514' });
+
+// OpenAI direct
+const model = createLanguageModel({ provider: 'openai', model: 'gpt-4.1-mini' });
+
+// Google direct
+const model = createLanguageModel({ provider: 'google', model: 'gemini-2.5-pro' });
+```
+
+### Use your own Vercel AI SDK model
+
+Already have a configured `LanguageModelV2` (custom provider, gateway, proxy, local model)? Drop it in:
+
+```ts
+import { AiSdkClient } from 'agentic-epistemology-framework';
+import { myCustomModel } from './my-model';
+
+const llmClient = new AiSdkClient({ model: myCustomModel, temperature: 0.3 });
+```
+
+### Testing without a network
+
+`MockLLMClient` returns deterministic, configurable responses:
+
+```ts
+import { Agent, MockLLMClient, EfficiencyFrame } from 'agentic-epistemology-framework';
+
+const llmClient = new MockLLMClient({
+  defaultScore: 0.7,
+  strengthByProposition: { DataIsReliable: 0.9 },
+  planWithAllTools: true,
+});
 ```
 
 ## Basic Usage
 
-```typescript
-/**
- * Simple agent example demonstrating the AEF
- */
-import * as dotenv from 'dotenv';
-import { Agent } from './src/core/agent';
-import { Registry } from './src/core/registry';
-import { DefaultMemory } from './src/core/memory';
-import { GeminiClient } from './src/llm/gemini-client';
-import { DefaultObserver, LogLevel } from './src/observer/default-observer';
-import { EfficiencyFrame } from './src/epistemic/frame';
-import { Belief } from './src/epistemic/belief';
-import { Justification, ObservationJustificationElement } from './src/epistemic/justification';
-import { ObservationPerception } from './src/core/perception';
-import { FunctionTool } from './src/action/tool';
-import { Capability } from './src/action/capability';
-import { TaskGoal } from './src/action/goal';
-import { displayMessage, displaySystemMessage, COLORS } from './src/core/cli-formatter';
+```ts
+import 'dotenv/config';
+import {
+  Agent,
+  createDefaultAgent,
+  Registry,
+  DefaultMemory,
+  DefaultObserver,
+  LogLevel,
+  EfficiencyFrame,
+  Belief,
+  Justification,
+  ObservationJustificationElement,
+  ObservationPerception,
+  FunctionTool,
+  Capability,
+  TaskGoal,
+  displayMessage,
+  displaySystemMessage,
+  COLORS,
+} from 'agentic-epistemology-framework';
 
-// Load environment variables
-dotenv.config();
+const agent = createDefaultAgent('agent_1', 'ResearchAgent');
 
-// Setup components
-const registry = new Registry();
-const memory = new DefaultMemory();
-const observer = new DefaultObserver(1000, LogLevel.Debug, true);
-
-// Create a frame
-const efficiencyFrame = new EfficiencyFrame();
-
-// Load API key from environment
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.error("Error: GEMINI_API_KEY environment variable not set.");
-  process.exit(1);
-}
-const geminiClient = new GeminiClient(apiKey);
-
-// Create an agent
-const agent = new Agent(
-  'agent_1',                                // Agent ID
-  'ResearchAgent',                          // Agent Name
-  [],                                       // Initial beliefs
-  efficiencyFrame,                          // Initial Frame
-  new Set([Capability.DataAnalysis]),       // Agent capabilities
-  registry,                                 // Registry instance
-  geminiClient,                             // GeminiClient instance
-  memory,                                   // Memory instance
-  observer                                  // Observer instance
-);
-
-// Create and register a tool
-const dataAnalysisTool = new FunctionTool(
-  (context: any) => {
-    displayMessage('System', 'Data analysis tool executed', COLORS.info);
-    return { summary: 'Analysis complete', trends: ['increasing', 'seasonal'] };
-  },
+// Register a tool the agent can call
+agent.registry.registerTool(new FunctionTool(
+  () => ({ summary: 'Analysis complete', trends: ['increasing', 'seasonal'] }),
   'Data Analyzer',
   'Performs statistical analysis on data',
-  new Set([Capability.DataAnalysis])
-);
-registry.registerTool(dataAnalysisTool);
-
-// Add initial belief
-const initialBelief = new Belief(
-  'DataAnalysisRequiresPreprocessing',
-  0.8,
-  new Justification([
-    new ObservationJustificationElement(
-      'past_experience',
-      { observation: 'Previous data analysis tasks required preprocessing' }
-    )
-  ])
-);
-
-// Agent perceives an observation
-agent.perceive(new ObservationPerception(
-  'memory',
-  { observation: 'Previous data analysis tasks required preprocessing' },
-  'past_experience'
+  new Set([Capability.DataAnalysis]),
 ));
 
-// Create a goal
-const researchGoal = new TaskGoal(
+// Seed a belief
+agent.perceive(new ObservationPerception(
+  'past_experience',
+  { observation: 'Previous data analysis tasks required preprocessing' },
+  'past_experience',
+));
+
+const goal = new TaskGoal(
   'data_analysis',
   { dataset: 'customer_feedback', objective: 'sentiment_trends' },
-  0.7
+  0.7,
 );
 
-// Run agent
-async function runAgent() {
-  displaySystemMessage(`Creating a plan for goal: ${researchGoal.description}`);
-  const plan = await agent.plan(researchGoal);
-
-  if (plan) {
-    displaySystemMessage(`Executing plan: ${plan.toString()}`);
-    await agent.executePlan(plan);
-    displaySystemMessage(`Plan status: ${plan.status}`);
-  } else {
-    displayMessage('System', 'Failed to create a plan for the goal', COLORS.error);
-  }
-
-  // Inspect the agent's beliefs
-  displaySystemMessage(`Agent's beliefs (confidence > 0.5)`);
-  const beliefs = agent.getBeliefs(0.5);
-  let beliefText = beliefs.length > 0 ? '' : 'No beliefs with confidence > 0.5';
-  beliefs.forEach((belief: Belief) => {
-    beliefText += `- ${belief.toString()}\n`;
-  });
-  displayMessage('Agent', beliefText.trim(), COLORS.agent1);
+const plan = await agent.plan(goal);
+if (plan) {
+  await agent.executePlan(plan);
+  displaySystemMessage(`Plan status: ${plan.status}`);
 }
-
-runAgent().catch(error => {
-  console.error('Error running agent:', error);
-});
 ```
 
 ## Advanced Features
 
 ### Belief Formation and Update
 
-```typescript
-import { Belief, Justification, ObservationJustificationElement, ToolResultJustificationElement, JustificationElement } from './src/epistemic'; // Import from epistemic index
-import { ObservationPerception, ToolResultPerception } from './src/core/perception'; // Import from core index
-import { GeminiClient } from './src/llm/gemini-client'; // Ensure GeminiClient is imported
-import { Frame } from './src/epistemic/frame'; // Ensure Frame is imported
+The `Frame` uses the configured `LLMClient` (by default `AiSdkClient`) to score how strongly new evidence supports or contradicts existing beliefs, and how salient that evidence is through the frame's lens. You don't call the LLM directly:
 
-// Assume agent and geminiClient are already initialized as in Basic Usage
+```ts
+import { ObservationPerception, ToolResultPerception } from 'agentic-epistemology-framework';
 
-// --- Belief Formation ---
-// Agent perceives an observation
 agent.perceive(new ObservationPerception(
   'sensor_A',
   { reading: 0.75, timestamp: Date.now() },
-  'Sensor A reading detected'
+  'Sensor A reading detected',
 ));
-// Internally, the agent uses its Frame and GeminiClient to potentially form a belief
-// like 'SensorAReadingIsHigh' based on this perception and its justification.
 
-
-// --- Belief Update ---
-// Later, the agent perceives conflicting evidence, e.g., from a tool result
-const toolResultData = { reading: 28, unit: 'celsius', timestamp: Date.now() };
-const conflictingEvidence = new ToolResultJustificationElement(
+agent.perceive(new ToolResultPerception(
   'thermometer_tool',
-  toolResultData
-);
-
-// Agent perceives the tool result
-agent.perceive(new ToolResultPerception('thermometer_tool', toolResultData));
-
-// Internally, agent.updateBeliefs is called.
-// The Frame (e.g., efficiencyFrame) uses GeminiClient to evaluate the new evidence
-// (conflictingEvidence) against existing beliefs (e.g., 'SensorAReadingIsHigh' or a
-// belief derived from it like 'RoomTemperatureIsAcceptable'). The agent automatically
-// handles the confidence updates based on its frame's logic, which leverages the LLM.
-
-// The following shows the *conceptual* internal update logic for illustration:
-async function illustrateInternalUpdateLogic(existingBelief: Belief, newElement: JustificationElement, frame: Frame, client: GeminiClient) {
-  // This logic is inside agent.updateBeliefs / frame.updateConfidence
-  const updatedConfidence = await frame.updateConfidence(
-    existingBelief.proposition, // The proposition being updated
-    existingBelief.confidence,
-    existingBelief.justification,
-    [newElement],
-    client // Pass the GeminiClient
-  );
-
-  const updatedJustification = new Justification([
-    ...existingBelief.justification.elements,
-    newElement
-  ]);
-
-  const updatedBelief = new Belief(
-    existingBelief.proposition, // Proposition might change based on frame interpretation
-    updatedConfidence,
-    updatedJustification
-  );
-  console.log(`\nIllustrative internal result: ${updatedBelief.toString()}`);
-  // The agent would then store this updated belief.
-}
-
-// You don't call illustrateInternalUpdateLogic directly; the agent handles it via perceive().
+  { reading: 28, unit: 'celsius', timestamp: Date.now() },
+));
 ```
 
-## Example: Debate Simulation
+Each `perceive` call triggers the frame to re-evaluate affected beliefs, producing new confidence scores and an extended `Justification` chain.
 
-Run the Debate Simulation example directly with ts-node in one of two ways:
+### Planning with Tool Calls
 
-### Let AI choose the debate topic (default)
+`generatePlan` uses the AI SDK's native tool-calling (`generateText` + `tools` + `toolChoice: 'required'`) so the planner actually emits structured tool invocations instead of free-form text that gets regex-parsed. Tools you register in the `Registry` are automatically exposed to the planner with their `parameterSchema` converted to zod for validation.
+
+## Examples
+
+Run the debate simulation:
+
 ```bash
-npx ts-node examples/debate-simulation.ts
+# Let the LLM pick the topic
+npx tsx examples/debate-simulation.ts
+
+# Or provide your own
+npx tsx examples/debate-simulation.ts "AI should be regulated by international law"
 ```
 
-### Specify your own debate topic
+The debate simulation features:
+
+- A moderator that guides the debate and can generate topics
+- Pro and con debaters with opposing frames
+- A judge that evaluates argument quality
+- Multiple rounds with dynamic question generation
+- Coloured terminal UI
+
+## Testing
+
+Tests run under [Vitest](https://vitest.dev):
+
 ```bash
-npx ts-node examples/debate-simulation.ts "Artificial Intelligence should be regulated by international law"
+npm test             # run once
+npm run test:watch   # watch mode
+npm run coverage     # with coverage report
 ```
 
-The debate-simulation example features:
-- A moderator that guides the debate (and generates topics when none are provided)
-- Pro and con debaters that argue opposing viewpoints
-- A judge that evaluates the quality of arguments
-- Multiple debate rounds with dynamic question generation
-- Colorful terminal UI for improved readability
+## Migrating from v1.x (Gemini-only)
+
+v1.x imports keep working. `GeminiClient` and `MockGeminiClient` are now thin deprecated shims that delegate to `AiSdkClient` and `MockLLMClient`. For new code, prefer the provider-agnostic imports:
+
+| v1.x | v2.x |
+| --- | --- |
+| `new GeminiClient(apiKey, 'gemini-2.0-flash')` | `new AiSdkClient({ model: createLanguageModel({ provider: 'google', apiKey, model: 'gemini-2.0-flash' }) })` |
+| `new MockGeminiClient()` | `new MockLLMClient()` |
+| `GEMINI_API_KEY` env var | `OPENROUTER_API_KEY` (preferred) or `GOOGLE_GENERATIVE_AI_API_KEY` |
 
 ## Documentation
 
-Comprehensive documentation covering concepts, architecture, component details, and data flow diagrams can be found in `documentation.md`. Further API details are available within the source code documentation (JSDoc comments).
+See `documentation.md` for the conceptual architecture and component walkthroughs. Source files carry JSDoc for the public API.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues or Pull Requests to the repository.
+Issues and PRs welcome.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT. See `LICENSE`.
 
 ## Citation
 
-If you use this framework or the underlying concepts in your research, please consider citing the original paper (if applicable) or the repository.
+If you use this framework or the underlying concepts in your research, please cite the original paper and/or this repository.

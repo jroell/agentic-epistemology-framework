@@ -19,6 +19,7 @@ import {
   registerAllFrameTypes,
   createEfficiencyFrame,
   createThoroughnessFrame,
+  createSecurityFrame,
   createProDebaterFrame,
   createConDebaterFrame,
   createJudgeFrame,

@@ -18,8 +18,20 @@ import type { AgentContext, DebateContext, ConfidenceUpdateContext } from '../..
 
 export const createTestEvidence = (
   content: string = 'Test evidence content',
-  source: string = 'test_source'
+  source: string = 'test_source',
+  _tag?: string,
 ): JustificationElement => new ObservationJustificationElement(source, content);
+
+/**
+ * Build a lightweight ObservationPerception for frame-system tests.
+ * The third positional argument is tolerated for legacy callers that
+ * passed a narrative summary.
+ */
+export const createTestPerception = (
+  content: string = 'Test perception content',
+  source: string = 'test_source',
+  _summary?: string,
+): ObservationPerception => new ObservationPerception(source, content, content);
 
 export const TEST_EVIDENCE = {
   // Performance-related evidence
