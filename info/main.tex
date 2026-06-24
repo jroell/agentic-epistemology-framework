@@ -226,6 +226,31 @@ The experiment exposed an important design lesson. Mean faithfulness score is no
 
 In the faithful fixture, the ledger recorded five selected facets, prompt inclusion for each facet, prompt hashes, configured and runtime weights, and interaction terms such as \texttt{financial\_outlook:crisis\_flow x adoption\_curve\_position:innovator}. The service correctly marked the response as faithful while still listing missing secondary markers, such as explicit novelty language. In the prompt omission fixture, the rendered prompt omitted \texttt{financial\_outlook}; the service diagnosed \texttt{facet\_prompt\_omission} and recommended verifying prompt assembly. In the persona drift fixture, the response introduced an unsupported enterprise CTO identity with unlimited budget; the service diagnosed \texttt{persona\_drift} and recommended regenerating or constraining the persona biography.
 
+
+\section{Live Vurvey Counterfactual Generation}
+The fixture experiments above still use controlled responses. To test the framework against the actual Vurvey persona generation path, we added a Vurvey API counterfactual runner that calls \texttt{PersonaAnswerGenerator.generateEnhancedPersonaAnswer} for a baseline persona and again for a counterfactual persona variant. The counterfactual variant is produced by applying a facet intervention to the persona's PM facet values before generation. This experiment therefore uses the live survey-simulation prompt path, the selected persona facets, the generated system prompt, and the configured Gemini survey-simulation model rather than simulated counterfactual scores.
+
+We first extracted read-only facet fixtures from staging and production. Staging produced a representative fixture with 25 high-facet-count personas, 15 published molds, and 157 distinct facet codes. Production produced 25 high-facet-count personas and 71 distinct facet codes; the production database currently contains one draft base mold and no mold facet configurations, so production mold distributions are not reported. Common staging facet codes include \texttt{adoption\_curve}, \texttt{agreeableness}, \texttt{brand\_relationship\_orientation}, \texttt{caregiving\_load}, and \texttt{disposable\_income}. Common production facet codes include \texttt{adoption\_curve}, \texttt{age}, \texttt{agreeableness}, \texttt{anxiety\_level}, \texttt{challenge\_mindset}, and several China-specific ecological and commercial context facets.
+
+We then ran the live counterfactual experiment on three staging personas using the stimulus: \emph{Evaluate a premium AI subscription that takes setup time and charges monthly.} Each case selected the first available high-impact facet from \texttt{disposable\_income}, \texttt{financial\_outlook}, \texttt{time\_poverty}, \texttt{risk\_tolerance}, \texttt{adoption\_curve}, or \texttt{stress\_level}, removed that facet, regenerated the response, and compared the baseline and counterfactual outputs.
+
+\begin{table}[h]
+\centering
+\caption{Live Vurvey counterfactual generation results on three staging personas. The counterfactual sensitivity is high, indicating that removing selected facets changes generated outputs. Marker coverage remains low, showing that current marker rules are too sparse and literal for real persona responses.}
+\label{tab:live-vurvey-counterfactuals}
+\begin{tabular}{lrrrr}
+\toprule
+Cases & Faithfulness & Counterfact. sensitivity & Marker cov. & Primary diagnosis \\
+\midrule
+3 & 0.579 & 0.886 & 0.248 & facet\_selection\_gap (3/3) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The qualitative outputs were informative. One staging persona responded: ``A monthly cost is already a stretch for anything extra, and if it takes time to set up? Forget about it.'' After the \texttt{disposable\_income} facet was removed, the generated response still referenced money and family constraints, indicating that similar constraints are redundantly represented in other facets or in the generated biography. Another persona with high disposable income treated the product as plausible if it saved time, while the counterfactual version became more value-conditional. These outcomes show that facets do influence the live generation path, but effects are distributed across multiple identity layers.
+
+The main finding is that real counterfactual sensitivity is measurable, but marker coverage is currently the limiting factor. The audit service correctly avoided overclaiming faithfulness: all three live cases were diagnosed as \texttt{facet\_selection\_gap} because the expected marker catalog did not cover enough of the real facet semantics and because removing one facet did not remove all related behavioral constraints from the biography and adjacent facets. This is a useful failure mode. It shows that the next product improvement should be richer facet-level marker metadata and interaction-aware expectations, not merely better prompt inspection.
+
 \section{Discussion}
 The generic benchmark shows that structured epistemic traces can recover simple injected failures when the trace contains the relevant fields. The facet benchmark is more realistic and harder. Full traces recover many failures, but not all. This is useful: persona faithfulness cannot be reduced to checking that a prompt contains the right words. It requires tracing facet selection, prompt rendering, frame composition, expected behavioral markers, response content, and sometimes counterfactual or latent evidence.
 
@@ -245,7 +270,7 @@ The benchmarks use controlled synthetic failures with known labels. They establi
 The framework also depends on the quality of facet definitions, prompt fragments, weights, and constraints. If the facet graph itself encodes weak theory or biased assumptions, \method{} will make those assumptions more visible but will not make them correct. Detailed observer logs can expose sensitive persona or respondent data, so production use requires careful retention, access control, and redaction policy.
 
 \section{Code and Data Availability}
-The reference implementation is available at \url{https://github.com/jroell/agentic-epistemology-framework} under the MIT license. The implementation includes \texttt{FacetFaithfulnessAuditService}, the generic root-cause benchmark, the facet-frame benchmark, and the facet audit service experiment. Generated outputs are written under the repository's results directory. A Vurvey API branch named \texttt{AEF-implementation} contains the product-facing adapter that maps PM facet values into the audit input shape.
+The reference implementation is available at \url{https://github.com/jroell/agentic-epistemology-framework} under the MIT license. The implementation includes \texttt{FacetFaithfulnessAuditService}, the generic root-cause benchmark, the facet-frame benchmark, and the facet audit service experiment. Generated outputs are written under the repository's results directory. A Vurvey API branch named \texttt{AEF-implementation} contains the product-facing adapter that maps PM facet values into the audit input shape, the read-only staging/production fixture extractor, and the live Vurvey counterfactual generation runner.
 
 \section{Conclusion}
 The Agentic Epistemology Framework provides an audit architecture for autonomous agents and synthetic personas. By making beliefs, confidence, justifications, frames, facets, and observer events first-class constructs, \method{} supports debugging not only what an agent said, but why the system should have expected that behavior from its configured epistemic state. The facet extension connects this audit layer to synthetic human simulation: facets become inspectable contributors to frame composition, and persona faithfulness becomes a measurable, diagnosable property rather than a matter of surface plausibility.

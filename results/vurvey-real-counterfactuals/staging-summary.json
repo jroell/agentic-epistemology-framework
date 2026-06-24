@@ -1,0 +1,70 @@
+{
+  "summary": {
+    "environment": "staging",
+    "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+    "caseCount": 3,
+    "meanFaithfulnessScore": 0.579,
+    "meanCounterfactualSensitivity": 0.886,
+    "meanMarkerCoverage": 0.248,
+    "failureCounts": {
+      "facet_selection_gap": 3
+    }
+  },
+  "caseSummaries": [
+    {
+      "personaName": "David Allen",
+      "intervention": {
+        "facetCode": "disposable_income",
+        "intervention": "remove",
+        "fromValue": "limited_disposable_income",
+        "expectedChange": "response changes when disposable_income is removed"
+      },
+      "audit": {
+        "faithfulnessScore": 0.561,
+        "primaryFailure": "facet_selection_gap",
+        "counterfactualSensitivity": 0.88,
+        "markerCoverage": 0.188,
+        "calibrationScore": 0.5
+      },
+      "baselineTextLength": 305,
+      "counterfactualTextLength": 290
+    },
+    {
+      "personaName": "Brynn Landry",
+      "intervention": {
+        "facetCode": "disposable_income",
+        "intervention": "remove",
+        "fromValue": "high_disposable_income",
+        "expectedChange": "response changes when disposable_income is removed"
+      },
+      "audit": {
+        "faithfulnessScore": 0.62,
+        "primaryFailure": "facet_selection_gap",
+        "counterfactualSensitivity": 0.925,
+        "markerCoverage": 0.368,
+        "calibrationScore": 0.5
+      },
+      "baselineTextLength": 279,
+      "counterfactualTextLength": 204
+    },
+    {
+      "personaName": "Imani Soler",
+      "intervention": {
+        "facetCode": "disposable_income",
+        "intervention": "remove",
+        "fromValue": "moderate_disposable_income",
+        "expectedChange": "response changes when disposable_income is removed"
+      },
+      "audit": {
+        "faithfulnessScore": 0.556,
+        "primaryFailure": "facet_selection_gap",
+        "counterfactualSensitivity": 0.853,
+        "markerCoverage": 0.188,
+        "calibrationScore": 0.5
+      },
+      "baselineTextLength": 250,
+      "counterfactualTextLength": 250
+    }
+  ],
+  "note": "Sanitized aggregate only. Raw generated texts remain in the private Vurvey API experiment output."
+}
