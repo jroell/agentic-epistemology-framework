@@ -9,10 +9,11 @@ The Agentic Epistemology Framework (AEF) provides a principled approach to model
 ## Key Features
 
 - **Epistemic Modeling**: Explicit representation of beliefs, justifications, confidence levels, and frames.
-- **Frame-Based Reasoning**: Support for different cognitive perspectives that influence belief formation and update.
-- **Multi-Agent Interactions**: Mechanisms for conflict detection and resolution through justification exchange.
+- **Facet-Conditioned Auditability**: First-class support for auditing whether synthetic personas faithfully express selected facet values and composed frames.
+- **Facet Influence Ledger**: Records selected facets, prompt hashes, runtime weights, marker coverage, contradictions, and recommended debug actions.
+- **Counterfactual Diagnosis**: Supports facet removal/swap probes to estimate whether persona behavior changes in the expected direction.
 - **Observer Pattern**: Comprehensive tracing of epistemic events for transparency and debugging.
-- **Modular Architecture**: Flexible, extensible components that can be integrated into various agent architectures.
+- **Public Benchmarks**: Deterministic benchmark harnesses for root-cause diagnosis, facet-frame faithfulness, and the AEF audit service.
 
 ## Installation
 
@@ -26,6 +27,16 @@ npm run build
 ```
 
 ## Getting Started
+
+Run the public benchmarks:
+
+```bash
+npx ts-node --transpile-only examples/root-cause-benchmark.ts --seed=42 --cases=160
+npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --seed=42 --cases=200
+npx ts-node --transpile-only examples/facet-faithfulness-audit-experiment.ts
+```
+
+See `benchmarks/README.md` for result schemas and current reference results.
 
 Clone the repository and run the Debate Simulation using ts-node:
 
