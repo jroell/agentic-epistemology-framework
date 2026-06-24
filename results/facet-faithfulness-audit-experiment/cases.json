@@ -1,0 +1,978 @@
+[
+  {
+    "id": "faithful-1",
+    "expectedFailure": "none",
+    "input": {
+      "responseId": "faithful-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "Premium AI subscription is interesting, but I would need quick proof from people like me before I can justify a recurring cost or setup time.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.8,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "faithful-2",
+    "expectedFailure": "none",
+    "input": {
+      "responseId": "faithful-2",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "Before answering on the premium AI subscription, I am curious but cautious: the monthly cost and setup time need clear peer proof.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.8,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "prompt-omission-1",
+    "expectedFailure": "facet_prompt_omission",
+    "input": {
+      "responseId": "prompt-omission-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "I would approve this immediately because budget is not a concern.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.9,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "misweight-1",
+    "expectedFailure": "facet_misweighting",
+    "input": {
+      "responseId": "misweight-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "I can spend a long time exploring every setup option and then decide.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.1,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.9,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "conflict-1",
+    "expectedFailure": "facet_conflict",
+    "input": {
+      "responseId": "conflict-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "I would purchase right away because novelty matters more than financial limits.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "purchase right away"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.9,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "drift-1",
+    "expectedFailure": "persona_drift",
+    "input": {
+      "responseId": "drift-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "As an enterprise CTO with an unlimited budget and procurement team, I would approve it immediately.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.9,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "style-1",
+    "expectedFailure": "response_style_violation",
+    "input": {
+      "responseId": "style-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "No. Too expensive.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.9,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.76
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.72
+        }
+      ]
+    }
+  },
+  {
+    "id": "counterfactual-1",
+    "expectedFailure": "low_counterfactual_sensitivity",
+    "input": {
+      "responseId": "counterfactual-1",
+      "personaId": "fixture-persona",
+      "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
+      "response": "Premium AI subscription is interesting, but I would need quick proof from people like me before I can justify a recurring cost or setup time.",
+      "facets": [
+        {
+          "facetId": "facet-financial",
+          "facetCode": "financial_outlook",
+          "facetValueId": "value-crisis",
+          "valueCode": "crisis_flow",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.9,
+          "runtimeWeight": 0.88,
+          "confidenceScore": 0.9,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are in crisis flow financially.",
+          "detailPrompt": "You resist recurring subscription costs unless the return is obvious.",
+          "expectedMarkers": [
+            "cost",
+            "recurring",
+            "justify"
+          ],
+          "forbiddenMarkers": [
+            "unlimited budget"
+          ]
+        },
+        {
+          "facetId": "facet-time",
+          "facetCode": "time_poverty",
+          "facetValueId": "value-extreme",
+          "valueCode": "extreme",
+          "domain": "socio_ecological",
+          "configuredWeight": 0.82,
+          "runtimeWeight": 0.8,
+          "confidenceScore": 0.85,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You have extreme time poverty.",
+          "detailPrompt": "You avoid setup-heavy products unless the value is immediate.",
+          "expectedMarkers": [
+            "time",
+            "quick",
+            "setup"
+          ]
+        },
+        {
+          "facetId": "facet-trust",
+          "facetCode": "source_trust",
+          "facetValueId": "value-peer",
+          "valueCode": "peer_to_peer",
+          "domain": "psychographic",
+          "configuredWeight": 0.72,
+          "runtimeWeight": 0.7,
+          "confidenceScore": 0.8,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You trust peer evidence more than institutional claims.",
+          "expectedMarkers": [
+            "people like me",
+            "peer"
+          ]
+        },
+        {
+          "facetId": "facet-style",
+          "facetCode": "response_style",
+          "facetValueId": "value-repeater",
+          "valueCode": "verbatim_repeater",
+          "domain": "interaction",
+          "configuredWeight": 0.65,
+          "runtimeWeight": 0.63,
+          "confidenceScore": 0.75,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You repeat or mirror the question before answering.",
+          "expectedMarkers": [
+            "premium AI subscription",
+            "before answering"
+          ]
+        },
+        {
+          "facetId": "facet-adoption",
+          "facetCode": "adoption_curve_position",
+          "facetValueId": "value-innovator",
+          "valueCode": "innovator",
+          "domain": "psychographic",
+          "configuredWeight": 0.58,
+          "runtimeWeight": 0.56,
+          "confidenceScore": 0.77,
+          "taxonomyVersion": "fixture-v1",
+          "source": "mold",
+          "headerPrompt": "You are curious about novel technology when constraints allow it.",
+          "expectedMarkers": [
+            "interested",
+            "curious"
+          ]
+        }
+      ],
+      "renderedPrompt": "You are in crisis flow financially.\nYou resist recurring subscription costs unless the return is obvious.\nYou have extreme time poverty.\nYou avoid setup-heavy products unless the value is immediate.\nYou trust peer evidence more than institutional claims.\nYou repeat or mirror the question before answering.\nYou are curious about novel technology when constraints allow it.",
+      "selfReportedConfidence": 0.9,
+      "counterfactuals": [
+        {
+          "facetCode": "financial_outlook",
+          "intervention": "swap",
+          "fromValue": "crisis_flow",
+          "toValue": "abundance",
+          "expectedChange": "less cost objection",
+          "observedChangeScore": 0.08
+        },
+        {
+          "facetCode": "time_poverty",
+          "intervention": "remove",
+          "expectedChange": "more willingness to evaluate setup",
+          "observedChangeScore": 0.12
+        }
+      ]
+    }
+  }
+]

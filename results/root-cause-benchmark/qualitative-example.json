@@ -1,0 +1,79 @@
+{
+  "case": {
+    "id": "case_001",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_1_recommend_action",
+    "initialConfidence": 0.46,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.15,
+    "expectedFrameWeight": 0.72,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_1_primary",
+        "supports": true,
+        "strength": 0.831,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_1_secondary",
+        "supports": true,
+        "strength": 0.716,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  "trace": [
+    {
+      "caseId": "case_001",
+      "type": "belief_formation",
+      "proposition": "case_1_recommend_action",
+      "confidenceBefore": 0.46,
+      "confidenceAfter": 0.46,
+      "justificationCount": 2,
+      "minJustifications": 1
+    },
+    {
+      "caseId": "case_001",
+      "type": "evidence_processed",
+      "proposition": "case_1_recommend_action",
+      "confidenceBefore": 0.46,
+      "confidenceAfter": 0.516,
+      "frame": "Thoroughness",
+      "frameWeight": 0.15,
+      "expectedFrameWeight": 0.72,
+      "evidenceId": "e_1_primary",
+      "source": "verified_tool",
+      "sourceTrust": 0.82,
+      "expectedSourceTrust": 0.82
+    },
+    {
+      "caseId": "case_001",
+      "type": "threshold_check",
+      "proposition": "case_1_recommend_action",
+      "confidenceAfter": 0.516,
+      "threshold": 0.7,
+      "expectedThreshold": 0.7,
+      "decision": "delay"
+    },
+    {
+      "caseId": "case_001",
+      "type": "action_outcome",
+      "proposition": "case_1_recommend_action",
+      "decision": "delay"
+    }
+  ],
+  "diagnosis": {
+    "prediction": "frame_misweighting",
+    "inspected": 6
+  }
+}

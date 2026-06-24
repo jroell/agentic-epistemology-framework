@@ -1,0 +1,30 @@
+{
+  "frame_misweighting": {
+    "frame_misweighting": 0,
+    "source_trust_error": 0,
+    "threshold_miscalibration": 0,
+    "justification_gap": 0,
+    "unknown": 40
+  },
+  "source_trust_error": {
+    "frame_misweighting": 0,
+    "source_trust_error": 0,
+    "threshold_miscalibration": 0,
+    "justification_gap": 0,
+    "unknown": 40
+  },
+  "threshold_miscalibration": {
+    "frame_misweighting": 0,
+    "source_trust_error": 0,
+    "threshold_miscalibration": 0,
+    "justification_gap": 0,
+    "unknown": 40
+  },
+  "justification_gap": {
+    "frame_misweighting": 0,
+    "source_trust_error": 0,
+    "threshold_miscalibration": 0,
+    "justification_gap": 0,
+    "unknown": 40
+  }
+}

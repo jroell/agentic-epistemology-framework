@@ -1,0 +1,1418 @@
+[
+  {
+    "id": "faithful-1",
+    "expectedFailure": "none",
+    "audit": {
+      "faithfulnessScore": 0.8762,
+      "diagnosis": {
+        "primaryFailure": "none",
+        "causalFacets": [],
+        "evidence": [
+          "No primary facet faithfulness failure detected."
+        ],
+        "confidence": 0.8
+      },
+      "ledger": {
+        "responseId": "faithful-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "faa68c62a56ae336",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "premium AI subscription",
+          "before answering"
+        ],
+        "missingMarkers": [
+          "peer",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 9,
+        "coverage": 0.75,
+        "missingMarkers": [
+          "peer",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "premium AI subscription",
+          "before answering"
+        ]
+      },
+      "contradictions": [],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.95,
+      "recommendedDebugActions": [
+        "Add or strengthen markers for: peer, interested, curious."
+      ]
+    }
+  },
+  {
+    "id": "faithful-2",
+    "expectedFailure": "none",
+    "audit": {
+      "faithfulnessScore": 0.8062,
+      "diagnosis": {
+        "primaryFailure": "none",
+        "causalFacets": [],
+        "evidence": [
+          "No primary facet faithfulness failure detected."
+        ],
+        "confidence": 0.8
+      },
+      "ledger": {
+        "responseId": "faithful-2",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "185a6d15b5bd8aec",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [
+          "cost",
+          "time",
+          "setup",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "curious"
+        ],
+        "missingMarkers": [
+          "recurring",
+          "justify",
+          "quick",
+          "people like me",
+          "interested"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 7,
+        "coverage": 0.5833333333333334,
+        "missingMarkers": [
+          "recurring",
+          "justify",
+          "quick",
+          "people like me",
+          "interested"
+        ],
+        "observedMarkers": [
+          "cost",
+          "time",
+          "setup",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "curious"
+        ]
+      },
+      "contradictions": [],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.7833333333333333,
+      "recommendedDebugActions": [
+        "Add or strengthen markers for: recurring, justify, quick, people like me, interested."
+      ]
+    }
+  },
+  {
+    "id": "prompt-omission-1",
+    "expectedFailure": "facet_prompt_omission",
+    "audit": {
+      "faithfulnessScore": 0.35819999999999996,
+      "diagnosis": {
+        "primaryFailure": "facet_prompt_omission",
+        "causalFacets": [
+          "financial_outlook"
+        ],
+        "evidence": [
+          "financial_outlook selected but not found in rendered prompt"
+        ],
+        "confidence": 0.95
+      },
+      "ledger": {
+        "responseId": "prompt-omission-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "788fdef31835cb7b",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": false,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [],
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 0,
+        "coverage": 0,
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": []
+      },
+      "contradictions": [
+        {
+          "facetCode": "financial_outlook",
+          "marker": "unlimited budget",
+          "evidence": "Response contains forbidden marker for financial_outlook"
+        }
+      ],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.09999999999999998,
+      "recommendedDebugActions": [
+        "Verify financial_outlook is rendered into the final prompt and not dropped by prompt assembly.",
+        "Add or strengthen markers for: cost, recurring, justify, time, quick.",
+        "Resolve contradiction for financial_outlook: unlimited budget."
+      ]
+    }
+  },
+  {
+    "id": "misweight-1",
+    "expectedFailure": "facet_misweighting",
+    "audit": {
+      "faithfulnessScore": 0.47719999999999996,
+      "diagnosis": {
+        "primaryFailure": "facet_misweighting",
+        "causalFacets": [
+          "time_poverty"
+        ],
+        "evidence": [
+          "time_poverty runtime weight 0.10 differs from configured 0.82"
+        ],
+        "confidence": 0.9
+      },
+      "ledger": {
+        "responseId": "misweight-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "72623b061717b6b5",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.1,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.72
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position",
+            "time_poverty"
+          ],
+          "suppressedFacets": [
+            "time_poverty"
+          ],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [
+          "time",
+          "setup"
+        ],
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "quick",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 2,
+        "coverage": 0.16666666666666666,
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "quick",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": [
+          "time",
+          "setup"
+        ]
+      },
+      "contradictions": [],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.2666666666666666,
+      "recommendedDebugActions": [
+        "Inspect time_poverty runtime weighting and frame composition contribution.",
+        "Add or strengthen markers for: cost, recurring, justify, quick, people like me.",
+        "Review suppressed facets: time_poverty."
+      ]
+    }
+  },
+  {
+    "id": "conflict-1",
+    "expectedFailure": "facet_conflict",
+    "audit": {
+      "faithfulnessScore": 0.3822,
+      "diagnosis": {
+        "primaryFailure": "facet_conflict",
+        "causalFacets": [
+          "financial_outlook"
+        ],
+        "evidence": [
+          "Response contains forbidden marker for financial_outlook"
+        ],
+        "confidence": 0.8
+      },
+      "ledger": {
+        "responseId": "conflict-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "05d341c69c062cc1",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [],
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 0,
+        "coverage": 0,
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": []
+      },
+      "contradictions": [
+        {
+          "facetCode": "financial_outlook",
+          "marker": "purchase right away",
+          "evidence": "Response contains forbidden marker for financial_outlook"
+        }
+      ],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.09999999999999998,
+      "recommendedDebugActions": [
+        "Add or strengthen markers for: cost, recurring, justify, time, quick.",
+        "Resolve contradiction for financial_outlook: purchase right away."
+      ]
+    }
+  },
+  {
+    "id": "drift-1",
+    "expectedFailure": "persona_drift",
+    "audit": {
+      "faithfulnessScore": 0.33719999999999994,
+      "diagnosis": {
+        "primaryFailure": "persona_drift",
+        "causalFacets": [
+          "persona_identity"
+        ],
+        "evidence": [
+          "Response contains forbidden marker for financial_outlook",
+          "Response introduced an unsupported enterprise persona identity."
+        ],
+        "confidence": 0.88
+      },
+      "ledger": {
+        "responseId": "drift-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "0c262db7baf7c354",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [],
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 0,
+        "coverage": 0,
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": []
+      },
+      "contradictions": [
+        {
+          "facetCode": "financial_outlook",
+          "marker": "unlimited budget",
+          "evidence": "Response contains forbidden marker for financial_outlook"
+        },
+        {
+          "facetCode": "persona_identity",
+          "marker": "persona drift identity marker",
+          "evidence": "Response introduced an unsupported enterprise persona identity."
+        }
+      ],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.09999999999999998,
+      "recommendedDebugActions": [
+        "Regenerate or constrain the persona biography and add an identity consistency check.",
+        "Add or strengthen markers for: cost, recurring, justify, time, quick.",
+        "Resolve contradiction for financial_outlook: unlimited budget.",
+        "Resolve contradiction for persona_identity: persona drift identity marker."
+      ]
+    }
+  },
+  {
+    "id": "style-1",
+    "expectedFailure": "response_style_violation",
+    "audit": {
+      "faithfulnessScore": 0.4272,
+      "diagnosis": {
+        "primaryFailure": "response_style_violation",
+        "causalFacets": [
+          "response_style"
+        ],
+        "evidence": [
+          "Response style expected markers were missing."
+        ],
+        "confidence": 0.72
+      },
+      "ledger": {
+        "responseId": "style-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "73a279477e8d1ec4",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [],
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 0,
+        "coverage": 0,
+        "missingMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": []
+      },
+      "contradictions": [],
+      "counterfactualSensitivity": 0.74,
+      "calibrationScore": 0.09999999999999998,
+      "recommendedDebugActions": [
+        "Increase response_style saliency or add a response-style repair pass.",
+        "Add or strengthen markers for: cost, recurring, justify, time, quick."
+      ]
+    }
+  },
+  {
+    "id": "counterfactual-1",
+    "expectedFailure": "low_counterfactual_sensitivity",
+    "audit": {
+      "faithfulnessScore": 0.627,
+      "diagnosis": {
+        "primaryFailure": "low_counterfactual_sensitivity",
+        "causalFacets": [
+          "financial_outlook",
+          "time_poverty"
+        ],
+        "evidence": [
+          "Counterfactual interventions did not change outputs in the expected direction."
+        ],
+        "confidence": 0.76
+      },
+      "ledger": {
+        "responseId": "counterfactual-1",
+        "personaId": "fixture-persona",
+        "stimulusHash": "5b5122e0bfaeb75b",
+        "responseHash": "faa68c62a56ae336",
+        "selectedFacets": [
+          {
+            "facetId": "facet-financial",
+            "facetCode": "financial_outlook",
+            "facetValueId": "value-crisis",
+            "valueCode": "crisis_flow",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.9,
+            "runtimeWeight": 0.88,
+            "confidenceScore": 0.9,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "c121a9f613d96d85",
+            "detailPromptHash": "ef554de191502c25",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-time",
+            "facetCode": "time_poverty",
+            "facetValueId": "value-extreme",
+            "valueCode": "extreme",
+            "domain": "socio_ecological",
+            "configuredWeight": 0.82,
+            "runtimeWeight": 0.8,
+            "confidenceScore": 0.85,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "3e55fe0d6958dbef",
+            "detailPromptHash": "39fa8275479ee4bc",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          },
+          {
+            "facetId": "facet-trust",
+            "facetCode": "source_trust",
+            "facetValueId": "value-peer",
+            "valueCode": "peer_to_peer",
+            "domain": "psychographic",
+            "configuredWeight": 0.72,
+            "runtimeWeight": 0.7,
+            "confidenceScore": 0.8,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "ccf07748a41f47ce",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-style",
+            "facetCode": "response_style",
+            "facetValueId": "value-repeater",
+            "valueCode": "verbatim_repeater",
+            "domain": "interaction",
+            "configuredWeight": 0.65,
+            "runtimeWeight": 0.63,
+            "confidenceScore": 0.75,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "0c1d1e3631164b5e",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.020000000000000018
+          },
+          {
+            "facetId": "facet-adoption",
+            "facetCode": "adoption_curve_position",
+            "facetValueId": "value-innovator",
+            "valueCode": "innovator",
+            "domain": "psychographic",
+            "configuredWeight": 0.58,
+            "runtimeWeight": 0.56,
+            "confidenceScore": 0.77,
+            "taxonomyVersion": "fixture-v1",
+            "headerPromptHash": "41222c33c0c0ba01",
+            "source": "mold",
+            "promptIncluded": true,
+            "contributionDelta": -0.019999999999999907
+          }
+        ],
+        "frameComposition": {
+          "activeFrame": "financial_outlook:crisis_flow|time_poverty:extreme|source_trust:peer_to_peer|response_style:verbatim_repeater|adoption_curve_position:innovator",
+          "topPositiveContributors": [
+            "financial_outlook",
+            "time_poverty",
+            "source_trust",
+            "response_style",
+            "adoption_curve_position"
+          ],
+          "suppressedFacets": [],
+          "interactionTerms": [
+            "financial_outlook:crisis_flow x adoption_curve_position:innovator",
+            "time_poverty:extreme x response_style:verbatim_repeater"
+          ]
+        },
+        "expectedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "peer",
+          "premium AI subscription",
+          "before answering",
+          "interested",
+          "curious"
+        ],
+        "observedBehaviorMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "premium AI subscription",
+          "before answering"
+        ],
+        "missingMarkers": [
+          "peer",
+          "interested",
+          "curious"
+        ]
+      },
+      "markerCoverage": {
+        "expected": 12,
+        "observed": 9,
+        "coverage": 0.75,
+        "missingMarkers": [
+          "peer",
+          "interested",
+          "curious"
+        ],
+        "observedMarkers": [
+          "cost",
+          "recurring",
+          "justify",
+          "time",
+          "quick",
+          "setup",
+          "people like me",
+          "premium AI subscription",
+          "before answering"
+        ]
+      },
+      "contradictions": [],
+      "counterfactualSensitivity": 0.1,
+      "calibrationScore": 0.85,
+      "recommendedDebugActions": [
+        "Add or strengthen markers for: peer, interested, curious."
+      ]
+    }
+  }
+]

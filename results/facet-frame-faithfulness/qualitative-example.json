@@ -1,0 +1,143 @@
+{
+  "case": {
+    "id": "facet_case_002",
+    "rootCause": "facet_misweighting",
+    "stimulus": "Evaluate a premium AI-powered subscription that requires setup time and a monthly fee.",
+    "facets": [
+      {
+        "code": "anxiety_level",
+        "value": "moderate",
+        "domain": "psychological",
+        "weight": 0.72,
+        "expectedWeight": 0.72,
+        "prompt": "Modulate risk appraisal and emotional load according to anxiety level."
+      },
+      {
+        "code": "time_poverty",
+        "value": "low",
+        "domain": "socio_ecological",
+        "weight": 0.18,
+        "expectedWeight": 0.78,
+        "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
+      },
+      {
+        "code": "financial_outlook",
+        "value": "crisis_flow",
+        "domain": "socio_ecological",
+        "weight": 0.82,
+        "expectedWeight": 0.82,
+        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
+      },
+      {
+        "code": "source_trust",
+        "value": "independent_verification",
+        "domain": "psychographic",
+        "weight": 0.68,
+        "expectedWeight": 0.68,
+        "prompt": "Determine which evidence sources carry social proof and subjective norm force."
+      },
+      {
+        "code": "response_style",
+        "value": "cautious_qualifier",
+        "domain": "interaction",
+        "weight": 0.74,
+        "expectedWeight": 0.74,
+        "prompt": "Govern surface linguistic style while preserving underlying persona constraints."
+      },
+      {
+        "code": "adoption_curve_position",
+        "value": "early_majority",
+        "domain": "psychographic",
+        "weight": 0.7,
+        "expectedWeight": 0.7,
+        "prompt": "Shape novelty appetite and resistance to unfamiliar market offerings."
+      }
+    ],
+    "expectedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:crisis_flow|response_style:cautious_qualifier|adoption_curve_position:early_majority",
+    "observedFrame": "anxiety_level:moderate|financial_outlook:crisis_flow|response_style:cautious_qualifier|adoption_curve_position:early_majority",
+    "expectedResponseMarkers": [
+      "raises cost or resource constraint"
+    ],
+    "observedResponse": "The persona gives a long, careful evaluation despite extreme time constraints."
+  },
+  "trace": [
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_set_loaded",
+      "expectedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:crisis_flow|response_style:cautious_qualifier|adoption_curve_position:early_majority",
+      "observedFrame": "anxiety_level:moderate|financial_outlook:crisis_flow|response_style:cautious_qualifier|adoption_curve_position:early_majority"
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_contribution",
+      "facetCode": "anxiety_level",
+      "facetValue": "moderate",
+      "domain": "psychological",
+      "weight": 0.72,
+      "expectedWeight": 0.72,
+      "prompt": "Modulate risk appraisal and emotional load according to anxiety level."
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_contribution",
+      "facetCode": "time_poverty",
+      "facetValue": "low",
+      "domain": "socio_ecological",
+      "weight": 0.18,
+      "expectedWeight": 0.78,
+      "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_contribution",
+      "facetCode": "financial_outlook",
+      "facetValue": "crisis_flow",
+      "domain": "socio_ecological",
+      "weight": 0.82,
+      "expectedWeight": 0.82,
+      "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_contribution",
+      "facetCode": "source_trust",
+      "facetValue": "independent_verification",
+      "domain": "psychographic",
+      "weight": 0.68,
+      "expectedWeight": 0.68,
+      "prompt": "Determine which evidence sources carry social proof and subjective norm force."
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_contribution",
+      "facetCode": "response_style",
+      "facetValue": "cautious_qualifier",
+      "domain": "interaction",
+      "weight": 0.74,
+      "expectedWeight": 0.74,
+      "prompt": "Govern surface linguistic style while preserving underlying persona constraints."
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "facet_contribution",
+      "facetCode": "adoption_curve_position",
+      "facetValue": "early_majority",
+      "domain": "psychographic",
+      "weight": 0.7,
+      "expectedWeight": 0.7,
+      "prompt": "Shape novelty appetite and resistance to unfamiliar market offerings."
+    },
+    {
+      "caseId": "facet_case_002",
+      "type": "stimulus_response",
+      "expectedResponseMarkers": [
+        "raises cost or resource constraint"
+      ],
+      "observedResponse": "The persona gives a long, careful evaluation despite extreme time constraints."
+    }
+  ],
+  "diagnosis": {
+    "prediction": "facet_misweighting",
+    "inspected": 11
+  }
+}

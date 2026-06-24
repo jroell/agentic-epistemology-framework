@@ -1,0 +1,38 @@
+[
+  {
+    "condition": "full",
+    "cases": 200,
+    "accuracy": 0.665,
+    "macroF1": 0.68,
+    "coverage": 0.725,
+    "avgEventsInspected": 24.8,
+    "avgTraceEvents": 8
+  },
+  {
+    "condition": "no_facet_weights",
+    "cases": 200,
+    "accuracy": 0.465,
+    "macroF1": 0.4658,
+    "coverage": 0.595,
+    "avgEventsInspected": 29,
+    "avgTraceEvents": 8
+  },
+  {
+    "condition": "no_facet_prompts",
+    "cases": 200,
+    "accuracy": 0.2,
+    "macroF1": 0.2,
+    "coverage": 0.2,
+    "avgEventsInspected": 27.8,
+    "avgTraceEvents": 8
+  },
+  {
+    "condition": "event_only",
+    "cases": 200,
+    "accuracy": 0,
+    "macroF1": 0,
+    "coverage": 0,
+    "avgEventsInspected": 32,
+    "avgTraceEvents": 8
+  }
+]

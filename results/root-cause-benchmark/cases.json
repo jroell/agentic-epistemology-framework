@@ -1,0 +1,5282 @@
+[
+  {
+    "id": "case_001",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_1_recommend_action",
+    "initialConfidence": 0.46,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.15,
+    "expectedFrameWeight": 0.72,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_1_primary",
+        "supports": true,
+        "strength": 0.831,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_1_secondary",
+        "supports": true,
+        "strength": 0.716,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_002",
+    "rootCause": "source_trust_error",
+    "proposition": "case_2_recommend_action",
+    "initialConfidence": 0.439,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.19,
+    "expectedSourceTrust": 0.86,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_2_primary",
+        "supports": true,
+        "strength": 0.934,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_2_secondary",
+        "supports": true,
+        "strength": 0.817,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_003",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_3_recommend_action",
+    "initialConfidence": 0.558,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.95,
+    "expectedThreshold": 0.71,
+    "evidence": [
+      {
+        "id": "e_3_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_3_secondary",
+        "supports": true,
+        "strength": 0.702,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_004",
+    "rootCause": "justification_gap",
+    "proposition": "case_4_recommend_action",
+    "initialConfidence": 0.562,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_4_primary",
+        "supports": true,
+        "strength": 0.892,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_4_secondary",
+        "supports": true,
+        "strength": 0.768,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_005",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_5_recommend_action",
+    "initialConfidence": 0.461,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.06,
+    "expectedFrameWeight": 0.8,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_5_primary",
+        "supports": true,
+        "strength": 0.943,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_5_secondary",
+        "supports": true,
+        "strength": 0.705,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_006",
+    "rootCause": "source_trust_error",
+    "proposition": "case_6_recommend_action",
+    "initialConfidence": 0.424,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.23,
+    "expectedSourceTrust": 0.81,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_6_primary",
+        "supports": true,
+        "strength": 0.89,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_6_secondary",
+        "supports": true,
+        "strength": 0.815,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_007",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_7_recommend_action",
+    "initialConfidence": 0.514,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.95,
+    "expectedThreshold": 0.66,
+    "evidence": [
+      {
+        "id": "e_7_primary",
+        "supports": true,
+        "strength": 0.911,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_7_secondary",
+        "supports": true,
+        "strength": 0.795,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_008",
+    "rootCause": "justification_gap",
+    "proposition": "case_8_recommend_action",
+    "initialConfidence": 0.436,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_8_primary",
+        "supports": true,
+        "strength": 0.845,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_8_secondary",
+        "supports": true,
+        "strength": 0.7,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_009",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_9_recommend_action",
+    "initialConfidence": 0.543,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.05,
+    "expectedFrameWeight": 0.77,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_9_primary",
+        "supports": true,
+        "strength": 0.897,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_9_secondary",
+        "supports": true,
+        "strength": 0.742,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_010",
+    "rootCause": "source_trust_error",
+    "proposition": "case_10_recommend_action",
+    "initialConfidence": 0.464,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.12,
+    "expectedSourceTrust": 0.9,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_10_primary",
+        "supports": true,
+        "strength": 0.863,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_10_secondary",
+        "supports": true,
+        "strength": 0.833,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_011",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_11_recommend_action",
+    "initialConfidence": 0.513,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.95,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_11_primary",
+        "supports": true,
+        "strength": 0.864,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_11_secondary",
+        "supports": true,
+        "strength": 0.701,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_012",
+    "rootCause": "justification_gap",
+    "proposition": "case_12_recommend_action",
+    "initialConfidence": 0.567,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_12_primary",
+        "supports": true,
+        "strength": 0.925,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_12_secondary",
+        "supports": true,
+        "strength": 0.794,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_013",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_13_recommend_action",
+    "initialConfidence": 0.469,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.21,
+    "expectedFrameWeight": 0.83,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_13_primary",
+        "supports": true,
+        "strength": 0.835,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_13_secondary",
+        "supports": true,
+        "strength": 0.699,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_014",
+    "rootCause": "source_trust_error",
+    "proposition": "case_14_recommend_action",
+    "initialConfidence": 0.499,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.27,
+    "expectedSourceTrust": 0.89,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_14_primary",
+        "supports": true,
+        "strength": 0.847,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_14_secondary",
+        "supports": true,
+        "strength": 0.791,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_015",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_15_recommend_action",
+    "initialConfidence": 0.532,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.87,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_15_primary",
+        "supports": true,
+        "strength": 0.929,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_15_secondary",
+        "supports": true,
+        "strength": 0.705,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_016",
+    "rootCause": "justification_gap",
+    "proposition": "case_16_recommend_action",
+    "initialConfidence": 0.524,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_16_primary",
+        "supports": true,
+        "strength": 0.948,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_16_secondary",
+        "supports": true,
+        "strength": 0.8,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_017",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_17_recommend_action",
+    "initialConfidence": 0.489,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.09,
+    "expectedFrameWeight": 0.86,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_17_primary",
+        "supports": true,
+        "strength": 0.826,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_17_secondary",
+        "supports": true,
+        "strength": 0.812,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_018",
+    "rootCause": "source_trust_error",
+    "proposition": "case_18_recommend_action",
+    "initialConfidence": 0.482,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.28,
+    "expectedSourceTrust": 0.78,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_18_primary",
+        "supports": true,
+        "strength": 0.857,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_18_secondary",
+        "supports": true,
+        "strength": 0.815,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_019",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_19_recommend_action",
+    "initialConfidence": 0.471,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.86,
+    "expectedThreshold": 0.68,
+    "evidence": [
+      {
+        "id": "e_19_primary",
+        "supports": true,
+        "strength": 0.889,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_19_secondary",
+        "supports": true,
+        "strength": 0.745,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_020",
+    "rootCause": "justification_gap",
+    "proposition": "case_20_recommend_action",
+    "initialConfidence": 0.479,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_20_primary",
+        "supports": true,
+        "strength": 0.882,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_20_secondary",
+        "supports": true,
+        "strength": 0.775,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_021",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_21_recommend_action",
+    "initialConfidence": 0.532,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.27,
+    "expectedFrameWeight": 0.8,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_21_primary",
+        "supports": true,
+        "strength": 0.892,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_21_secondary",
+        "supports": true,
+        "strength": 0.717,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_022",
+    "rootCause": "source_trust_error",
+    "proposition": "case_22_recommend_action",
+    "initialConfidence": 0.458,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.28,
+    "expectedSourceTrust": 0.74,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_22_primary",
+        "supports": true,
+        "strength": 0.94,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_22_secondary",
+        "supports": true,
+        "strength": 0.771,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_023",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_23_recommend_action",
+    "initialConfidence": 0.461,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.95,
+    "expectedThreshold": 0.69,
+    "evidence": [
+      {
+        "id": "e_23_primary",
+        "supports": true,
+        "strength": 0.89,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_23_secondary",
+        "supports": true,
+        "strength": 0.832,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_024",
+    "rootCause": "justification_gap",
+    "proposition": "case_24_recommend_action",
+    "initialConfidence": 0.551,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_24_primary",
+        "supports": true,
+        "strength": 0.86,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_24_secondary",
+        "supports": true,
+        "strength": 0.79,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_025",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_25_recommend_action",
+    "initialConfidence": 0.428,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.18,
+    "expectedFrameWeight": 0.73,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_25_primary",
+        "supports": true,
+        "strength": 0.864,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_25_secondary",
+        "supports": true,
+        "strength": 0.803,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_026",
+    "rootCause": "source_trust_error",
+    "proposition": "case_26_recommend_action",
+    "initialConfidence": 0.469,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.14,
+    "expectedSourceTrust": 0.87,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_26_primary",
+        "supports": true,
+        "strength": 0.904,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_26_secondary",
+        "supports": true,
+        "strength": 0.755,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_027",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_27_recommend_action",
+    "initialConfidence": 0.501,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.69,
+    "evidence": [
+      {
+        "id": "e_27_primary",
+        "supports": true,
+        "strength": 0.824,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_27_secondary",
+        "supports": true,
+        "strength": 0.797,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_028",
+    "rootCause": "justification_gap",
+    "proposition": "case_28_recommend_action",
+    "initialConfidence": 0.506,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_28_primary",
+        "supports": true,
+        "strength": 0.95,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_28_secondary",
+        "supports": true,
+        "strength": 0.779,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_029",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_29_recommend_action",
+    "initialConfidence": 0.546,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.06,
+    "expectedFrameWeight": 0.85,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_29_primary",
+        "supports": true,
+        "strength": 0.827,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_29_secondary",
+        "supports": true,
+        "strength": 0.779,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_030",
+    "rootCause": "source_trust_error",
+    "proposition": "case_30_recommend_action",
+    "initialConfidence": 0.57,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.21,
+    "expectedSourceTrust": 0.75,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_30_primary",
+        "supports": true,
+        "strength": 0.878,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_30_secondary",
+        "supports": true,
+        "strength": 0.772,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_031",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_31_recommend_action",
+    "initialConfidence": 0.485,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.87,
+    "expectedThreshold": 0.65,
+    "evidence": [
+      {
+        "id": "e_31_primary",
+        "supports": true,
+        "strength": 0.897,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_31_secondary",
+        "supports": true,
+        "strength": 0.702,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_032",
+    "rootCause": "justification_gap",
+    "proposition": "case_32_recommend_action",
+    "initialConfidence": 0.465,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_32_primary",
+        "supports": true,
+        "strength": 0.893,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_32_secondary",
+        "supports": true,
+        "strength": 0.836,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_033",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_33_recommend_action",
+    "initialConfidence": 0.527,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.25,
+    "expectedFrameWeight": 0.88,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_33_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_33_secondary",
+        "supports": true,
+        "strength": 0.792,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_034",
+    "rootCause": "source_trust_error",
+    "proposition": "case_34_recommend_action",
+    "initialConfidence": 0.509,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.14,
+    "expectedSourceTrust": 0.77,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_34_primary",
+        "supports": true,
+        "strength": 0.905,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_34_secondary",
+        "supports": true,
+        "strength": 0.774,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_035",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_35_recommend_action",
+    "initialConfidence": 0.457,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.68,
+    "evidence": [
+      {
+        "id": "e_35_primary",
+        "supports": true,
+        "strength": 0.833,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_35_secondary",
+        "supports": true,
+        "strength": 0.751,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_036",
+    "rootCause": "justification_gap",
+    "proposition": "case_36_recommend_action",
+    "initialConfidence": 0.552,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_36_primary",
+        "supports": true,
+        "strength": 0.858,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_36_secondary",
+        "supports": true,
+        "strength": 0.748,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_037",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_37_recommend_action",
+    "initialConfidence": 0.477,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.23,
+    "expectedFrameWeight": 0.77,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_37_primary",
+        "supports": true,
+        "strength": 0.915,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_37_secondary",
+        "supports": true,
+        "strength": 0.801,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_038",
+    "rootCause": "source_trust_error",
+    "proposition": "case_38_recommend_action",
+    "initialConfidence": 0.574,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.21,
+    "expectedSourceTrust": 0.83,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_38_primary",
+        "supports": true,
+        "strength": 0.923,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_38_secondary",
+        "supports": true,
+        "strength": 0.706,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_039",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_39_recommend_action",
+    "initialConfidence": 0.532,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.64,
+    "evidence": [
+      {
+        "id": "e_39_primary",
+        "supports": true,
+        "strength": 0.821,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_39_secondary",
+        "supports": true,
+        "strength": 0.688,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_040",
+    "rootCause": "justification_gap",
+    "proposition": "case_40_recommend_action",
+    "initialConfidence": 0.482,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_40_primary",
+        "supports": true,
+        "strength": 0.947,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_40_secondary",
+        "supports": true,
+        "strength": 0.777,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_041",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_41_recommend_action",
+    "initialConfidence": 0.439,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.24,
+    "expectedFrameWeight": 0.75,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_41_primary",
+        "supports": true,
+        "strength": 0.885,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_41_secondary",
+        "supports": true,
+        "strength": 0.829,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_042",
+    "rootCause": "source_trust_error",
+    "proposition": "case_42_recommend_action",
+    "initialConfidence": 0.575,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.25,
+    "expectedSourceTrust": 0.9,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_42_primary",
+        "supports": true,
+        "strength": 0.92,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_42_secondary",
+        "supports": true,
+        "strength": 0.716,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_043",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_43_recommend_action",
+    "initialConfidence": 0.56,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.68,
+    "evidence": [
+      {
+        "id": "e_43_primary",
+        "supports": true,
+        "strength": 0.931,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_43_secondary",
+        "supports": true,
+        "strength": 0.789,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_044",
+    "rootCause": "justification_gap",
+    "proposition": "case_44_recommend_action",
+    "initialConfidence": 0.512,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_44_primary",
+        "supports": true,
+        "strength": 0.936,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_44_secondary",
+        "supports": true,
+        "strength": 0.801,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_045",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_45_recommend_action",
+    "initialConfidence": 0.491,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.09,
+    "expectedFrameWeight": 0.76,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_45_primary",
+        "supports": true,
+        "strength": 0.922,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_45_secondary",
+        "supports": true,
+        "strength": 0.76,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_046",
+    "rootCause": "source_trust_error",
+    "proposition": "case_46_recommend_action",
+    "initialConfidence": 0.488,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.13,
+    "expectedSourceTrust": 0.78,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_46_primary",
+        "supports": true,
+        "strength": 0.838,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_46_secondary",
+        "supports": true,
+        "strength": 0.79,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_047",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_47_recommend_action",
+    "initialConfidence": 0.435,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.9,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_47_primary",
+        "supports": true,
+        "strength": 0.926,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_47_secondary",
+        "supports": true,
+        "strength": 0.744,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_048",
+    "rootCause": "justification_gap",
+    "proposition": "case_48_recommend_action",
+    "initialConfidence": 0.437,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_48_primary",
+        "supports": true,
+        "strength": 0.929,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_48_secondary",
+        "supports": true,
+        "strength": 0.752,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_049",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_49_recommend_action",
+    "initialConfidence": 0.515,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.23,
+    "expectedFrameWeight": 0.89,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_49_primary",
+        "supports": true,
+        "strength": 0.867,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_49_secondary",
+        "supports": true,
+        "strength": 0.727,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_050",
+    "rootCause": "source_trust_error",
+    "proposition": "case_50_recommend_action",
+    "initialConfidence": 0.428,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.15,
+    "expectedSourceTrust": 0.91,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_50_primary",
+        "supports": true,
+        "strength": 0.932,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_50_secondary",
+        "supports": true,
+        "strength": 0.729,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_051",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_51_recommend_action",
+    "initialConfidence": 0.549,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.9,
+    "expectedThreshold": 0.71,
+    "evidence": [
+      {
+        "id": "e_51_primary",
+        "supports": true,
+        "strength": 0.88,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_51_secondary",
+        "supports": true,
+        "strength": 0.805,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_052",
+    "rootCause": "justification_gap",
+    "proposition": "case_52_recommend_action",
+    "initialConfidence": 0.427,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_52_primary",
+        "supports": true,
+        "strength": 0.91,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_52_secondary",
+        "supports": true,
+        "strength": 0.798,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_053",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_53_recommend_action",
+    "initialConfidence": 0.464,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.09,
+    "expectedFrameWeight": 0.87,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_53_primary",
+        "supports": true,
+        "strength": 0.854,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_53_secondary",
+        "supports": true,
+        "strength": 0.791,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_054",
+    "rootCause": "source_trust_error",
+    "proposition": "case_54_recommend_action",
+    "initialConfidence": 0.458,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.3,
+    "expectedSourceTrust": 0.88,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_54_primary",
+        "supports": true,
+        "strength": 0.916,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_54_secondary",
+        "supports": true,
+        "strength": 0.742,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_055",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_55_recommend_action",
+    "initialConfidence": 0.491,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.87,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_55_primary",
+        "supports": true,
+        "strength": 0.887,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_55_secondary",
+        "supports": true,
+        "strength": 0.711,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_056",
+    "rootCause": "justification_gap",
+    "proposition": "case_56_recommend_action",
+    "initialConfidence": 0.526,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_56_primary",
+        "supports": true,
+        "strength": 0.949,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_56_secondary",
+        "supports": true,
+        "strength": 0.741,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_057",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_57_recommend_action",
+    "initialConfidence": 0.561,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.2,
+    "expectedFrameWeight": 0.84,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_57_primary",
+        "supports": true,
+        "strength": 0.896,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_57_secondary",
+        "supports": true,
+        "strength": 0.829,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_058",
+    "rootCause": "source_trust_error",
+    "proposition": "case_58_recommend_action",
+    "initialConfidence": 0.58,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.2,
+    "expectedSourceTrust": 0.76,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_58_primary",
+        "supports": true,
+        "strength": 0.865,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_58_secondary",
+        "supports": true,
+        "strength": 0.803,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_059",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_59_recommend_action",
+    "initialConfidence": 0.432,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_59_primary",
+        "supports": true,
+        "strength": 0.912,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_59_secondary",
+        "supports": true,
+        "strength": 0.783,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_060",
+    "rootCause": "justification_gap",
+    "proposition": "case_60_recommend_action",
+    "initialConfidence": 0.541,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_60_primary",
+        "supports": true,
+        "strength": 0.837,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_60_secondary",
+        "supports": true,
+        "strength": 0.74,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_061",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_61_recommend_action",
+    "initialConfidence": 0.502,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.13,
+    "expectedFrameWeight": 0.86,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_61_primary",
+        "supports": true,
+        "strength": 0.855,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_61_secondary",
+        "supports": true,
+        "strength": 0.686,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_062",
+    "rootCause": "source_trust_error",
+    "proposition": "case_62_recommend_action",
+    "initialConfidence": 0.495,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.2,
+    "expectedSourceTrust": 0.9,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_62_primary",
+        "supports": true,
+        "strength": 0.878,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_62_secondary",
+        "supports": true,
+        "strength": 0.743,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_063",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_63_recommend_action",
+    "initialConfidence": 0.462,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.88,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_63_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_63_secondary",
+        "supports": true,
+        "strength": 0.763,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_064",
+    "rootCause": "justification_gap",
+    "proposition": "case_64_recommend_action",
+    "initialConfidence": 0.463,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_64_primary",
+        "supports": true,
+        "strength": 0.949,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_64_secondary",
+        "supports": true,
+        "strength": 0.804,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_065",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_65_recommend_action",
+    "initialConfidence": 0.579,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.18,
+    "expectedFrameWeight": 0.88,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_65_primary",
+        "supports": true,
+        "strength": 0.893,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_65_secondary",
+        "supports": true,
+        "strength": 0.725,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_066",
+    "rootCause": "source_trust_error",
+    "proposition": "case_66_recommend_action",
+    "initialConfidence": 0.456,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.16,
+    "expectedSourceTrust": 0.76,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_66_primary",
+        "supports": true,
+        "strength": 0.891,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_66_secondary",
+        "supports": true,
+        "strength": 0.836,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_067",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_67_recommend_action",
+    "initialConfidence": 0.533,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.92,
+    "expectedThreshold": 0.64,
+    "evidence": [
+      {
+        "id": "e_67_primary",
+        "supports": true,
+        "strength": 0.924,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_67_secondary",
+        "supports": true,
+        "strength": 0.769,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_068",
+    "rootCause": "justification_gap",
+    "proposition": "case_68_recommend_action",
+    "initialConfidence": 0.55,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_68_primary",
+        "supports": true,
+        "strength": 0.872,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_68_secondary",
+        "supports": true,
+        "strength": 0.822,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_069",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_69_recommend_action",
+    "initialConfidence": 0.556,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.06,
+    "expectedFrameWeight": 0.75,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_69_primary",
+        "supports": true,
+        "strength": 0.909,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_69_secondary",
+        "supports": true,
+        "strength": 0.778,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_070",
+    "rootCause": "source_trust_error",
+    "proposition": "case_70_recommend_action",
+    "initialConfidence": 0.538,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.22,
+    "expectedSourceTrust": 0.87,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_70_primary",
+        "supports": true,
+        "strength": 0.846,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_70_secondary",
+        "supports": true,
+        "strength": 0.756,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_071",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_71_recommend_action",
+    "initialConfidence": 0.439,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.65,
+    "evidence": [
+      {
+        "id": "e_71_primary",
+        "supports": true,
+        "strength": 0.826,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_71_secondary",
+        "supports": true,
+        "strength": 0.797,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_072",
+    "rootCause": "justification_gap",
+    "proposition": "case_72_recommend_action",
+    "initialConfidence": 0.481,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_72_primary",
+        "supports": true,
+        "strength": 0.949,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_72_secondary",
+        "supports": true,
+        "strength": 0.806,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_073",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_73_recommend_action",
+    "initialConfidence": 0.454,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.23,
+    "expectedFrameWeight": 0.88,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_73_primary",
+        "supports": true,
+        "strength": 0.94,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_73_secondary",
+        "supports": true,
+        "strength": 0.731,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_074",
+    "rootCause": "source_trust_error",
+    "proposition": "case_74_recommend_action",
+    "initialConfidence": 0.468,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.09,
+    "expectedSourceTrust": 0.9,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_74_primary",
+        "supports": true,
+        "strength": 0.906,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_74_secondary",
+        "supports": true,
+        "strength": 0.691,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_075",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_75_recommend_action",
+    "initialConfidence": 0.504,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_75_primary",
+        "supports": true,
+        "strength": 0.879,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_75_secondary",
+        "supports": true,
+        "strength": 0.743,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_076",
+    "rootCause": "justification_gap",
+    "proposition": "case_76_recommend_action",
+    "initialConfidence": 0.487,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_76_primary",
+        "supports": true,
+        "strength": 0.884,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_76_secondary",
+        "supports": true,
+        "strength": 0.824,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_077",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_77_recommend_action",
+    "initialConfidence": 0.468,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.23,
+    "expectedFrameWeight": 0.73,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_77_primary",
+        "supports": true,
+        "strength": 0.95,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_77_secondary",
+        "supports": true,
+        "strength": 0.776,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_078",
+    "rootCause": "source_trust_error",
+    "proposition": "case_78_recommend_action",
+    "initialConfidence": 0.441,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.17,
+    "expectedSourceTrust": 0.78,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_78_primary",
+        "supports": true,
+        "strength": 0.935,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_78_secondary",
+        "supports": true,
+        "strength": 0.783,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_079",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_79_recommend_action",
+    "initialConfidence": 0.429,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.88,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_79_primary",
+        "supports": true,
+        "strength": 0.863,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_79_secondary",
+        "supports": true,
+        "strength": 0.749,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_080",
+    "rootCause": "justification_gap",
+    "proposition": "case_80_recommend_action",
+    "initialConfidence": 0.509,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_80_primary",
+        "supports": true,
+        "strength": 0.894,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_80_secondary",
+        "supports": true,
+        "strength": 0.69,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_081",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_81_recommend_action",
+    "initialConfidence": 0.559,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.11,
+    "expectedFrameWeight": 0.86,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_81_primary",
+        "supports": true,
+        "strength": 0.829,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_81_secondary",
+        "supports": true,
+        "strength": 0.795,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_082",
+    "rootCause": "source_trust_error",
+    "proposition": "case_82_recommend_action",
+    "initialConfidence": 0.512,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.23,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_82_primary",
+        "supports": true,
+        "strength": 0.837,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_82_secondary",
+        "supports": true,
+        "strength": 0.781,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_083",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_83_recommend_action",
+    "initialConfidence": 0.452,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.65,
+    "evidence": [
+      {
+        "id": "e_83_primary",
+        "supports": true,
+        "strength": 0.9,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_83_secondary",
+        "supports": true,
+        "strength": 0.825,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_084",
+    "rootCause": "justification_gap",
+    "proposition": "case_84_recommend_action",
+    "initialConfidence": 0.434,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_84_primary",
+        "supports": true,
+        "strength": 0.882,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_84_secondary",
+        "supports": true,
+        "strength": 0.821,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_085",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_85_recommend_action",
+    "initialConfidence": 0.519,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.22,
+    "expectedFrameWeight": 0.86,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_85_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_85_secondary",
+        "supports": true,
+        "strength": 0.804,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_086",
+    "rootCause": "source_trust_error",
+    "proposition": "case_86_recommend_action",
+    "initialConfidence": 0.475,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.16,
+    "expectedSourceTrust": 0.77,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_86_primary",
+        "supports": true,
+        "strength": 0.879,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_86_secondary",
+        "supports": true,
+        "strength": 0.74,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_087",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_87_recommend_action",
+    "initialConfidence": 0.557,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.89,
+    "expectedThreshold": 0.68,
+    "evidence": [
+      {
+        "id": "e_87_primary",
+        "supports": true,
+        "strength": 0.885,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_87_secondary",
+        "supports": true,
+        "strength": 0.744,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_088",
+    "rootCause": "justification_gap",
+    "proposition": "case_88_recommend_action",
+    "initialConfidence": 0.574,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_88_primary",
+        "supports": true,
+        "strength": 0.867,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_88_secondary",
+        "supports": true,
+        "strength": 0.727,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_089",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_89_recommend_action",
+    "initialConfidence": 0.52,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.28,
+    "expectedFrameWeight": 0.83,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_89_primary",
+        "supports": true,
+        "strength": 0.871,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_89_secondary",
+        "supports": true,
+        "strength": 0.703,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_090",
+    "rootCause": "source_trust_error",
+    "proposition": "case_90_recommend_action",
+    "initialConfidence": 0.447,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.17,
+    "expectedSourceTrust": 0.85,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_90_primary",
+        "supports": true,
+        "strength": 0.91,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_90_secondary",
+        "supports": true,
+        "strength": 0.778,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_091",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_91_recommend_action",
+    "initialConfidence": 0.484,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.91,
+    "expectedThreshold": 0.71,
+    "evidence": [
+      {
+        "id": "e_91_primary",
+        "supports": true,
+        "strength": 0.918,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_91_secondary",
+        "supports": true,
+        "strength": 0.719,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_092",
+    "rootCause": "justification_gap",
+    "proposition": "case_92_recommend_action",
+    "initialConfidence": 0.421,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_92_primary",
+        "supports": true,
+        "strength": 0.904,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_92_secondary",
+        "supports": true,
+        "strength": 0.796,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_093",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_93_recommend_action",
+    "initialConfidence": 0.44,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.26,
+    "expectedFrameWeight": 0.76,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_93_primary",
+        "supports": true,
+        "strength": 0.91,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_93_secondary",
+        "supports": true,
+        "strength": 0.719,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_094",
+    "rootCause": "source_trust_error",
+    "proposition": "case_94_recommend_action",
+    "initialConfidence": 0.456,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.18,
+    "expectedSourceTrust": 0.77,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_94_primary",
+        "supports": true,
+        "strength": 0.837,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_94_secondary",
+        "supports": true,
+        "strength": 0.754,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_095",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_95_recommend_action",
+    "initialConfidence": 0.575,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.72,
+    "evidence": [
+      {
+        "id": "e_95_primary",
+        "supports": true,
+        "strength": 0.837,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_95_secondary",
+        "supports": true,
+        "strength": 0.798,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_096",
+    "rootCause": "justification_gap",
+    "proposition": "case_96_recommend_action",
+    "initialConfidence": 0.471,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_96_primary",
+        "supports": true,
+        "strength": 0.933,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_96_secondary",
+        "supports": true,
+        "strength": 0.778,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_097",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_97_recommend_action",
+    "initialConfidence": 0.562,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.11,
+    "expectedFrameWeight": 0.8,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_97_primary",
+        "supports": true,
+        "strength": 0.946,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_97_secondary",
+        "supports": true,
+        "strength": 0.767,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_098",
+    "rootCause": "source_trust_error",
+    "proposition": "case_98_recommend_action",
+    "initialConfidence": 0.554,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.1,
+    "expectedSourceTrust": 0.86,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_98_primary",
+        "supports": true,
+        "strength": 0.829,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_98_secondary",
+        "supports": true,
+        "strength": 0.799,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_099",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_99_recommend_action",
+    "initialConfidence": 0.554,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.91,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_99_primary",
+        "supports": true,
+        "strength": 0.883,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_99_secondary",
+        "supports": true,
+        "strength": 0.753,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_100",
+    "rootCause": "justification_gap",
+    "proposition": "case_100_recommend_action",
+    "initialConfidence": 0.456,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_100_primary",
+        "supports": true,
+        "strength": 0.94,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_100_secondary",
+        "supports": true,
+        "strength": 0.733,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_101",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_101_recommend_action",
+    "initialConfidence": 0.559,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.23,
+    "expectedFrameWeight": 0.79,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_101_primary",
+        "supports": true,
+        "strength": 0.918,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_101_secondary",
+        "supports": true,
+        "strength": 0.76,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_102",
+    "rootCause": "source_trust_error",
+    "proposition": "case_102_recommend_action",
+    "initialConfidence": 0.462,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.14,
+    "expectedSourceTrust": 0.85,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_102_primary",
+        "supports": true,
+        "strength": 0.842,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_102_secondary",
+        "supports": true,
+        "strength": 0.705,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_103",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_103_recommend_action",
+    "initialConfidence": 0.505,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.89,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_103_primary",
+        "supports": true,
+        "strength": 0.89,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_103_secondary",
+        "supports": true,
+        "strength": 0.699,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_104",
+    "rootCause": "justification_gap",
+    "proposition": "case_104_recommend_action",
+    "initialConfidence": 0.493,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_104_primary",
+        "supports": true,
+        "strength": 0.894,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_104_secondary",
+        "supports": true,
+        "strength": 0.798,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_105",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_105_recommend_action",
+    "initialConfidence": 0.498,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.22,
+    "expectedFrameWeight": 0.78,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_105_primary",
+        "supports": true,
+        "strength": 0.889,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_105_secondary",
+        "supports": true,
+        "strength": 0.743,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_106",
+    "rootCause": "source_trust_error",
+    "proposition": "case_106_recommend_action",
+    "initialConfidence": 0.491,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.28,
+    "expectedSourceTrust": 0.91,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_106_primary",
+        "supports": true,
+        "strength": 0.865,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_106_secondary",
+        "supports": true,
+        "strength": 0.748,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_107",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_107_recommend_action",
+    "initialConfidence": 0.521,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.65,
+    "evidence": [
+      {
+        "id": "e_107_primary",
+        "supports": true,
+        "strength": 0.889,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_107_secondary",
+        "supports": true,
+        "strength": 0.707,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_108",
+    "rootCause": "justification_gap",
+    "proposition": "case_108_recommend_action",
+    "initialConfidence": 0.466,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_108_primary",
+        "supports": true,
+        "strength": 0.845,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_108_secondary",
+        "supports": true,
+        "strength": 0.689,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_109",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_109_recommend_action",
+    "initialConfidence": 0.486,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.21,
+    "expectedFrameWeight": 0.78,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_109_primary",
+        "supports": true,
+        "strength": 0.863,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_109_secondary",
+        "supports": true,
+        "strength": 0.822,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_110",
+    "rootCause": "source_trust_error",
+    "proposition": "case_110_recommend_action",
+    "initialConfidence": 0.568,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.27,
+    "expectedSourceTrust": 0.87,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_110_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_110_secondary",
+        "supports": true,
+        "strength": 0.752,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_111",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_111_recommend_action",
+    "initialConfidence": 0.575,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.89,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_111_primary",
+        "supports": true,
+        "strength": 0.903,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_111_secondary",
+        "supports": true,
+        "strength": 0.768,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_112",
+    "rootCause": "justification_gap",
+    "proposition": "case_112_recommend_action",
+    "initialConfidence": 0.482,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_112_primary",
+        "supports": true,
+        "strength": 0.886,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_112_secondary",
+        "supports": true,
+        "strength": 0.74,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_113",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_113_recommend_action",
+    "initialConfidence": 0.539,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.19,
+    "expectedFrameWeight": 0.83,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_113_primary",
+        "supports": true,
+        "strength": 0.862,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_113_secondary",
+        "supports": true,
+        "strength": 0.831,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_114",
+    "rootCause": "source_trust_error",
+    "proposition": "case_114_recommend_action",
+    "initialConfidence": 0.472,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.24,
+    "expectedSourceTrust": 0.91,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_114_primary",
+        "supports": true,
+        "strength": 0.848,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_114_secondary",
+        "supports": true,
+        "strength": 0.826,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_115",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_115_recommend_action",
+    "initialConfidence": 0.532,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.89,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_115_primary",
+        "supports": true,
+        "strength": 0.857,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_115_secondary",
+        "supports": true,
+        "strength": 0.707,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_116",
+    "rootCause": "justification_gap",
+    "proposition": "case_116_recommend_action",
+    "initialConfidence": 0.57,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_116_primary",
+        "supports": true,
+        "strength": 0.906,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_116_secondary",
+        "supports": true,
+        "strength": 0.827,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_117",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_117_recommend_action",
+    "initialConfidence": 0.449,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.16,
+    "expectedFrameWeight": 0.82,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_117_primary",
+        "supports": true,
+        "strength": 0.925,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_117_secondary",
+        "supports": true,
+        "strength": 0.814,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_118",
+    "rootCause": "source_trust_error",
+    "proposition": "case_118_recommend_action",
+    "initialConfidence": 0.535,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.1,
+    "expectedSourceTrust": 0.81,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_118_primary",
+        "supports": true,
+        "strength": 0.871,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_118_secondary",
+        "supports": true,
+        "strength": 0.711,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_119",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_119_recommend_action",
+    "initialConfidence": 0.575,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.87,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_119_primary",
+        "supports": true,
+        "strength": 0.889,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_119_secondary",
+        "supports": true,
+        "strength": 0.769,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_120",
+    "rootCause": "justification_gap",
+    "proposition": "case_120_recommend_action",
+    "initialConfidence": 0.427,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_120_primary",
+        "supports": true,
+        "strength": 0.93,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_120_secondary",
+        "supports": true,
+        "strength": 0.707,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_121",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_121_recommend_action",
+    "initialConfidence": 0.562,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.13,
+    "expectedFrameWeight": 0.77,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_121_primary",
+        "supports": true,
+        "strength": 0.94,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_121_secondary",
+        "supports": true,
+        "strength": 0.765,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_122",
+    "rootCause": "source_trust_error",
+    "proposition": "case_122_recommend_action",
+    "initialConfidence": 0.573,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.11,
+    "expectedSourceTrust": 0.87,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_122_primary",
+        "supports": true,
+        "strength": 0.857,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_122_secondary",
+        "supports": true,
+        "strength": 0.823,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_123",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_123_recommend_action",
+    "initialConfidence": 0.421,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.86,
+    "expectedThreshold": 0.69,
+    "evidence": [
+      {
+        "id": "e_123_primary",
+        "supports": true,
+        "strength": 0.929,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_123_secondary",
+        "supports": true,
+        "strength": 0.776,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_124",
+    "rootCause": "justification_gap",
+    "proposition": "case_124_recommend_action",
+    "initialConfidence": 0.423,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_124_primary",
+        "supports": true,
+        "strength": 0.917,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_124_secondary",
+        "supports": true,
+        "strength": 0.803,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_125",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_125_recommend_action",
+    "initialConfidence": 0.487,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.08,
+    "expectedFrameWeight": 0.8,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_125_primary",
+        "supports": true,
+        "strength": 0.917,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_125_secondary",
+        "supports": true,
+        "strength": 0.793,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_126",
+    "rootCause": "source_trust_error",
+    "proposition": "case_126_recommend_action",
+    "initialConfidence": 0.439,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.25,
+    "expectedSourceTrust": 0.89,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_126_primary",
+        "supports": true,
+        "strength": 0.938,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_126_secondary",
+        "supports": true,
+        "strength": 0.717,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_127",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_127_recommend_action",
+    "initialConfidence": 0.532,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.64,
+    "evidence": [
+      {
+        "id": "e_127_primary",
+        "supports": true,
+        "strength": 0.92,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_127_secondary",
+        "supports": true,
+        "strength": 0.72,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_128",
+    "rootCause": "justification_gap",
+    "proposition": "case_128_recommend_action",
+    "initialConfidence": 0.576,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_128_primary",
+        "supports": true,
+        "strength": 0.872,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_128_secondary",
+        "supports": true,
+        "strength": 0.718,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_129",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_129_recommend_action",
+    "initialConfidence": 0.559,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.27,
+    "expectedFrameWeight": 0.9,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_129_primary",
+        "supports": true,
+        "strength": 0.944,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_129_secondary",
+        "supports": true,
+        "strength": 0.744,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_130",
+    "rootCause": "source_trust_error",
+    "proposition": "case_130_recommend_action",
+    "initialConfidence": 0.577,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.14,
+    "expectedSourceTrust": 0.79,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_130_primary",
+        "supports": true,
+        "strength": 0.872,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_130_secondary",
+        "supports": true,
+        "strength": 0.741,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_131",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_131_recommend_action",
+    "initialConfidence": 0.481,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.91,
+    "expectedThreshold": 0.68,
+    "evidence": [
+      {
+        "id": "e_131_primary",
+        "supports": true,
+        "strength": 0.835,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_131_secondary",
+        "supports": true,
+        "strength": 0.703,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_132",
+    "rootCause": "justification_gap",
+    "proposition": "case_132_recommend_action",
+    "initialConfidence": 0.528,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_132_primary",
+        "supports": true,
+        "strength": 0.862,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_132_secondary",
+        "supports": true,
+        "strength": 0.703,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_133",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_133_recommend_action",
+    "initialConfidence": 0.514,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.21,
+    "expectedFrameWeight": 0.73,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_133_primary",
+        "supports": true,
+        "strength": 0.931,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_133_secondary",
+        "supports": true,
+        "strength": 0.703,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_134",
+    "rootCause": "source_trust_error",
+    "proposition": "case_134_recommend_action",
+    "initialConfidence": 0.475,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.3,
+    "expectedSourceTrust": 0.78,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_134_primary",
+        "supports": true,
+        "strength": 0.949,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_134_secondary",
+        "supports": true,
+        "strength": 0.698,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_135",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_135_recommend_action",
+    "initialConfidence": 0.5,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.86,
+    "expectedThreshold": 0.64,
+    "evidence": [
+      {
+        "id": "e_135_primary",
+        "supports": true,
+        "strength": 0.838,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_135_secondary",
+        "supports": true,
+        "strength": 0.693,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_136",
+    "rootCause": "justification_gap",
+    "proposition": "case_136_recommend_action",
+    "initialConfidence": 0.479,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_136_primary",
+        "supports": true,
+        "strength": 0.9,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_136_secondary",
+        "supports": true,
+        "strength": 0.84,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_137",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_137_recommend_action",
+    "initialConfidence": 0.467,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.07,
+    "expectedFrameWeight": 0.74,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_137_primary",
+        "supports": true,
+        "strength": 0.933,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_137_secondary",
+        "supports": true,
+        "strength": 0.699,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_138",
+    "rootCause": "source_trust_error",
+    "proposition": "case_138_recommend_action",
+    "initialConfidence": 0.57,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.22,
+    "expectedSourceTrust": 0.76,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_138_primary",
+        "supports": true,
+        "strength": 0.841,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_138_secondary",
+        "supports": true,
+        "strength": 0.759,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_139",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_139_recommend_action",
+    "initialConfidence": 0.56,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.68,
+    "evidence": [
+      {
+        "id": "e_139_primary",
+        "supports": true,
+        "strength": 0.923,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_139_secondary",
+        "supports": true,
+        "strength": 0.692,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_140",
+    "rootCause": "justification_gap",
+    "proposition": "case_140_recommend_action",
+    "initialConfidence": 0.575,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_140_primary",
+        "supports": true,
+        "strength": 0.832,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_140_secondary",
+        "supports": true,
+        "strength": 0.8,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_141",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_141_recommend_action",
+    "initialConfidence": 0.469,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.23,
+    "expectedFrameWeight": 0.76,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_141_primary",
+        "supports": true,
+        "strength": 0.916,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_141_secondary",
+        "supports": true,
+        "strength": 0.702,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_142",
+    "rootCause": "source_trust_error",
+    "proposition": "case_142_recommend_action",
+    "initialConfidence": 0.51,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.1,
+    "expectedSourceTrust": 0.83,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_142_primary",
+        "supports": true,
+        "strength": 0.848,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_142_secondary",
+        "supports": true,
+        "strength": 0.797,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_143",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_143_recommend_action",
+    "initialConfidence": 0.548,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.94,
+    "expectedThreshold": 0.71,
+    "evidence": [
+      {
+        "id": "e_143_primary",
+        "supports": true,
+        "strength": 0.84,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_143_secondary",
+        "supports": true,
+        "strength": 0.829,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_144",
+    "rootCause": "justification_gap",
+    "proposition": "case_144_recommend_action",
+    "initialConfidence": 0.51,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_144_primary",
+        "supports": true,
+        "strength": 0.891,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_144_secondary",
+        "supports": true,
+        "strength": 0.758,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_145",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_145_recommend_action",
+    "initialConfidence": 0.498,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Efficiency",
+    "frameWeight": 0.22,
+    "expectedFrameWeight": 0.77,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_145_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_145_secondary",
+        "supports": true,
+        "strength": 0.746,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_146",
+    "rootCause": "source_trust_error",
+    "proposition": "case_146_recommend_action",
+    "initialConfidence": 0.574,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.27,
+    "expectedSourceTrust": 0.87,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_146_primary",
+        "supports": true,
+        "strength": 0.891,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_146_secondary",
+        "supports": true,
+        "strength": 0.699,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_147",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_147_recommend_action",
+    "initialConfidence": 0.424,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.9,
+    "expectedThreshold": 0.67,
+    "evidence": [
+      {
+        "id": "e_147_primary",
+        "supports": true,
+        "strength": 0.875,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_147_secondary",
+        "supports": true,
+        "strength": 0.735,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_148",
+    "rootCause": "justification_gap",
+    "proposition": "case_148_recommend_action",
+    "initialConfidence": 0.522,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_148_primary",
+        "supports": true,
+        "strength": 0.862,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_148_secondary",
+        "supports": true,
+        "strength": 0.712,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_149",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_149_recommend_action",
+    "initialConfidence": 0.428,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.27,
+    "expectedFrameWeight": 0.8,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_149_primary",
+        "supports": true,
+        "strength": 0.835,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_149_secondary",
+        "supports": true,
+        "strength": 0.724,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_150",
+    "rootCause": "source_trust_error",
+    "proposition": "case_150_recommend_action",
+    "initialConfidence": 0.562,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.27,
+    "expectedSourceTrust": 0.8,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_150_primary",
+        "supports": true,
+        "strength": 0.938,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_150_secondary",
+        "supports": true,
+        "strength": 0.773,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_151",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_151_recommend_action",
+    "initialConfidence": 0.483,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.93,
+    "expectedThreshold": 0.65,
+    "evidence": [
+      {
+        "id": "e_151_primary",
+        "supports": true,
+        "strength": 0.879,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_151_secondary",
+        "supports": true,
+        "strength": 0.826,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_152",
+    "rootCause": "justification_gap",
+    "proposition": "case_152_recommend_action",
+    "initialConfidence": 0.521,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_152_primary",
+        "supports": true,
+        "strength": 0.839,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_152_secondary",
+        "supports": true,
+        "strength": 0.829,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_153",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_153_recommend_action",
+    "initialConfidence": 0.508,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Thoroughness",
+    "frameWeight": 0.21,
+    "expectedFrameWeight": 0.8,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_153_primary",
+        "supports": true,
+        "strength": 0.898,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_153_secondary",
+        "supports": true,
+        "strength": 0.772,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_154",
+    "rootCause": "source_trust_error",
+    "proposition": "case_154_recommend_action",
+    "initialConfidence": 0.484,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.09,
+    "expectedSourceTrust": 0.91,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_154_primary",
+        "supports": true,
+        "strength": 0.833,
+        "source": "verified_tool",
+        "type": "speed"
+      },
+      {
+        "id": "e_154_secondary",
+        "supports": true,
+        "strength": 0.796,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_155",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_155_recommend_action",
+    "initialConfidence": 0.559,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.92,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_155_primary",
+        "supports": true,
+        "strength": 0.933,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_155_secondary",
+        "supports": true,
+        "strength": 0.724,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_156",
+    "rootCause": "justification_gap",
+    "proposition": "case_156_recommend_action",
+    "initialConfidence": 0.486,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_156_primary",
+        "supports": true,
+        "strength": 0.893,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_156_secondary",
+        "supports": true,
+        "strength": 0.729,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_157",
+    "rootCause": "frame_misweighting",
+    "proposition": "case_157_recommend_action",
+    "initialConfidence": 0.482,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Security",
+    "frameWeight": 0.14,
+    "expectedFrameWeight": 0.83,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_157_primary",
+        "supports": true,
+        "strength": 0.889,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_157_secondary",
+        "supports": true,
+        "strength": 0.771,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_158",
+    "rootCause": "source_trust_error",
+    "proposition": "case_158_recommend_action",
+    "initialConfidence": 0.554,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.7,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.13,
+    "expectedSourceTrust": 0.85,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_158_primary",
+        "supports": true,
+        "strength": 0.821,
+        "source": "verified_tool",
+        "type": "quality"
+      },
+      {
+        "id": "e_158_secondary",
+        "supports": true,
+        "strength": 0.787,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_159",
+    "rootCause": "threshold_miscalibration",
+    "proposition": "case_159_recommend_action",
+    "initialConfidence": 0.508,
+    "expectedDecision": "act",
+    "actualDecision": "delay",
+    "frame": "Balanced",
+    "frameWeight": 0.75,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.92,
+    "expectedThreshold": 0.63,
+    "evidence": [
+      {
+        "id": "e_159_primary",
+        "supports": true,
+        "strength": 0.874,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_159_secondary",
+        "supports": true,
+        "strength": 0.727,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 2,
+    "minJustifications": 1
+  },
+  {
+    "id": "case_160",
+    "rootCause": "justification_gap",
+    "proposition": "case_160_recommend_action",
+    "initialConfidence": 0.447,
+    "expectedDecision": "delay",
+    "actualDecision": "act",
+    "frame": "Balanced",
+    "frameWeight": 0.72,
+    "expectedFrameWeight": 0.7,
+    "sourceTrust": 0.82,
+    "expectedSourceTrust": 0.82,
+    "threshold": 0.7,
+    "expectedThreshold": 0.7,
+    "evidence": [
+      {
+        "id": "e_160_primary",
+        "supports": true,
+        "strength": 0.861,
+        "source": "verified_tool",
+        "type": "security"
+      },
+      {
+        "id": "e_160_secondary",
+        "supports": true,
+        "strength": 0.83,
+        "source": "peer_agent",
+        "type": "testimony"
+      }
+    ],
+    "justificationCount": 0,
+    "minJustifications": 1
+  }
+]

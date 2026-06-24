@@ -1,0 +1,5 @@
+condition,cases,accuracy,macroF1,coverage,avgEvidenceInspected,avgTraceEvents
+full,160,1,1,1,8,4
+no_frame,160,0.75,0.75,0.75,10.5,4
+no_justification,160,0.5,0.5,0.5,13.25,4
+event_only,160,0,0,0,16,4

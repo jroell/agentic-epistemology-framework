@@ -1,0 +1,42 @@
+[
+  {
+    "condition": "prompt_only",
+    "cases": 8,
+    "diagnosisAccuracy": 0.125,
+    "meanFaithfulnessScore": 0.162,
+    "meanMarkerCoverage": 0,
+    "meanCounterfactualSensitivity": 0.5,
+    "meanCalibrationScore": 0.125,
+    "signalToNoiseRatio": 0.167
+  },
+  {
+    "condition": "facet_list",
+    "cases": 8,
+    "diagnosisAccuracy": 0.125,
+    "meanFaithfulnessScore": 0.382,
+    "meanMarkerCoverage": 0,
+    "meanCounterfactualSensitivity": 0.5,
+    "meanCalibrationScore": 0.125,
+    "signalToNoiseRatio": 0.833
+  },
+  {
+    "condition": "facet_weights",
+    "cases": 8,
+    "diagnosisAccuracy": 0.75,
+    "meanFaithfulnessScore": 0.526,
+    "meanMarkerCoverage": 0.281,
+    "meanCounterfactualSensitivity": 0.5,
+    "meanCalibrationScore": 0.406,
+    "signalToNoiseRatio": 2.2
+  },
+  {
+    "condition": "full_aef",
+    "cases": 8,
+    "diagnosisAccuracy": 1,
+    "meanFaithfulnessScore": 0.536,
+    "meanMarkerCoverage": 0.281,
+    "meanCounterfactualSensitivity": 0.66,
+    "meanCalibrationScore": 0.406,
+    "signalToNoiseRatio": 4.111
+  }
+]

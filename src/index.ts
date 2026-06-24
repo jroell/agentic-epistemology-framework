@@ -16,6 +16,7 @@ export * from './core';
 export * from './epistemic';
 export * from './action';
 export * from './observer';
+export * from './audit';
 
 export const VERSION = '1.0.0';
 

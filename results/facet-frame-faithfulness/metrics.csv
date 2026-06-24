@@ -1,0 +1,5 @@
+condition,cases,accuracy,macroF1,coverage,avgEventsInspected,avgTraceEvents
+full,200,0.665,0.68,0.725,24.8,8
+no_facet_weights,200,0.465,0.4658,0.595,29,8
+no_facet_prompts,200,0.2,0.2,0.2,27.8,8
+event_only,200,0,0,0,32,8
