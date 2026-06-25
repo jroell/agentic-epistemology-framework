@@ -56,6 +56,17 @@ type ResultRow = {
   avgTraceEvents: number;
 };
 
+type SummaryRow = {
+  condition: TraceCondition;
+  seeds: number;
+  meanAccuracy: number;
+  ci95Accuracy: number;
+  meanMacroF1: number;
+  ci95MacroF1: number;
+  meanCoverage: number;
+  ci95Coverage: number;
+};
+
 const ROOT_CAUSES: RootCause[] = [
   'facet_omission',
   'facet_misweighting',
@@ -217,6 +228,7 @@ function buildScenario(rootCause: RootCause, index: number, rng: SeededRandom): 
     }
     scenario.expectedFrame = composedFrame(facets);
     scenario.observedFrame = scenario.expectedFrame;
+    scenario.expectedResponseMarkers = expectedMarkers(facets);
     scenario.observedResponse = 'No. It is too expensive.';
   }
 
@@ -376,6 +388,64 @@ function evaluate(cases: Scenario[], condition: TraceCondition): ResultRow {
   };
 }
 
+
+function mean(values: number[]): number {
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function sampleStd(values: number[]): number {
+  if (values.length <= 1) return 0;
+  const m = mean(values);
+  const variance = values.reduce((sum, value) => sum + (value - m) ** 2, 0) / (values.length - 1);
+  return Math.sqrt(variance);
+}
+
+function ci95(values: number[]): number {
+  if (values.length <= 1) return 0;
+  return 1.96 * sampleStd(values) / Math.sqrt(values.length);
+}
+
+function buildCases(seed: number, totalCases: number): Scenario[] {
+  const rng = new SeededRandom(seed);
+  const cases: Scenario[] = [];
+  for (let i = 0; i < totalCases; i++) {
+    cases.push(buildScenario(ROOT_CAUSES[i % ROOT_CAUSES.length], i + 1, rng));
+  }
+  return cases;
+}
+
+function summarize(seedRows: ResultRow[][]): SummaryRow[] {
+  return CONDITIONS.map((condition) => {
+    const rows = seedRows.map((rowsForSeed) => rowsForSeed.find((row) => row.condition === condition)!);
+    const accuracies = rows.map((row) => row.accuracy);
+    const f1s = rows.map((row) => row.macroF1);
+    const coverages = rows.map((row) => row.coverage);
+    return {
+      condition,
+      seeds: seedRows.length,
+      meanAccuracy: round(mean(accuracies), 4),
+      ci95Accuracy: round(ci95(accuracies), 4),
+      meanMacroF1: round(mean(f1s), 4),
+      ci95MacroF1: round(ci95(f1s), 4),
+      meanCoverage: round(mean(coverages), 4),
+      ci95Coverage: round(ci95(coverages), 4),
+    };
+  });
+}
+
+function latexSummaryTable(rows: SummaryRow[]): string {
+  return [
+    '\\begin{tabular}{lrrrrrr}',
+    '\\toprule',
+    'Trace condition & Accuracy & 95\\% CI & Macro F1 & 95\\% CI & Coverage & 95\\% CI \\\\',
+    '\\midrule',
+    ...rows.map((row) => `${row.condition.replace(/_/g, '\\_')} & ${row.meanAccuracy.toFixed(3)} & $\\pm$ ${row.ci95Accuracy.toFixed(3)} & ${row.meanMacroF1.toFixed(3)} & $\\pm$ ${row.ci95MacroF1.toFixed(3)} & ${row.meanCoverage.toFixed(3)} & $\\pm$ ${row.ci95Coverage.toFixed(3)} \\\\`),
+    '\\bottomrule',
+    '\\end{tabular}',
+    '',
+  ].join('\n');
+}
+
 function csv(rows: ResultRow[]): string {
   const headers = Object.keys(rows[0]);
   return [headers.join(','), ...rows.map((row) => headers.map((header) => String((row as any)[header])).join(','))].join('\n') + '\n';
@@ -394,7 +464,7 @@ function latexTable(rows: ResultRow[]): string {
   ].join('\n');
 }
 
-function writeAccuracyFigure(rows: ResultRow[], outputPath: string): void {
+function writeAccuracyFigure(rows: Array<ResultRow | SummaryRow>, outputPath: string): void {
   const width = 720;
   const height = 420;
   const margin = { left: 80, right: 30, top: 40, bottom: 80 };
@@ -406,10 +476,11 @@ function writeAccuracyFigure(rows: ResultRow[], outputPath: string): void {
 
   const bars = rows.map((row, index) => {
     const x = margin.left + index * (barWidth + gap) + gap / 2;
-    const h = row.accuracy * plotHeight;
+    const accuracy = 'accuracy' in row ? row.accuracy : row.meanAccuracy;
+    const h = accuracy * plotHeight;
     const y = margin.top + plotHeight - h;
     return `<rect x="${x}" y="${y}" width="${barWidth}" height="${h}" fill="${colors[index]}" />\n` +
-      `<text x="${x + barWidth / 2}" y="${y - 8}" text-anchor="middle" font-size="14">${row.accuracy.toFixed(2)}</text>\n` +
+      `<text x="${x + barWidth / 2}" y="${y - 8}" text-anchor="middle" font-size="14">${accuracy.toFixed(2)}</text>\n` +
       `<text transform="translate(${x + barWidth / 2},${height - 35}) rotate(-25)" text-anchor="end" font-size="13">${row.condition}</text>`;
   }).join('\n');
 
@@ -435,23 +506,27 @@ function writeAccuracyFigure(rows: ResultRow[], outputPath: string): void {
 function main(): void {
   const seedArg = process.argv.find((arg) => arg.startsWith('--seed='));
   const casesArg = process.argv.find((arg) => arg.startsWith('--cases='));
+  const seedCountArg = process.argv.find((arg) => arg.startsWith('--seed-count='));
   const seed = seedArg ? Number(seedArg.split('=')[1]) : 42;
   const totalCases = casesArg ? Number(casesArg.split('=')[1]) : 200;
-  const rng = new SeededRandom(seed);
-  const cases: Scenario[] = [];
-
-  for (let i = 0; i < totalCases; i++) {
-    cases.push(buildScenario(ROOT_CAUSES[i % ROOT_CAUSES.length], i + 1, rng));
-  }
+  const seedCount = seedCountArg ? Number(seedCountArg.split('=')[1]) : 1;
+  const cases = buildCases(seed, totalCases);
 
   const rows = CONDITIONS.map((condition) => evaluate(cases, condition));
+  const seedRows = Array.from({ length: seedCount }, (_, index) => {
+    const seedCases = buildCases(seed + index, totalCases);
+    return CONDITIONS.map((condition) => evaluate(seedCases, condition));
+  });
+  const summaryRows = summarize(seedRows);
   const outputDir = path.join(process.cwd(), 'results', 'facet-frame-faithfulness');
   fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(path.join(outputDir, 'cases.json'), JSON.stringify(cases, null, 2));
   fs.writeFileSync(path.join(outputDir, 'metrics.json'), JSON.stringify(rows, null, 2));
   fs.writeFileSync(path.join(outputDir, 'metrics.csv'), csv(rows));
   fs.writeFileSync(path.join(outputDir, 'metrics-table.tex'), latexTable(rows));
-  writeAccuracyFigure(rows, path.join(outputDir, 'accuracy-by-condition.svg'));
+  fs.writeFileSync(path.join(outputDir, 'metrics-summary.json'), JSON.stringify(summaryRows, null, 2));
+  fs.writeFileSync(path.join(outputDir, 'metrics-summary-table.tex'), latexSummaryTable(summaryRows));
+  writeAccuracyFigure(summaryRows, path.join(outputDir, 'accuracy-by-condition.svg'));
 
   const exampleCase = cases.find((scenario) => scenario.rootCause === 'facet_misweighting') ?? cases[0];
   fs.writeFileSync(path.join(outputDir, 'qualitative-example.json'), JSON.stringify({
@@ -460,7 +535,7 @@ function main(): void {
     diagnosis: diagnose(makeTrace(exampleCase, 'full')),
   }, null, 2));
 
-  console.log(JSON.stringify({ seed, totalCases, rows, outputDir }, null, 2));
+  console.log(JSON.stringify({ seed, seedCount, totalCases, rows, summaryRows, outputDir }, null, 2));
 }
 
 main();

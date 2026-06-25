@@ -304,7 +304,7 @@
       "raises cost or resource constraint",
       "expresses risk sensitivity or worry",
       "asks for peer evidence or word of mouth",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -926,7 +926,8 @@
     "observedFrame": "anxiety_level:moderate|time_poverty:moderate|financial_outlook:crisis_flow|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
       "raises cost or resource constraint",
-      "asks for peer evidence or word of mouth"
+      "asks for peer evidence or word of mouth",
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -1228,7 +1229,7 @@
     "expectedFrame": "anxiety_level:low|time_poverty:moderate|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "observedFrame": "anxiety_level:low|time_poverty:moderate|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "expectedResponseMarkers": [
-      "states position directly",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -1537,6 +1538,7 @@
     "observedFrame": "anxiety_level:low|time_poverty:extreme|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -1845,7 +1847,7 @@
     "expectedFrame": "anxiety_level:low|time_poverty:moderate|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "observedFrame": "anxiety_level:low|time_poverty:moderate|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
-      "gives bounded persona-consistent rationale"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -2153,6 +2155,7 @@
     "expectedResponseMarkers": [
       "raises cost or resource constraint",
       "expresses risk sensitivity or worry",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -2464,6 +2467,7 @@
       "mentions limited time or cognitive bandwidth",
       "raises cost or resource constraint",
       "expresses risk sensitivity or worry",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -3082,7 +3086,7 @@
     "observedFrame": "anxiety_level:high|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
       "expresses risk sensitivity or worry",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -3390,7 +3394,8 @@
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
       "raises cost or resource constraint",
-      "asks for peer evidence or word of mouth"
+      "asks for peer evidence or word of mouth",
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -3699,7 +3704,8 @@
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
       "raises cost or resource constraint",
-      "asks for peer evidence or word of mouth"
+      "asks for peer evidence or word of mouth",
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -4315,7 +4321,7 @@
     "observedFrame": "anxiety_level:moderate|time_poverty:extreme|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -4621,6 +4627,7 @@
     "observedFrame": "anxiety_level:low|time_poverty:extreme|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -5239,7 +5246,7 @@
     "expectedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "observedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -5551,7 +5558,7 @@
       "mentions limited time or cognitive bandwidth",
       "expresses risk sensitivity or worry",
       "asks for peer evidence or word of mouth",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -6171,7 +6178,7 @@
     "observedFrame": "anxiety_level:low|time_poverty:extreme|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:innovator",
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -6784,7 +6791,8 @@
     "expectedFrame": "anxiety_level:low|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "observedFrame": "anxiety_level:low|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
-      "asks for peer evidence or word of mouth"
+      "asks for peer evidence or word of mouth",
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -7402,6 +7410,7 @@
     "expectedFrame": "anxiety_level:moderate|time_poverty:moderate|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "observedFrame": "anxiety_level:moderate|time_poverty:moderate|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "expectedResponseMarkers": [
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -7711,7 +7720,7 @@
     "expectedResponseMarkers": [
       "mentions limited time or cognitive bandwidth",
       "asks for peer evidence or word of mouth",
-      "states position directly",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -8022,7 +8031,8 @@
     "expectedFrame": "anxiety_level:moderate|time_poverty:extreme|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:innovator",
     "observedFrame": "anxiety_level:moderate|time_poverty:extreme|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:innovator",
     "expectedResponseMarkers": [
-      "mentions limited time or cognitive bandwidth"
+      "mentions limited time or cognitive bandwidth",
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -8329,7 +8339,7 @@
     "expectedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "observedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
-      "gives bounded persona-consistent rationale"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -9258,7 +9268,7 @@
     "expectedResponseMarkers": [
       "raises cost or resource constraint",
       "expresses risk sensitivity or worry",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -9879,7 +9889,7 @@
     "expectedFrame": "anxiety_level:low|time_poverty:low|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:innovator",
     "observedFrame": "anxiety_level:low|time_poverty:low|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:innovator",
     "expectedResponseMarkers": [
-      "gives bounded persona-consistent rationale"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -10813,7 +10823,8 @@
     "expectedResponseMarkers": [
       "raises cost or resource constraint",
       "expresses risk sensitivity or worry",
-      "asks for peer evidence or word of mouth"
+      "asks for peer evidence or word of mouth",
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -11122,6 +11133,7 @@
       "mentions limited time or cognitive bandwidth",
       "raises cost or resource constraint",
       "asks for peer evidence or word of mouth",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -11426,6 +11438,7 @@
     "expectedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "observedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:abundance|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "expectedResponseMarkers": [
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."
@@ -12044,7 +12057,7 @@
     "observedFrame": "anxiety_level:low|time_poverty:moderate|financial_outlook:crisis_flow|response_style:verbatim_repeater|adoption_curve_position:early_majority",
     "expectedResponseMarkers": [
       "raises cost or resource constraint",
-      "states position directly"
+      "mirrors the question before answering"
     ],
     "observedResponse": "No. It is too expensive."
   },
@@ -12353,7 +12366,7 @@
     "expectedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "observedFrame": "anxiety_level:moderate|time_poverty:low|financial_outlook:stable|response_style:verbatim_repeater|adoption_curve_position:laggard",
     "expectedResponseMarkers": [
-      "states position directly",
+      "mirrors the question before answering",
       "resists novelty"
     ],
     "observedResponse": "No. It is too expensive."

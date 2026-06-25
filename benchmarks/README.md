@@ -1,12 +1,12 @@
-# AEF Public Benchmarks
+# AEF Public Harnesses
 
-This directory documents the reproducible benchmark harnesses included with the Agentic Epistemology Framework.
+This directory documents the reproducible trace-sensitivity harnesses included with the Agentic Epistemology Framework.
 
-The benchmark code lives in `examples/` so it can run directly against the TypeScript source without a package publish step.
+The harness code lives in `examples/` so it can run directly against the TypeScript source without a package publish step.
 
-## Benchmarks
+## Harnesses
 
-### 1. Generic root-cause benchmark
+### 1. Generic root-cause harness
 
 Tests whether structured epistemic traces expose fields needed to localize injected agent failure labels in a deterministic harness.
 
@@ -28,14 +28,14 @@ results/root-cause-benchmark/
 └── accuracy-by-condition.svg
 ```
 
-Primary metric: diagnosis accuracy by trace condition.
+Primary metric: diagnosis accuracy by trace condition. This is an information-availability check, not an external-validity estimate.
 
-### 2. Facet-frame faithfulness benchmark
+### 2. Facet-frame faithfulness harness
 
-Tests whether facet-aware traces improve diagnosis of synthetic persona failures such as facet omission, facet misweighting, facet conflict, persona drift, and response-style violation.
+Tests whether facet-aware traces expose fields needed to localize synthetic persona failures such as facet omission, facet misweighting, facet conflict, persona drift, and response-style violation.
 
 ```bash
-npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --seed=42 --cases=200
+npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --seed=42 --seed-count=20 --cases=200
 ```
 
 Outputs:
@@ -46,15 +46,17 @@ results/facet-frame-faithfulness/
 ├── metrics.json
 ├── metrics.csv
 ├── metrics-table.tex
+├── metrics-summary.json
+├── metrics-summary-table.tex
 ├── qualitative-example.json
 └── accuracy-by-condition.svg
 ```
 
-Primary metric: diagnosis accuracy and macro F1 by trace condition.
+Primary metrics: diagnosis accuracy, macro F1, and coverage by trace condition.
 
-### 3. Facet faithfulness audit service experiment
+### 3. Facet faithfulness audit service case study
 
-Tests the implemented `FacetFaithfulnessAuditService` on Vurvey-style persona cases with prompt provenance, marker coverage, contradictions, counterfactual sensitivity, calibration, and signal-to-noise scoring.
+Tests the implemented `FacetFaithfulnessAuditService` on Vurvey-style persona fixtures with prompt provenance, marker coverage, contradictions, counterfactual sensitivity, and calibration scoring.
 
 ```bash
 npx ts-node --transpile-only examples/facet-faithfulness-audit-experiment.ts
@@ -68,20 +70,22 @@ results/facet-faithfulness-audit-experiment/
 ├── audits.json
 ├── metrics.json
 ├── metrics-table.tex
-└── diagnosis-accuracy.svg
+├── calibration.json
+├── calibration-table.tex
+└── calibration.svg
 ```
 
-Primary metric: diagnosis accuracy by evidence condition.
+Primary metric: diagnosis accuracy by evidence condition. The calibration artifacts are a fixture sanity check, not a deployment reliability diagram.
 
 ## Reproducibility notes
 
-- All public benchmark inputs are synthetic fixtures.
+- All public harness inputs are synthetic fixtures.
 - The harnesses require no Vurvey credentials, no private database, and no model API calls.
 - The Vurvey real-generation counterfactual results included in the paper are reported only as sanitized aggregates under `results/vurvey-*`; raw persona text and raw database fixture rows are intentionally excluded.
 
 ## Current reference results
 
-### Generic root-cause benchmark
+### Generic root-cause harness
 
 | Condition | Accuracy | Macro F1 | Coverage |
 |---|---:|---:|---:|
@@ -90,32 +94,31 @@ Primary metric: diagnosis accuracy by evidence condition.
 | no_justification | 0.500 | 0.500 | 0.500 |
 | event_only | 0.000 | 0.000 | 0.000 |
 
-### Facet-frame faithfulness benchmark
+### Facet-frame faithfulness harness
 
 | Condition | Accuracy | Macro F1 | Coverage |
 |---|---:|---:|---:|
-| full | 0.865 | 0.898 | 0.865 |
-| no_facet_weights | 0.665 | 0.678 | 0.735 |
+| full | 1.000 | 1.000 | 1.000 |
+| no_facet_weights | 0.800 | 0.772 | 0.866 |
 | no_facet_prompts | 0.400 | 0.400 | 0.400 |
 | event_only | 0.000 | 0.000 | 0.000 |
 
-### Facet faithfulness audit service experiment
+### Facet faithfulness audit service case study
 
 | Condition | Accuracy | Faithfulness | Marker Coverage | Counterfactual |
 |---|---:|---:|---:|---:|
-| prompt_only | 0.125 | 0.162 | 0.000 | 0.500 |
+| response_only | 0.125 | 0.162 | 0.000 | 0.500 |
 | facet_list | 0.125 | 0.382 | 0.000 | 0.500 |
-| facet_weights | 0.750 | 0.526 | 0.281 | 0.500 |
+| facet_markers_weights | 0.750 | 0.526 | 0.281 | 0.500 |
 | full_aef | 1.000 | 0.536 | 0.281 | 0.660 |
 
-## How to add a new benchmark
+## How to add a new harness
 
-1. Add a new `examples/<benchmark-name>.ts` runner.
+1. Add a new `examples/<harness-name>.ts` runner.
 2. Make it deterministic by accepting `--seed`.
-3. Write outputs under `results/<benchmark-name>/`.
+3. Write outputs under `results/<harness-name>/`.
 4. Include at least `cases.json`, `metrics.json`, and a qualitative example.
 5. Add a short section to this README with the command and expected outputs.
-
 
 ## Reviewer caveat
 

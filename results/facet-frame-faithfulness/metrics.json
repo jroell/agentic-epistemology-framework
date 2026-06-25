@@ -2,18 +2,18 @@
   {
     "condition": "full",
     "cases": 200,
-    "accuracy": 0.865,
-    "macroF1": 0.8981,
-    "coverage": 0.865,
+    "accuracy": 1,
+    "macroF1": 1,
+    "coverage": 1,
     "avgEventsInspected": 18.6,
     "avgTraceEvents": 7.8
   },
   {
     "condition": "no_facet_weights",
     "cases": 200,
-    "accuracy": 0.665,
-    "macroF1": 0.6776,
-    "coverage": 0.735,
+    "accuracy": 0.8,
+    "macroF1": 0.7702,
+    "coverage": 0.87,
     "avgEventsInspected": 22.8,
     "avgTraceEvents": 7.8
   },

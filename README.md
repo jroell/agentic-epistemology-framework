@@ -13,7 +13,7 @@ The Agentic Epistemology Framework (AEF) provides a principled approach to model
 - **Facet Influence Ledger**: Records selected facets, prompt hashes, runtime weights, marker coverage, contradictions, and recommended debug actions.
 - **Counterfactual Diagnosis**: Supports facet removal/swap probes to estimate whether persona behavior changes in the expected direction.
 - **Observer Pattern**: Comprehensive tracing of epistemic events for transparency and debugging.
-- **Public Benchmarks**: Deterministic benchmark harnesses for root-cause diagnosis, facet-frame faithfulness, and the AEF audit service.
+- **Public Harnesses**: Deterministic trace-sensitivity harnesses for root-cause diagnosis, facet-frame faithfulness, and the AEF audit service.
 
 ## Installation
 
@@ -28,11 +28,11 @@ npm run build
 
 ## Getting Started
 
-Run the public benchmarks:
+Run the public harnesses:
 
 ```bash
 npx ts-node --transpile-only examples/root-cause-benchmark.ts --seed=42 --cases=160
-npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --seed=42 --cases=200
+npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --seed=42 --seed-count=20 --cases=200
 npx ts-node --transpile-only examples/facet-faithfulness-audit-experiment.ts
 ```
 

@@ -12,7 +12,7 @@ type Failure =
   | 'response_style_violation'
   | 'low_counterfactual_sensitivity';
 
-type Condition = 'prompt_only' | 'facet_list' | 'facet_weights' | 'full_aef';
+type Condition = 'response_only' | 'facet_list' | 'facet_markers_weights' | 'full_aef';
 
 interface Scenario {
   id: string;
@@ -28,6 +28,14 @@ interface MetricRow {
   meanMarkerCoverage: number;
   meanCounterfactualSensitivity: number;
   meanCalibrationScore: number;
+}
+
+interface CalibrationRow {
+  bin: string;
+  count: number;
+  meanConfidence: number;
+  meanFaithfulness: number;
+  absoluteGap: number;
 }
 
 const service = new FacetFaithfulnessAuditService();
@@ -203,7 +211,7 @@ function scenarios(): Scenario[] {
 
 function applyCondition(input: FacetAuditInput, condition: Condition): FacetAuditInput {
   if (condition === 'full_aef') return input;
-  if (condition === 'facet_weights') {
+  if (condition === 'facet_markers_weights') {
     return { ...input, renderedPrompt: undefined, counterfactuals: undefined };
   }
   if (condition === 'facet_list') {
@@ -234,10 +242,75 @@ function round(value: number): number {
   return Math.round(value * 1000) / 1000;
 }
 
+function calibrationRows(cases: Scenario[]): CalibrationRow[] {
+  const bins = [
+    { label: '0.00-0.33', min: 0, max: 0.33 },
+    { label: '0.34-0.66', min: 0.34, max: 0.66 },
+    { label: '0.67-1.00', min: 0.67, max: 1 },
+  ];
+  const audits = cases.map((item) => ({ item, audit: service.audit(item.input) }));
+  return bins.map((bin) => {
+    const matching = audits.filter(({ item }) => {
+      const confidence = item.input.selfReportedConfidence ?? 0;
+      return confidence >= bin.min && confidence <= bin.max;
+    });
+    if (matching.length === 0) {
+      return { bin: bin.label, count: 0, meanConfidence: 0, meanFaithfulness: 0, absoluteGap: 0 };
+    }
+    const meanConfidence = mean(matching.map(({ item }) => item.input.selfReportedConfidence ?? 0));
+    const meanFaithfulness = mean(matching.map(({ audit }) => audit.faithfulnessScore));
+    return {
+      bin: bin.label,
+      count: matching.length,
+      meanConfidence: round(meanConfidence),
+      meanFaithfulness: round(meanFaithfulness),
+      absoluteGap: round(Math.abs(meanConfidence - meanFaithfulness)),
+    };
+  });
+}
+
+function calibrationLatex(rows: CalibrationRow[]): string {
+  return [
+    '\\begin{tabular}{lrrrr}',
+    '\\toprule',
+    'Confidence bin & Count & Mean confidence & Mean faithfulness & Gap \\\\',
+    '\\midrule',
+    ...rows.map((row) => `${row.bin} & ${row.count} & ${row.meanConfidence.toFixed(3)} & ${row.meanFaithfulness.toFixed(3)} & ${row.absoluteGap.toFixed(3)} \\\\`),
+    '\\bottomrule',
+    '\\end{tabular}',
+    '',
+  ].join('\n');
+}
+
+function writeCalibrationFigure(rows: CalibrationRow[], outputPath: string): void {
+  const width = 640;
+  const height = 420;
+  const margin = { left: 80, right: 40, top: 40, bottom: 70 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+  const points = rows.filter((row) => row.count > 0).map((row) => {
+    const x = margin.left + row.meanConfidence * plotWidth;
+    const y = margin.top + plotHeight - row.meanFaithfulness * plotHeight;
+    return `<circle cx="${x}" cy="${y}" r="8" fill="#0072B2" />\n<text x="${x + 10}" y="${y - 10}" font-size="12">${row.bin} (n=${row.count})</text>`;
+  }).join('\n');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <rect width="100%" height="100%" fill="white"/>
+  <text x="${width / 2}" y="24" text-anchor="middle" font-size="18" font-family="Arial">Calibration: confidence vs. measured faithfulness</text>
+  <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${width - margin.right}" y2="${margin.top}" stroke="#999" stroke-dasharray="5,5" />
+  <line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${margin.top + plotHeight}" stroke="#333" />
+  <line x1="${margin.left}" y1="${margin.top + plotHeight}" x2="${width - margin.right}" y2="${margin.top + plotHeight}" stroke="#333" />
+  <text x="${margin.left + plotWidth / 2}" y="${height - 25}" text-anchor="middle" font-size="14">Self-reported confidence</text>
+  <text transform="translate(24,${margin.top + plotHeight / 2}) rotate(-90)" text-anchor="middle" font-size="14">Measured faithfulness</text>
+  ${points}
+</svg>\n`;
+  fs.writeFileSync(outputPath, svg);
+}
+
 
 function run(): void {
   const cases = scenarios();
-  const conditions: Condition[] = ['prompt_only', 'facet_list', 'facet_weights', 'full_aef'];
+  const calibration = calibrationRows(cases);
+  const conditions: Condition[] = ['response_only', 'facet_list', 'facet_markers_weights', 'full_aef'];
   const metrics: MetricRow[] = conditions.map((condition) => {
     const results = cases.map((item) => {
       const audit = service.audit(applyCondition(item.input, condition));
@@ -260,6 +333,9 @@ function run(): void {
   fs.writeFileSync(path.join(outDir, 'metrics.json'), JSON.stringify(metrics, null, 2));
   fs.writeFileSync(path.join(outDir, 'cases.json'), JSON.stringify(cases, null, 2));
   fs.writeFileSync(path.join(outDir, 'audits.json'), JSON.stringify(cases.map((item) => ({ id: item.id, expectedFailure: item.expectedFailure, audit: service.audit(item.input) })), null, 2));
+  fs.writeFileSync(path.join(outDir, 'calibration.json'), JSON.stringify(calibration, null, 2));
+  fs.writeFileSync(path.join(outDir, 'calibration-table.tex'), calibrationLatex(calibration));
+  writeCalibrationFigure(calibration, path.join(outDir, 'calibration.svg'));
   fs.writeFileSync(path.join(outDir, 'metrics-table.tex'), [
     '\\begin{tabular}{lrrrrr}',
     '\\toprule',
@@ -271,7 +347,7 @@ function run(): void {
     '',
   ].join('\n'));
 
-  console.log(JSON.stringify({ metrics, outDir }, null, 2));
+  console.log(JSON.stringify({ metrics, calibration, outDir }, null, 2));
 }
 
 run();

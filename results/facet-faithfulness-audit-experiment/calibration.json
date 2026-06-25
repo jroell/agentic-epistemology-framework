@@ -1,0 +1,23 @@
+[
+  {
+    "bin": "0.00-0.33",
+    "count": 0,
+    "meanConfidence": 0,
+    "meanFaithfulness": 0,
+    "absoluteGap": 0
+  },
+  {
+    "bin": "0.34-0.66",
+    "count": 0,
+    "meanConfidence": 0,
+    "meanFaithfulness": 0,
+    "absoluteGap": 0
+  },
+  {
+    "bin": "0.67-1.00",
+    "count": 8,
+    "meanConfidence": 0.875,
+    "meanFaithfulness": 0.536,
+    "absoluteGap": 0.339
+  }
+]

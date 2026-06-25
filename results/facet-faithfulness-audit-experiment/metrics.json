@@ -1,6 +1,6 @@
 [
   {
-    "condition": "prompt_only",
+    "condition": "response_only",
     "cases": 8,
     "diagnosisAccuracy": 0.125,
     "meanFaithfulnessScore": 0.162,
@@ -18,7 +18,7 @@
     "meanCalibrationScore": 0.125
   },
   {
-    "condition": "facet_weights",
+    "condition": "facet_markers_weights",
     "cases": 8,
     "diagnosisAccuracy": 0.75,
     "meanFaithfulnessScore": 0.526,

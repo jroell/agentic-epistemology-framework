@@ -288,10 +288,12 @@ export interface DebateContext {
  * Frame configuration for parameterization
  * Enables domain-specific customization without modifying frame code
  */
+export type UpdateStrategy = 'frame-weighted' | 'source-trust' | 'bayesian' | 'hybrid';
+
 export interface FrameConfiguration {
   frameType: string;
   parameters: Record<string, any>;
-  updateStrategy: 'frame-weighted' | 'source-trust' | 'bayesian' | 'hybrid';
+  updateStrategy: UpdateStrategy;
   llmProvider?: string;
   customStrategies?: Record<string, any>;
 }

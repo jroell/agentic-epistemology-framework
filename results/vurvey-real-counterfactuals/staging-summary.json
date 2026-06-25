@@ -2,69 +2,105 @@
   "summary": {
     "environment": "staging",
     "stimulus": "Evaluate a premium AI subscription that takes setup time and charges monthly.",
-    "caseCount": 3,
-    "meanFaithfulnessScore": 0.579,
-    "meanCounterfactualSensitivity": 0.886,
-    "meanMarkerCoverage": 0.248,
+    "caseCount": 10,
+    "meanFaithfulnessScore": 0.588,
+    "meanCounterfactualSensitivity": 0.852,
+    "meanMarkerCoverage": 0.261,
     "failureCounts": {
-      "facet_selection_gap": 3
+      "facet_selection_gap": 9,
+      "none": 1
     }
   },
   "caseSummaries": [
     {
-      "personaName": "David Allen",
-      "intervention": {
-        "facetCode": "disposable_income",
-        "intervention": "remove",
-        "fromValue": "limited_disposable_income",
-        "expectedChange": "response changes when disposable_income is removed"
-      },
-      "audit": {
-        "faithfulnessScore": 0.561,
-        "primaryFailure": "facet_selection_gap",
-        "counterfactualSensitivity": 0.88,
-        "markerCoverage": 0.188,
-        "calibrationScore": 0.5
-      },
-      "baselineTextLength": 305,
-      "counterfactualTextLength": 290
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "moderate_disposable_income",
+      "faithfulnessScore": 0.558,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.768,
+      "markerCoverage": 0.25
     },
     {
-      "personaName": "Brynn Landry",
-      "intervention": {
-        "facetCode": "disposable_income",
-        "intervention": "remove",
-        "fromValue": "high_disposable_income",
-        "expectedChange": "response changes when disposable_income is removed"
-      },
-      "audit": {
-        "faithfulnessScore": 0.62,
-        "primaryFailure": "facet_selection_gap",
-        "counterfactualSensitivity": 0.925,
-        "markerCoverage": 0.368,
-        "calibrationScore": 0.5
-      },
-      "baselineTextLength": 279,
-      "counterfactualTextLength": 204
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "moderate_disposable_income",
+      "faithfulnessScore": 0.572,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.868,
+      "markerCoverage": 0.235
     },
     {
-      "personaName": "Imani Soler",
-      "intervention": {
-        "facetCode": "disposable_income",
-        "intervention": "remove",
-        "fromValue": "moderate_disposable_income",
-        "expectedChange": "response changes when disposable_income is removed"
-      },
-      "audit": {
-        "faithfulnessScore": 0.556,
-        "primaryFailure": "facet_selection_gap",
-        "counterfactualSensitivity": 0.853,
-        "markerCoverage": 0.188,
-        "calibrationScore": 0.5
-      },
-      "baselineTextLength": 250,
-      "counterfactualTextLength": 250
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "moderate_disposable_income",
+      "faithfulnessScore": 0.569,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.83,
+      "markerCoverage": 0.25
+    },
+    {
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "moderate_disposable_income",
+      "faithfulnessScore": 0.559,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.887,
+      "markerCoverage": 0.176
+    },
+    {
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "limited_disposable_income",
+      "faithfulnessScore": 0.575,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.863,
+      "markerCoverage": 0.25
+    },
+    {
+      "interventionFacet": "risk_tolerance",
+      "interventionType": "remove",
+      "fromValue": "cautious_conservative",
+      "faithfulnessScore": 0.572,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.874,
+      "markerCoverage": 0.231
+    },
+    {
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "moderate_disposable_income",
+      "faithfulnessScore": 0.556,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.872,
+      "markerCoverage": 0.176
+    },
+    {
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "high_disposable_income",
+      "faithfulnessScore": 0.752,
+      "primaryFailure": "none",
+      "counterfactualSensitivity": 0.789,
+      "markerCoverage": 0.5
+    },
+    {
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "high_disposable_income",
+      "faithfulnessScore": 0.596,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.909,
+      "markerCoverage": 0.294
+    },
+    {
+      "interventionFacet": "disposable_income",
+      "interventionType": "remove",
+      "fromValue": "high_disposable_income",
+      "faithfulnessScore": 0.575,
+      "primaryFailure": "facet_selection_gap",
+      "counterfactualSensitivity": 0.863,
+      "markerCoverage": 0.25
     }
-  ],
-  "note": "Sanitized aggregate only. Raw generated texts remain in the private Vurvey API experiment output."
+  ]
 }

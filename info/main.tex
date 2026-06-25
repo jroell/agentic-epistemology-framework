@@ -16,7 +16,7 @@
 
 \title{Facet-Conditioned Trace Audits for Diagnosing Synthetic Persona Failures}
 \author{Jason Roell}
-\date{January 15, 2025}
+\date{June 25, 2026}
 
 \newcommand{\method}{AEF}
 
@@ -25,7 +25,7 @@
 \maketitle
 
 \begin{abstract}
-Synthetic personas increasingly act from long-lived constructed identities rather than single-turn prompts. Their failures often include epistemic components: a system may omit a persona constraint, overweight a conflicting cue, express confidence unsupported by its construction, or provide a plausible but unfaithful justification. This paper introduces the Agentic Epistemology Framework (\method), a trace schema and audit service for diagnosing such failures. \method{} records selected facets, prompt provenance, facet weights, expected behavioral markers, response evidence, calibration checks, and optional counterfactual probes. We extend the framework with \emph{facets}: persistent psychological, socio-ecological, psychographic, and interaction constraints that compose into an agent's active frame. The reference implementation provides deterministic public harnesses that illustrate which trace fields are needed to localize injected failure classes, plus a preliminary live integration with a Vurvey persona-generation pipeline. In controlled synthetic harnesses, richer traces recover more injected labels than prompt-only or event-only traces; these numbers are best interpreted as trace-sensitivity checks rather than external validity estimates. A small live counterfactual study shows measurable output sensitivity to facet removal, but also reveals the main current limitation: expected-marker metadata is too sparse to diagnose real responses robustly. The contribution is therefore a reproducible audit interface, benchmark scaffold, and implementation path toward stronger validation of facet-conditioned persona faithfulness.
+Synthetic personas increasingly act from long-lived constructed identities rather than single-turn prompts. Their failures often include epistemic components: a system may omit a persona constraint, overweight a conflicting cue, express confidence unsupported by its construction, or provide a plausible but unfaithful justification. This paper introduces the Agentic Epistemology Framework (\method), a trace schema and audit service for diagnosing such failures. \method{} records selected facets, prompt provenance, facet weights, expected behavioral markers, response evidence, calibration checks, and optional counterfactual probes. We extend the framework with \emph{facets}: persistent psychological, socio-ecological, psychographic, and interaction constraints that compose into an agent's active frame. The reference implementation provides deterministic public harnesses that illustrate which trace fields are needed to localize injected failure classes, plus a preliminary live integration with a Vurvey persona-generation pipeline. In controlled synthetic harnesses, richer traces recover more injected labels than prompt-only or event-only traces; these numbers are best interpreted as trace-sensitivity checks rather than external validity estimates. A small live counterfactual study shows measurable output sensitivity to facet removal, but also reveals the main current limitation: expected-marker metadata is too sparse to diagnose real responses robustly. The contribution is therefore a reproducible audit interface, harness scaffold, and implementation path toward stronger validation of facet-conditioned persona faithfulness.
 \end{abstract}
 
 \section{Introduction}
@@ -33,23 +33,23 @@ Autonomous agents now plan, use tools, communicate, and revise internal state ac
 
 This paper introduces the Agentic Epistemology Framework (\method), a structured architecture for auditing agent reasoning. \method{} represents beliefs as propositions with confidence and justifications, records observer events for epistemic transitions, and models frames as active cognitive perspectives that influence evidence weighting, source trust, and action thresholds. The paper further extends frames with \emph{facets}: typed persona constraints that jointly shape the active frame. Facets can represent psychological dispositions, lived-context constraints, psychographic motivations, and interaction style. In a synthetic human simulation, facets are not independent prompt fragments. They interact nonlinearly, and those interactions should be inspectable.
 
-This first publication of \method{} has two goals. First, it defines a vocabulary and implementation pattern for epistemic auditability in agents and synthetic societies. Second, it provides executable benchmarks that test whether the resulting traces make known failure causes diagnosable. The framework does not claim that generated persona behavior is valid in the world merely because the system produces plausible text. Instead, it asks whether the system can expose enough structured evidence to debug when a persona fails to follow its own construction.
+This first publication of \method{} has two goals. First, it defines a vocabulary and implementation pattern for epistemic auditability in agents and synthetic personas. Second, it provides executable harnesses that test whether the resulting traces make known failure causes diagnosable. The framework does not claim that generated persona behavior is valid in the world merely because the system produces plausible text. Instead, it asks whether the system can expose enough structured evidence to debug when a persona fails to follow its own construction.
 
 \subsection{Contributions}
 This paper makes four contributions:
 \begin{enumerate}[leftmargin=*]
   \item A structured epistemic ontology for beliefs, confidence, justifications, frames, facets, perceptions, actions, and observer events.
   \item A facet composition model in which persistent persona constraints contribute nonlinearly to an agent's active frame.
-  \item A TypeScript reference implementation with automated root-cause and facet-faithfulness benchmarks.
+  \item A TypeScript reference implementation with deterministic trace-sensitivity harnesses and a preliminary live counterfactual integration.
   \item An evaluation protocol that combines structured traces with confidence calibration, black-box perturbation tests, and optional representation-level probes for reasoning faithfulness.
 \end{enumerate}
 
 \section{Background and Motivation}
-\method{} draws from belief-desire-intention models \citep{bratman1987intention, rao1991modeling, wooldridge2009multiagent}, epistemic logic \citep{fagin2003reasoning}, belief revision \citep{alchourron1985logic, gardenfors1988knowledge}, frame semantics \citep{minsky1974framework, fillmore1976frame, lakoff1987women}, argumentation theory \citep{dung1995acceptability, nute1994defeasible}, and agent-based modeling \citep{epstein1996growing}. These traditions provide useful structure, but current LLM-based agents create additional audit problems.
+\method{} uses terminology from belief-desire-intention models \citep{bratman1987intention, rao1991modeling, wooldridge2009multiagent}, epistemic logic \citep{fagin2003reasoning}, belief revision \citep{alchourron1985logic, gardenfors1988knowledge}, frame semantics \citep{minsky1974framework, fillmore1976frame, lakoff1987women}, argumentation theory \citep{dung1995acceptability, nute1994defeasible}. The implementation does not claim to satisfy formal AGM revision postulates, argumentation semantics, or a full agent-based society model. These traditions motivate a vocabulary for audit artifacts: what belief was held, what evidence supported it, what frame shaped interpretation, and what changed after new evidence arrived. The paper's implemented contribution is therefore closer to an engineering audit layer than a formal epistemic calculus.
 
-Recent work shows that natural-language explanations should not be treated as automatically faithful. Chain-of-thought explanations can systematically misrepresent the true reasons for a model's answer \citep{arxiv230504388}, and faithfulness requires intervention-style tests rather than surface plausibility alone \citep{arxiv230713702}. Calibration and self-evaluation research shows that language models can sometimes estimate whether their own answers are correct, but this depends strongly on elicitation format and task setting \citep{arxiv220705221}. Black-box hallucination detection methods, such as sampling-based consistency checks, provide another way to test whether outputs are stable under repeated generation \citep{arxiv230308896}. Meanwhile, representation engineering and sparse autoencoder work provide tools for probing latent directions or interpretable features when model activations are available \citep{arxiv231001405, arxiv230908600}.
+Recent work shows that natural-language explanations should not be treated as automatically faithful. Chain-of-thought explanations can systematically misrepresent the true reasons for a model's answer \citep{arxiv230504388}, and faithfulness requires intervention-style tests rather than surface plausibility alone \citep{arxiv230713702}. Calibration and self-evaluation research shows that language models can sometimes estimate whether their own answers are correct, but this depends strongly on elicitation format and task setting \citep{arxiv220705221}. Black-box hallucination detection methods, such as sampling-based consistency checks, provide another way to test whether outputs are stable under repeated generation \citep{arxiv230308896}. Representation engineering and sparse autoencoder work provide tools for probing latent directions or interpretable features when model activations are available \citep{arxiv231001405, arxiv230908600}.
 
-\method{} treats these lines of work as complementary. Observer traces expose the explicit state the system is designed to use. Black-box perturbations test whether outputs change when facets, evidence, or prompts are altered. Calibration tests ask whether the system knows when its response is likely faithful. Representation-level probes, when available, can test whether latent activations align with the asserted frame or facet. The framework is designed to hold all of these evidence types in a single audit trail.
+\method{} implements the structured-trace layer and exposes interfaces where these stronger checks can attach. The current experiments do not run SelfCheck-style sampling, representation probes, or sparse autoencoder analyses. They should be read as trace and runtime-audit studies, not as evidence that all complementary interpretability layers have been integrated.
 
 \section{Facet-Conditioned Synthetic Personas}
 Synthetic human simulation treats a persona as a complex adaptive system rather than a flat list of demographic labels. A persona has internal psychological dispositions, lived-context constraints, motivations, trust heuristics, resource constraints, and linguistic interaction style. In the Vurvey implementation inspected for this work, these variables are represented as a graph of PM facets. A facet is an axis of variation such as income, response style, source trust, or domain expertise. A facet value contains stable identifiers, prompts, taxonomy metadata, and reliability fields. Personas link to selected values through persona fragments. Population molds define facet distributions, mandatory and preferred values, weights, selection modes, and constraints.
@@ -88,21 +88,13 @@ A \textbf{belief} is a proposition $P$ held by an agent with confidence $conf \i
 \end{enumerate}
 
 \section{Confidence, Frame, and Facet Updates}
-Let $conf_{old}$ denote an agent's current confidence in proposition $P$, and let $e$ denote new evidence relevant to $P$. \method{} uses update functions of the form:
+Let $conf_{old}$ denote an agent's current confidence in proposition $P$, and let $e$ denote new evidence relevant to $P$. \method{} treats confidence updates as implementation-specific transitions that should be logged, not as a universal belief-revision rule. A simple implementation may interpolate between prior confidence and an evidence-implied target:
 \begin{equation}
-conf_{new} = f(conf_{old}, just_{old}, e, F_t).
+conf_{new} = (1 - w) \cdot conf_{old} + w \cdot C(e,P),
 \end{equation}
+where $w$ is the evidence saliency recorded by the runtime. This equation is a logging contract for a common update pattern, not an AGM-style belief revision model.
 
-For frame-weighted evidence, evidence $e$ suggests a target confidence $C(e,P) \in [0,1]$. The active frame assigns evidence weight $w_{F_t}(e)$:
-\begin{equation}
-conf_{new} = (1 - w_{F_t}(e)) \cdot conf_{old} + w_{F_t}(e) \cdot C(e,P).
-\end{equation}
-
-For facet-conditioned personas, $w_{F_t}(e)$ can be decomposed into facet contributions:
-\begin{equation}
-w_{F_t}(e) = \sigma\left(b + \sum_i \alpha_i h(Facet_i, e) + \sum_{i<j} \beta_{ij} h(Facet_i, Facet_j, e)\right),
-\end{equation}
-where $h$ maps facets and evidence to contribution scores, $\alpha_i$ are individual facet weights, $\beta_{ij}$ are interaction weights, and $\sigma$ bounds the resulting saliency. The observer should log individual contributions and interaction terms whenever the implementation can expose them.
+For facet-conditioned personas, the current implementation does not fit a parametric interaction model. Instead, it records a facet influence ledger: selected facet values, prompt hashes, configured weights, runtime weights when available, expected markers, observed markers, suppressed facets, and any known interaction terms. The live Vurvey counterfactuals show why this conservative design matters: removing one facet may not remove a behavior when the same constraint is redundantly encoded in the generated biography or adjacent facets. Future work can fit explicit interaction weights, but the implemented contribution is the audit surface needed to discover when such weights would be meaningful.
 
 \section{Auditing Faithfulness}
 \method{} distinguishes four kinds of faithfulness evidence.
@@ -116,21 +108,23 @@ where $h$ maps facets and evidence to contribution scores, $\alpha_i$ are indivi
 \textbf{Latent faithfulness} asks whether hidden representations align with the claimed frame or facet when activations are available. Representation engineering can test directions corresponding to persona-relevant concepts, and sparse autoencoders can expose interpretable features. These probes are optional because many production systems expose only black-box access, but the framework leaves room for them as stronger evidence.
 
 \section{Reference Implementation}
-The reference implementation is written in TypeScript and is publicly available at \url{https://github.com/jroell/agentic-epistemology-framework}. It implements beliefs, justifications, frames, agents, memory, actions, tools, and observer events. The implementation now includes two benchmark harnesses: a generic root-cause benchmark and a facet-frame faithfulness benchmark.
+The reference implementation is written in TypeScript and is publicly available at \url{https://github.com/jroell/agentic-epistemology-framework}. It implements beliefs, justifications, frames, agents, memory, actions, tools, and observer events. The implementation now includes two trace-sensitivity harnesses: a generic root-cause harness and a facet-frame faithfulness harness.
 
 The Vurvey production codebase informed the facet extension. Its PM facet graph includes global facets and versioned facet values, \texttt{headerPrompt} and \texttt{detailPrompt} fields used to build persona prompts, \texttt{PmPersonaFragment} rows that link personas to selected facet values, mold facet configurations with weights and options, and auto-configuration services that recommend and weight facet distributions for population molds. The current implementation extends that path in two places: \texttt{vurvey-python} writes an AEF construction manifest into \texttt{ai\_personas.facetConfigs} when personas are generated from molds, and \texttt{vurvey-api} attaches an AEF audit summary to each simulated survey answer during phase-two generation. These implementation details motivate the audit requirement: a persona response should be diagnosable back to the facet graph, prompt fragments, selected values, construction manifest, composed frame, rendered system prompt, user prompt, and generated response that produced it.
 
-\section{Automated Root-Cause Benchmark}
-The generic benchmark asks whether structured epistemic traces make it possible to identify the cause of agent failures in scenarios where the ground-truth cause is known. It covers four injected causes: frame misweighting, source-trust error, threshold miscalibration, and justification gap. It evaluates four trace conditions: full trace, no-frame trace, no-justification trace, and event-only trace.
+\section{Automated Root-Cause Trace-Sensitivity Harness}
+The generic harness asks whether structured epistemic traces carry the fields needed to identify injected failure labels in scenarios where the ground-truth label is known by construction. It covers four injected causes: frame misweighting, source-trust error, threshold miscalibration, and justification gap. It evaluates four trace conditions: full trace, no-frame trace, no-justification trace, and event-only trace.
 
-We ran the benchmark with 160 synthetic cases using seed 42. The benchmark command was:
+We ran the harness with 160 synthetic cases using seed 42. This single run is descriptive; it is not an uncertainty estimate or an external performance claim. The command was:
 \begin{verbatim}
 npx ts-node --transpile-only examples/root-cause-benchmark.ts --seed=42 --cases=160
 \end{verbatim}
 
+The labels in this harness are intentionally injected into trace fields. The table therefore measures information availability under ablations: whether a diagnostic trace schema preserves the evidence a heuristic diagnoser needs. It should not be read as an unbiased estimate of deployed persona-diagnosis accuracy.
+
 \begin{table}[h]
 \centering
-\caption{Generic root-cause diagnosis results. Full traces expose the fields needed to recover all labels in this deterministic synthetic generator. Ablating frame fields, justification/source fields, or epistemic details removes diagnostic capability.}
+\caption{Generic root-cause trace-sensitivity results. Full traces expose the fields needed to recover all labels in this deterministic synthetic generator. Ablating frame fields, justification/source fields, or epistemic details removes diagnostic capability.}
 \label{tab:root-cause-results}
 \begin{tabular}{lrrrrr}
 \toprule
@@ -151,8 +145,8 @@ event\_only & 0.000 & 0.000 & 0.000 & 16.00 & 4.00 \\
 \label{fig:accuracy-by-condition}
 \end{figure}
 
-\section{Facet-Frame Faithfulness Benchmark}
-The second benchmark targets synthetic persona auditing. Each case constructs a persona from six facets: anxiety level, time poverty, financial outlook, source trust, response style, and adoption-curve position. The harness injects one of five failure types:
+\section{Facet-Frame Trace-Sensitivity Harness}
+The second harness targets synthetic persona auditing. Each case constructs a persona from six facets: anxiety level, time poverty, financial outlook, source trust, response style, and adoption-curve position. The harness injects one of five failure types:
 \begin{enumerate}[leftmargin=*]
   \item \textbf{Facet omission}: a required facet is absent from the composed frame.
   \item \textbf{Facet misweighting}: a facet contribution is materially lower or higher than its expected calibration.
@@ -161,23 +155,24 @@ The second benchmark targets synthetic persona auditing. Each case constructs a 
   \item \textbf{Response-style violation}: the response ignores the selected interaction-style facet.
 \end{enumerate}
 
-The benchmark evaluates four conditions: full trace, no facet weights, no facet prompts, and event-only trace. We ran 200 cases with seed 42:
+The harness evaluates four conditions: full trace, no facet weights, no facet prompts, and event-only trace. We ran 200 cases per seed across 20 deterministic seeds:
 \begin{verbatim}
-npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --seed=42 --cases=200
+npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts \
+  --seed=42 --seed-count=20 --cases=200
 \end{verbatim}
 
 \begin{table}[h]
 \centering
-\caption{Facet-frame faithfulness results. After fixing the omission-control bug, full traces outperform ablations in this deterministic sensitivity harness. Removing facet weights harms diagnosis of weighting errors. Removing facet prompts and expected response markers sharply reduces coverage.}
+\caption{Facet-frame faithfulness results. After fixing the omission-control bug, full traces expose all injected labels in this deterministic sensitivity harness across 20 seeds. Removing facet weights harms diagnosis of weighting errors. Removing facet prompts and expected response markers sharply reduces coverage.}
 \label{tab:facet-faithfulness-results}
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-Trace condition & Accuracy & Macro F1 & Coverage & Events inspected & Trace events \\
+Trace condition & Accuracy & 95\% CI & Macro F1 & 95\% CI & Coverage & 95\% CI \\
 \midrule
-full & 0.865 & 0.898 & 0.865 & 18.60 & 7.80 \\
-no\_facet\_weights & 0.665 & 0.678 & 0.735 & 22.80 & 7.80 \\
-no\_facet\_prompts & 0.400 & 0.400 & 0.400 & 21.60 & 7.80 \\
-event\_only & 0.000 & 0.000 & 0.000 & 31.20 & 7.80 \\
+full & 1.000 & $\pm$ 0.000 & 1.000 & $\pm$ 0.000 & 1.000 & $\pm$ 0.000 \\
+no\_facet\_markers\_weights & 0.800 & $\pm$ 0.000 & 0.772 & $\pm$ 0.003 & 0.866 & $\pm$ 0.007 \\
+no\_facet\_prompts & 0.400 & $\pm$ 0.000 & 0.400 & $\pm$ 0.000 & 0.400 & $\pm$ 0.000 \\
+event\_only & 0.000 & $\pm$ 0.000 & 0.000 & $\pm$ 0.000 & 0.000 & $\pm$ 0.000 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -185,31 +180,31 @@ event\_only & 0.000 & 0.000 & 0.000 & 31.20 & 7.80 \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\linewidth]{figures/facet-frame-faithfulness.pdf}
-\caption{Facet-frame faithfulness diagnosis accuracy by trace condition.}
+\caption{Facet-frame trace-sensitivity accuracy by trace condition.}
 \label{fig:facet-frame-faithfulness}
 \end{figure}
 
 A representative facet-misweighting case illustrates the diagnostic path. The persona was expected to evaluate a premium AI subscription while constrained by crisis-flow financial outlook and a time-poverty facet. The trace showed \texttt{time\_poverty} with observed weight 0.18 against expected weight 0.78. The response gave a long, careful evaluation despite the time constraint. The diagnostic procedure predicted \texttt{facet\_misweighting} after inspecting the facet contribution event.
 
 
-\section{Facet Faithfulness Audit Service Experiment}
-The benchmark above motivated a concrete implementation: \texttt{FacetFaithfulnessAuditService}. The service takes a persona response, selected facets, rendered prompt provenance, model metadata, self-reported confidence, and optional counterfactual probes. It returns a facet influence ledger, marker coverage, contradictions, counterfactual sensitivity, calibration score, final faithfulness score, primary diagnosis, causal facets, evidence, and recommended debug actions.
+\section{Facet Faithfulness Audit Service Case Study}
+The harness above motivated a concrete implementation: \texttt{FacetFaithfulnessAuditService}. The service takes a persona response, selected facets, rendered prompt provenance, model metadata, self-reported confidence, and optional counterfactual probes. It returns a facet influence ledger, marker coverage, contradictions, counterfactual sensitivity, calibration score, final faithfulness score, primary diagnosis, causal facets, evidence, and recommended debug actions.
 
 The service implements the audit hooks proposed by the framework: selected facet IDs and values, taxonomy versions, prompt hashes, configured and runtime weights, frame composition, suppressed facets, inferred interaction terms, expected markers, observed markers, forbidden marker contradictions, confidence calibration, and counterfactual sensitivity. A Vurvey adapter maps PM facet values, facet codes, \texttt{headerPrompt}, \texttt{detailPrompt}, confidence scores, taxonomy versions, construction-manifest weights, and rendered prompt provenance into this audit input shape.
 
-We evaluated the audit service on eight hand-constructed Vurvey-style persona cases covering faithful responses, prompt omission, facet misweighting, facet conflict, persona drift, response-style violation, and low counterfactual sensitivity. The goal of this experiment is not to prove external predictive validity. It tests whether the implemented service can recover failure causes from increasingly rich evidence conditions.
+We evaluated the audit service on eight hand-constructed Vurvey-style case studies covering faithful responses, prompt omission, facet misweighting, facet conflict, persona drift, response-style violation, and low counterfactual sensitivity. The goal of this experiment is not to prove external predictive validity. It tests whether the implemented service can recover handcrafted fixture labels from increasingly rich evidence conditions.
 
 \begin{table}[h]
 \centering
-\caption{Facet faithfulness audit service results. Prompt-only and facet-list evidence are insufficient for reliable diagnosis. Adding weights improves diagnosis, and full AEF evidence, including prompt provenance and counterfactual probes, recovers all eight handcrafted fixture labels. These are fixture labels rather than external deployment labels.}
+\caption{Facet faithfulness audit service results. Response-only and facet-list evidence are insufficient for reliable diagnosis. Adding markers and weights improves diagnosis, and full AEF evidence, including prompt provenance and counterfactual probes, recovers all eight handcrafted fixture labels. These are fixture labels rather than external deployment labels.}
 \label{tab:facet-audit-service-results}
 \begin{tabular}{lrrrrr}
 \toprule
 Condition & Accuracy & Faithfulness & Marker cov. & Counterfact. & Calibration \\
 \midrule
-prompt\_only & 0.125 & 0.162 & 0.000 & 0.500 & 0.125 \\
+response\_only & 0.125 & 0.162 & 0.000 & 0.500 & 0.125 \\
 facet\_list & 0.125 & 0.382 & 0.000 & 0.500 & 0.125 \\
-facet\_weights & 0.750 & 0.526 & 0.281 & 0.500 & 0.406 \\
+facet\_markers\_weights & 0.750 & 0.526 & 0.281 & 0.500 & 0.406 \\
 full\_aef & 1.000 & 0.536 & 0.281 & 0.660 & 0.406 \\
 \bottomrule
 \end{tabular}
@@ -226,33 +221,58 @@ The experiment exposed an important design lesson. Mean faithfulness score is no
 
 In the faithful fixture, the ledger recorded five selected facets, prompt inclusion for each facet, prompt hashes, configured and runtime weights, and interaction terms such as \texttt{financial\_outlook:crisis\_flow x adoption\_curve\_position:innovator}. The service correctly marked the response as faithful while still listing missing secondary markers, such as explicit novelty language. In the prompt omission fixture, the rendered prompt omitted \texttt{financial\_outlook}; the service diagnosed \texttt{facet\_prompt\_omission} and recommended verifying prompt assembly. In the persona drift fixture, the response introduced an unsupported enterprise CTO identity with unlimited budget; the service diagnosed \texttt{persona\_drift} and recommended regenerating or constraining the persona biography.
 
-
-\section{Live Vurvey Counterfactual Generation}
-The fixture experiments above still use controlled responses. To test the framework against the actual Vurvey persona generation path, we added a Vurvey API counterfactual runner that calls \texttt{PersonaAnswerGenerator.generateEnhancedPersonaAnswer} for a baseline persona and again for a counterfactual persona variant. The counterfactual variant is produced by applying a facet intervention to the persona's PM facet values before generation. This experiment therefore uses the live survey-simulation prompt path, the selected persona facets, the generated system prompt, and the configured Gemini survey-simulation model rather than simulated counterfactual scores.
-
-We first extracted read-only facet fixtures from staging and production. Staging produced a representative fixture with 25 high-facet-count personas, 15 published molds, and 157 distinct facet codes. Production produced 25 high-facet-count personas and 71 distinct facet codes; the production database currently contains one draft base mold and no mold facet configurations, so production mold distributions are not reported. Common staging facet codes include \texttt{adoption\_curve}, \texttt{agreeableness}, \texttt{brand\_relationship\_orientation}, \texttt{caregiving\_load}, and \texttt{disposable\_income}. Common production facet codes include \texttt{adoption\_curve}, \texttt{age}, \texttt{agreeableness}, \texttt{anxiety\_level}, \texttt{challenge\_mindset}, and several China-specific ecological and commercial context facets.
-
-We then ran the live counterfactual experiment on three staging personas using the stimulus: \emph{Evaluate a premium AI subscription that takes setup time and charges monthly.} Each case selected the first available high-impact facet from \texttt{disposable\_income}, \texttt{financial\_outlook}, \texttt{time\_poverty}, \texttt{risk\_tolerance}, \texttt{adoption\_curve}, or \texttt{stress\_level}, removed that facet, regenerated the response, and compared the baseline and counterfactual outputs.
+\subsection{Calibration Analysis}
+The hand-constructed audit cases also provide a calibration sanity check. All eight examples have high self-reported confidence, but the measured faithfulness score is much lower. In the high-confidence bin, mean confidence is 0.875 while mean measured faithfulness is 0.536, a gap of 0.339. This is not a deployment calibration result or a full reliability diagram, because the fixture set is small, high-confidence only, and not independently labeled, but it shows that calibration should be analyzed directly rather than left as a table column.
 
 \begin{table}[h]
 \centering
-\caption{Live Vurvey counterfactual generation results on three staging personas. The counterfactual sensitivity is high, indicating that removing selected facets changes generated outputs. Marker coverage remains low, showing that current marker rules are too sparse and literal for real persona responses.}
+\caption{Fixture calibration summary. The high-confidence bin is overconfident relative to measured faithfulness, motivating reliability diagrams and held-out human labels in future evaluations.}
+\label{tab:calibration-fixture}
+\begin{tabular}{lrrrr}
+\toprule
+Confidence bin & Count & Mean confidence & Mean faithfulness & Gap \\
+\midrule
+0.00-0.33 & 0 & 0.000 & 0.000 & 0.000 \\
+0.34-0.66 & 0 & 0.000 & 0.000 & 0.000 \\
+0.67-1.00 & 8 & 0.875 & 0.536 & 0.339 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.70\linewidth]{figures/calibration.pdf}
+\caption{Fixture calibration sanity check comparing self-reported confidence with measured faithfulness.}
+\label{fig:calibration}
+\end{figure}
+
+
+\section{Live Vurvey Counterfactual Case Study}
+The fixture case studies above still use controlled responses. To test the framework against the actual Vurvey persona generation path, we added a Vurvey API counterfactual runner that calls \texttt{PersonaAnswerGenerator.generateEnhancedPersonaAnswer} for a baseline persona and again for a counterfactual persona variant. The counterfactual variant is produced by applying a facet intervention to the persona's PM facet values before generation. This case study therefore uses the live survey-simulation prompt path, the selected persona facets, the generated system prompt, and the configured Gemini survey-simulation model rather than simulated counterfactual scores.
+
+We first extracted read-only facet fixtures from staging and production. Staging produced a representative fixture with 25 high-facet-count personas, 15 published molds, and 157 distinct facet codes. Production produced 25 high-facet-count personas and 71 distinct facet codes; the production database currently contains one draft base mold and no mold facet configurations, so production mold distributions are not reported. Common staging facet codes include \texttt{adoption\_curve}, \texttt{agreeableness}, \texttt{brand\_relationship\_orientation}, \texttt{caregiving\_load}, and \texttt{disposable\_income}. Common production facet codes include \texttt{adoption\_curve}, \texttt{age}, \texttt{agreeableness}, \texttt{anxiety\_level}, \texttt{challenge\_mindset}, and several China-specific ecological and commercial context facets.
+
+We then ran the live counterfactual case study on ten staging personas using the stimulus: \emph{Evaluate a premium AI subscription that takes setup time and charges monthly.} Each case selected the first available high-impact facet from \texttt{disposable\_income}, \texttt{financial\_outlook}, \texttt{time\_poverty}, \texttt{risk\_tolerance}, \texttt{adoption\_curve}, or \texttt{stress\_level}, removed that facet, regenerated the response, and compared the baseline and counterfactual outputs.
+
+\begin{table}[h]
+\centering
+\caption{Live Vurvey counterfactual case-study results on ten staging personas. The counterfactual sensitivity is high, indicating that removing selected facets changes generated outputs. Marker coverage remains low, showing that current marker rules are too sparse and literal for real persona responses.}
 \label{tab:live-vurvey-counterfactuals}
 \begin{tabular}{lrrrr}
 \toprule
 Cases & Faithfulness & Counterfact. sensitivity & Marker cov. & Primary diagnosis \\
 \midrule
-3 & 0.579 & 0.886 & 0.248 & facet\_selection\_gap (3/3) \\
+10 & 0.588 & 0.852 & 0.261 & facet\_selection\_gap (9/10) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The qualitative outputs were informative. One staging persona responded: ``A monthly cost is already a stretch for anything extra, and if it takes time to set up? Forget about it.'' After the \texttt{disposable\_income} facet was removed, the generated response still referenced money and family constraints, indicating that similar constraints are redundantly represented in other facets or in the generated biography. Another persona with high disposable income treated the product as plausible if it saved time, while the counterfactual version became more value-conditional. These outcomes show that facets do influence the live generation path, but effects are distributed across multiple identity layers.
+The qualitative outputs were informative. One staging persona responded: ``A monthly cost is already a stretch for anything extra, and if it takes time to set up? Forget about it.'' After the \texttt{disposable\_income} facet was removed, the generated response still referenced money and family constraints, indicating that similar constraints are redundantly represented in other facets or in the generated biography. Another persona with high disposable income treated the product as plausible if it saved time, while the counterfactual version became more value-conditional. These outcomes are consistent with facets influencing the live generation path, but effects are distributed across multiple identity layers.
 
-The main finding is that real counterfactual sensitivity is measurable, but marker coverage is currently the limiting factor. The audit service correctly avoided overclaiming faithfulness: all three live cases were diagnosed as \texttt{facet\_selection\_gap} because the expected marker catalog did not cover enough of the real facet semantics and because removing one facet did not remove all related behavioral constraints from the biography and adjacent facets. This is a useful failure mode. It shows that the product improvement should be richer facet-level marker metadata, interaction-aware expectations, and persisted construction manifests. The implementation now records such manifests at persona initialization time and uses them at survey-simulation runtime, closing the main traceability gap identified by the live counterfactual experiment.
+The main finding is that real counterfactual sensitivity is measurable in this small case study, but marker coverage and facet redundancy are currently the limiting factors. The audit service correctly avoided overclaiming faithfulness: nine of ten live cases were diagnosed as \texttt{facet\_selection\_gap} because the expected marker catalog did not cover enough of the real facet semantics and because removing one facet did not remove all related behavioral constraints from the biography and adjacent facets. This is a useful failure mode. It shows that the product improvement should be richer facet-level marker metadata, interaction-aware expectations, and persisted construction manifests. The implementation now records such manifests at persona initialization time and uses them at survey-simulation runtime, closing the main traceability gap identified by the live counterfactual experiment.
 
 \section{Discussion}
-The generic benchmark shows that structured epistemic traces can expose simple injected failures when the trace contains the relevant fields. The facet benchmark is more realistic and harder. Full traces recover many failures, but not all. This is useful: persona faithfulness cannot be reduced to checking that a prompt contains the right words. It requires tracing facet selection, prompt rendering, frame composition, expected behavioral markers, response content, and sometimes counterfactual or latent evidence.
+The generic harness shows that structured epistemic traces can expose simple injected failures when the trace contains the relevant fields. This is an information-availability result, not a proof that diagnosis is intrinsically hard or easy. The facet harness is more realistic and harder. Full traces recover many failures, but not all. This is useful, but also limiting: structure is necessary for diagnosis but not sufficient for the harder classes of real persona unfaithfulness. It requires tracing facet selection, prompt rendering, frame composition, expected behavioral markers, response content, and sometimes counterfactual or latent evidence. The live case study further shows that facets are not cleanly separable levers: biography text and adjacent facets can redundantly encode the same constraint.
 
 For Vurvey-style synthetic personas, \method{} suggests several concrete audit hooks:
 \begin{enumerate}[leftmargin=*]
@@ -265,15 +285,15 @@ For Vurvey-style synthetic personas, \method{} suggests several concrete audit h
 \end{enumerate}
 
 \section{Limitations}
-The benchmarks use controlled synthetic failures with known labels and deterministic heuristic evaluators. They establish that the implementation can carry and expose useful diagnostic fields, not that all synthetic personas are valid or predictive in deployment, and not that the reported synthetic accuracies estimate real-world performance. The facet benchmark should be extended with noisy traces, hidden labels, independent evaluators, human debugging studies, live product prompt paths, and held-out response data.
+The harnesses use controlled synthetic failures with known labels and deterministic heuristic evaluators. They establish that the implementation can carry and expose useful diagnostic fields, not that all synthetic personas are valid or predictive in deployment, and not that the reported synthetic accuracies estimate real-world performance. The generic harness, audit-service case study, and live counterfactual case study are descriptive. The facet harness reports seed variation because it is cheap to run, but it still uses deterministic injected labels. Future work should add noisy traces, hidden labels, independent evaluators, human debugging studies, live product prompt paths, and held-out response data.
 
-The framework also depends on the quality of facet definitions, prompt fragments, weights, and constraints. If the facet graph itself encodes weak theory or biased assumptions, \method{} will make those assumptions more visible but will not make them correct. Detailed observer logs can expose sensitive persona or respondent data, so production use requires careful retention, access control, and redaction policy.
+Auditability and external validity are separate axes. \method{} can show that a persona did or did not follow its own construction; it cannot show that the construction corresponds to real people. External validation requires held-out human response data and validation work such as the broader synthetic-persona validation harness. The framework also depends on the quality of facet definitions, prompt fragments, weights, and constraints. If the facet graph itself encodes weak theory or biased assumptions, \method{} will make those assumptions more visible but will not make them correct. Detailed observer logs can expose sensitive persona or respondent data, so production use requires careful retention, access control, and redaction policy.
 
 \section{Code and Data Availability}
-The reference implementation is available at \url{https://github.com/jroell/agentic-epistemology-framework} under the MIT license. The implementation includes \texttt{FacetFaithfulnessAuditService}, the generic root-cause benchmark, the facet-frame benchmark, the facet audit service experiment,, public benchmark documentation, and a Vurvey construction-manifest/runtime-audit integration. Generated outputs are written under the repository's results directory. A Vurvey API branch named \texttt{AEF-implementation} contains the product-facing adapter that maps PM facet values and construction-manifest weights into the audit input shape, attaches AEF audit summaries during survey simulation, and includes the live Vurvey counterfactual generation runner. A Vurvey Python branch named \texttt{AEF-implementation} persists AEF construction manifests into \texttt{ai\_personas.facetConfigs} during mold-based persona generation.
+The reference implementation is available at \url{https://github.com/jroell/agentic-epistemology-framework} under the MIT license. The implementation includes \texttt{FacetFaithfulnessAuditService}, the generic root-cause trace-sensitivity harness, the facet-frame trace-sensitivity harness, the facet audit service case study, public harness documentation, and a Vurvey construction-manifest/runtime-audit integration. Generated outputs are written under the repository's results directory. A Vurvey API branch named \texttt{AEF-implementation} contains the product-facing adapter that maps PM facet values and construction-manifest weights into the audit input shape, attaches AEF audit summaries during survey simulation, and includes the live Vurvey counterfactual case-study runner. A Vurvey Python branch named \texttt{AEF-implementation} persists AEF construction manifests into \texttt{ai\_personas.facetConfigs} during mold-based persona generation.
 
 \section{Conclusion}
-The Agentic Epistemology Framework provides an audit architecture for autonomous agents and synthetic personas. By making beliefs, confidence, justifications, frames, facets, and observer events first-class constructs, \method{} supports debugging not only what an agent said, but why the system should have expected that behavior from its configured epistemic state. The facet extension connects this audit layer to synthetic human simulation: facets become inspectable contributors to frame composition, and persona faithfulness becomes a measurable, diagnosable property rather than a matter of surface plausibility.
+The Agentic Epistemology Framework provides an audit architecture for autonomous agents and synthetic personas. By making beliefs, confidence, justifications, frames, facets, and observer events first-class constructs, \method{} supports debugging not only what an agent said, but why the system should have expected that behavior from its configured epistemic state. The facet extension connects this audit layer to synthetic human simulation: facets become inspectable contributors to frame composition, and persona faithfulness becomes a more inspectable engineering target rather than a matter of surface plausibility.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

@@ -1,0 +1,42 @@
+[
+  {
+    "condition": "full",
+    "seeds": 20,
+    "meanAccuracy": 1,
+    "ci95Accuracy": 0,
+    "meanMacroF1": 1,
+    "ci95MacroF1": 0,
+    "meanCoverage": 1,
+    "ci95Coverage": 0
+  },
+  {
+    "condition": "no_facet_weights",
+    "seeds": 20,
+    "meanAccuracy": 0.8,
+    "ci95Accuracy": 0,
+    "meanMacroF1": 0.7718,
+    "ci95MacroF1": 0.0026,
+    "meanCoverage": 0.8663,
+    "ci95Coverage": 0.0073
+  },
+  {
+    "condition": "no_facet_prompts",
+    "seeds": 20,
+    "meanAccuracy": 0.4,
+    "ci95Accuracy": 0,
+    "meanMacroF1": 0.4,
+    "ci95MacroF1": 0,
+    "meanCoverage": 0.4,
+    "ci95Coverage": 0
+  },
+  {
+    "condition": "event_only",
+    "seeds": 20,
+    "meanAccuracy": 0,
+    "ci95Accuracy": 0,
+    "meanMacroF1": 0,
+    "ci95MacroF1": 0,
+    "meanCoverage": 0,
+    "ci95Coverage": 0
+  }
+]

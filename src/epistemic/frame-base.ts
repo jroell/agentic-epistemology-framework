@@ -20,7 +20,8 @@ import {
   IParameterProvider,
   FrameConfiguration,
   AgentContext,
-  ConfidenceUpdateContext
+  ConfidenceUpdateContext,
+  UpdateStrategy
 } from './frame-interfaces';
 import { 
   UpdateStrategyFactory, 
@@ -28,7 +29,7 @@ import {
   ExponentialMovingAverageTrustLearner 
 } from './frame-strategies';
 import type { Proposition, Justification, JustificationElement } from '../types/common';
-import { Perception } from '../core/perception';
+import { ObservationPerception, Perception } from '../core/perception';
 import { Goal } from '../action/goal';
 import { generateId, clampConfidence } from '../types/common';
 
@@ -168,8 +169,8 @@ export class ComposableBaseFrame extends BaseCoreFrame implements IEpistemicFram
     name: string,
     description: string,
     frameType: string,
-    private llmProvider: ILLMProvider,
-    private parameterProvider?: IParameterProvider,
+    protected llmProvider: ILLMProvider,
+    protected parameterProvider?: IParameterProvider,
     id?: string,
     updateStrategy: string = 'frame-weighted'
   ) {
@@ -282,7 +283,7 @@ export class ComposableBaseFrame extends BaseCoreFrame implements IEpistemicFram
         this,
         agentContext
       );
-      return { ...perception, data: interpretedData };
+      return new ObservationPerception('interpreted', interpretedData, perception.source);
     } catch (error) {
       console.warn('Perception interpretation failed:', error);
       return perception; // Return original if interpretation fails
@@ -433,7 +434,7 @@ export class FrameRegistry {
 export function createFrameConfig(
   frameType: string,
   parameters: Record<string, any> = {},
-  updateStrategy: string = 'frame-weighted'
+  updateStrategy: UpdateStrategy = 'frame-weighted'
 ): FrameConfiguration {
   return {
     frameType,
@@ -449,7 +450,7 @@ export function createFrame(
   frameType: string,
   llmProvider: ILLMProvider,
   parameters: Record<string, any> = {},
-  updateStrategy: string = 'frame-weighted',
+  updateStrategy: UpdateStrategy = 'frame-weighted',
   parameterProvider?: IParameterProvider,
   id?: string
 ): IEpistemicFrame {

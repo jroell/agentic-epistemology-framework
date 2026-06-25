@@ -21,6 +21,7 @@ import {
   createFrameConfig
 } from './frame-base';
 import { clampConfidence } from '../types/common';
+import { ObservationJustificationElement } from './justification';
 
 // ============================================================================
 // CONCRETE FRAME IMPLEMENTATIONS - Built on SOLID Foundation
@@ -170,7 +171,7 @@ class ProDebaterFrameImpl extends ComposableBaseFrame implements IDebateFrame {
     try {
       // Pro debaters evaluate arguments based on how well they support the pro position
       const baseStrength = await this.llmProvider.judgeEvidenceStrength(
-        { id: '', type: 'argument', content: argument, source: 'debate' },
+        new ObservationJustificationElement('debate', { argument }),
         debateContext.topic
       );
       
@@ -243,7 +244,7 @@ class ConDebaterFrameImpl extends ComposableBaseFrame implements IDebateFrame {
     try {
       // Con debaters evaluate arguments based on how well they support the con position
       const baseStrength = await this.llmProvider.judgeEvidenceStrength(
-        { id: '', type: 'argument', content: argument, source: 'debate' },
+        new ObservationJustificationElement('debate', { argument }),
         debateContext.topic
       );
       
@@ -317,7 +318,7 @@ class JudgeFrameImpl extends ComposableBaseFrame implements IDebateFrame {
     try {
       // Judges evaluate arguments neutrally regardless of position
       return await this.llmProvider.judgeEvidenceStrength(
-        { id: '', type: 'argument', content: argument, source: 'debate' },
+        new ObservationJustificationElement('debate', { argument }),
         debateContext.topic
       );
     } catch (error) {

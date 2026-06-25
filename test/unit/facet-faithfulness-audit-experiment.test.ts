@@ -21,7 +21,7 @@ describe('facet faithfulness audit experiment', () => {
     const byCondition = new Map(metrics.map((row) => [row.condition, row]));
     const full = byCondition.get('full_aef')!;
     const facetList = byCondition.get('facet_list')!;
-    const facetWeights = byCondition.get('facet_weights')!;
+    const facetWeights = byCondition.get('facet_markers_weights')!;
 
     expect(full.diagnosisAccuracy).toBeGreaterThan(facetList.diagnosisAccuracy);
     expect(full.meanCounterfactualSensitivity).toBeGreaterThan(facetWeights.meanCounterfactualSensitivity);

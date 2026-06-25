@@ -14,7 +14,8 @@ import {
   FrameRegistry,
   createFrameConfig,
   getFrameSystemInfo,
-  initializeFrameSystem
+  initializeFrameSystem,
+  ObservationJustificationElement
 } from '../src/epistemic';
 
 // ============================================================================
@@ -179,7 +180,7 @@ class DevilsAdvocateFrame extends ComposableBaseFrame implements IDebateFrame {
     try {
       // Get base strength evaluation
       const baseStrength = await this.llmProvider.judgeEvidenceStrength(
-        { id: '', type: 'argument', content: argument, source: 'debate' },
+        new ObservationJustificationElement('debate', { argument }),
         debateContext.topic
       );
       
@@ -322,7 +323,8 @@ export function exampleUsage(): void {
 // ============================================================================
 
 // 1. Initialize the frame system (once at startup)
-import { initializeFrameSystem } from '../src/epistemic';
+import { initializeFrameSystem   ObservationJustificationElement
+} from '../src/epistemic';
 import { registerCustomFrames, createOptimismFrame } from './custom-frame-example';
 
 initializeFrameSystem();
