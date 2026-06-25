@@ -8,7 +8,7 @@ The benchmark code lives in `examples/` so it can run directly against the TypeS
 
 ### 1. Generic root-cause benchmark
 
-Tests whether structured epistemic traces recover injected agent failure causes.
+Tests whether structured epistemic traces expose fields needed to localize injected agent failure labels in a deterministic harness.
 
 ```bash
 npx ts-node --transpile-only examples/root-cause-benchmark.ts --seed=42 --cases=160
@@ -94,19 +94,19 @@ Primary metric: diagnosis accuracy by evidence condition.
 
 | Condition | Accuracy | Macro F1 | Coverage |
 |---|---:|---:|---:|
-| full | 0.665 | 0.680 | 0.725 |
-| no_facet_weights | 0.465 | 0.466 | 0.595 |
-| no_facet_prompts | 0.200 | 0.200 | 0.200 |
+| full | 0.865 | 0.898 | 0.865 |
+| no_facet_weights | 0.665 | 0.678 | 0.735 |
+| no_facet_prompts | 0.400 | 0.400 | 0.400 |
 | event_only | 0.000 | 0.000 | 0.000 |
 
 ### Facet faithfulness audit service experiment
 
-| Condition | Accuracy | Faithfulness | SNR |
-|---|---:|---:|---:|
-| prompt_only | 0.125 | 0.162 | 0.17 |
-| facet_list | 0.125 | 0.382 | 0.83 |
-| facet_weights | 0.750 | 0.526 | 2.20 |
-| full_aef | 1.000 | 0.536 | 4.11 |
+| Condition | Accuracy | Faithfulness | Marker Coverage | Counterfactual |
+|---|---:|---:|---:|---:|
+| prompt_only | 0.125 | 0.162 | 0.000 | 0.500 |
+| facet_list | 0.125 | 0.382 | 0.000 | 0.500 |
+| facet_weights | 0.750 | 0.526 | 0.281 | 0.500 |
+| full_aef | 1.000 | 0.536 | 0.281 | 0.660 |
 
 ## How to add a new benchmark
 
@@ -115,3 +115,8 @@ Primary metric: diagnosis accuracy by evidence condition.
 3. Write outputs under `results/<benchmark-name>/`.
 4. Include at least `cases.json`, `metrics.json`, and a qualitative example.
 5. Add a short section to this README with the command and expected outputs.
+
+
+## Reviewer caveat
+
+These public harnesses are deterministic trace-sensitivity tests. They are not external-validity estimates for deployed personas. Use them to check that a trace schema carries enough information for a diagnoser, then validate real persona behavior with independent labels, noisy traces, and live model outputs.

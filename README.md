@@ -1,6 +1,6 @@
 # Agentic Epistemology Framework (AEF)
 
-A TypeScript reference implementation of the Agentic Epistemology Framework as described in the paper "Agentic Epistemology: A Structured Framework for Reasoning in Autonomous Agents and Synthetic Societies".
+A TypeScript reference implementation of the Agentic Epistemology Framework, focused on facet-conditioned trace audits for diagnosing synthetic persona failures.
 
 ## Overview
 

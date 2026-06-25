@@ -14,7 +14,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 
-\title{Agentic Epistemology: Facet-Conditioned Auditability for Autonomous Agents and Synthetic Societies}
+\title{Facet-Conditioned Trace Audits for Diagnosing Synthetic Persona Failures}
 \author{Jason Roell}
 \date{January 15, 2025}
 
@@ -25,7 +25,7 @@
 \maketitle
 
 \begin{abstract}
-Autonomous agents and synthetic personas increasingly act from long-lived context rather than single-turn instructions. Their failures are therefore epistemic: the system may overweight the wrong evidence, ignore a persona constraint, express confidence unsupported by its latent state, or provide a plausible but unfaithful justification. This paper introduces the Agentic Epistemology Framework (\method), an audit architecture for representing and tracing beliefs, confidence, justifications, frames, and facet-conditioned persona constraints. The framework combines structured observer traces with black-box faithfulness tests, confidence calibration checks, and optional representation-level probes inspired by recent work on chain-of-thought faithfulness, model self-knowledge, representation engineering, and sparse autoencoder interpretability. We extend the framework with \emph{facets}: persistent psychological, socio-ecological, psychographic, and interaction constraints that compose nonlinearly into an agent's active frame. A TypeScript reference implementation includes automated benchmarks for root-cause diagnosis and facet-frame faithfulness. In controlled synthetic cases, full epistemic traces recover injected generic root causes with 1.000 accuracy and recover injected facet-faithfulness failures with 0.665 accuracy, while ablated traces degrade substantially. These results support the central claim that explicit epistemic state and facet-aware traces make agent behavior more diagnosable, while leaving open the harder problem of validating open-ended real-world simulations.
+Synthetic personas increasingly act from long-lived constructed identities rather than single-turn prompts. Their failures often include epistemic components: a system may omit a persona constraint, overweight a conflicting cue, express confidence unsupported by its construction, or provide a plausible but unfaithful justification. This paper introduces the Agentic Epistemology Framework (\method), a trace schema and audit service for diagnosing such failures. \method{} records selected facets, prompt provenance, facet weights, expected behavioral markers, response evidence, calibration checks, and optional counterfactual probes. We extend the framework with \emph{facets}: persistent psychological, socio-ecological, psychographic, and interaction constraints that compose into an agent's active frame. The reference implementation provides deterministic public harnesses that illustrate which trace fields are needed to localize injected failure classes, plus a preliminary live integration with a Vurvey persona-generation pipeline. In controlled synthetic harnesses, richer traces recover more injected labels than prompt-only or event-only traces; these numbers are best interpreted as trace-sensitivity checks rather than external validity estimates. A small live counterfactual study shows measurable output sensitivity to facet removal, but also reveals the main current limitation: expected-marker metadata is too sparse to diagnose real responses robustly. The contribution is therefore a reproducible audit interface, benchmark scaffold, and implementation path toward stronger validation of facet-conditioned persona faithfulness.
 \end{abstract}
 
 \section{Introduction}
@@ -33,7 +33,7 @@ Autonomous agents now plan, use tools, communicate, and revise internal state ac
 
 This paper introduces the Agentic Epistemology Framework (\method), a structured architecture for auditing agent reasoning. \method{} represents beliefs as propositions with confidence and justifications, records observer events for epistemic transitions, and models frames as active cognitive perspectives that influence evidence weighting, source trust, and action thresholds. The paper further extends frames with \emph{facets}: typed persona constraints that jointly shape the active frame. Facets can represent psychological dispositions, lived-context constraints, psychographic motivations, and interaction style. In a synthetic human simulation, facets are not independent prompt fragments. They interact nonlinearly, and those interactions should be inspectable.
 
-The first publication of \method{} has two goals. First, it defines a vocabulary and implementation pattern for epistemic auditability in agents and synthetic societies. Second, it provides executable benchmarks that test whether the resulting traces make known failure causes diagnosable. The framework does not claim that generated persona behavior is valid in the world merely because the system produces plausible text. Instead, it asks whether the system can expose enough structured evidence to debug when a persona fails to follow its own construction.
+This first publication of \method{} has two goals. First, it defines a vocabulary and implementation pattern for epistemic auditability in agents and synthetic societies. Second, it provides executable benchmarks that test whether the resulting traces make known failure causes diagnosable. The framework does not claim that generated persona behavior is valid in the world merely because the system produces plausible text. Instead, it asks whether the system can expose enough structured evidence to debug when a persona fails to follow its own construction.
 
 \subsection{Contributions}
 This paper makes four contributions:
@@ -130,7 +130,7 @@ npx ts-node --transpile-only examples/root-cause-benchmark.ts --seed=42 --cases=
 
 \begin{table}[h]
 \centering
-\caption{Generic root-cause diagnosis results. Full traces recover all injected causes in this controlled benchmark. Ablating frame fields, justification/source fields, or epistemic details removes diagnostic capability.}
+\caption{Generic root-cause diagnosis results. Full traces expose the fields needed to recover all labels in this deterministic synthetic generator. Ablating frame fields, justification/source fields, or epistemic details removes diagnostic capability.}
 \label{tab:root-cause-results}
 \begin{tabular}{lrrrrr}
 \toprule
@@ -168,16 +168,16 @@ npx ts-node --transpile-only examples/facet-frame-faithfulness-benchmark.ts --se
 
 \begin{table}[h]
 \centering
-\caption{Facet-frame faithfulness results. Full traces outperform ablations, but the task is intentionally harder than the generic benchmark. Removing facet weights harms diagnosis of weighting errors. Removing facet prompts and expected response markers sharply reduces coverage.}
+\caption{Facet-frame faithfulness results. After fixing the omission-control bug, full traces outperform ablations in this deterministic sensitivity harness. Removing facet weights harms diagnosis of weighting errors. Removing facet prompts and expected response markers sharply reduces coverage.}
 \label{tab:facet-faithfulness-results}
 \begin{tabular}{lrrrrr}
 \toprule
 Trace condition & Accuracy & Macro F1 & Coverage & Events inspected & Trace events \\
 \midrule
-full & 0.665 & 0.680 & 0.725 & 24.80 & 8.00 \\
-no\_facet\_weights & 0.465 & 0.466 & 0.595 & 29.00 & 8.00 \\
-no\_facet\_prompts & 0.200 & 0.200 & 0.200 & 27.80 & 8.00 \\
-event\_only & 0.000 & 0.000 & 0.000 & 32.00 & 8.00 \\
+full & 0.865 & 0.898 & 0.865 & 18.60 & 7.80 \\
+no\_facet\_weights & 0.665 & 0.678 & 0.735 & 22.80 & 7.80 \\
+no\_facet\_prompts & 0.400 & 0.400 & 0.400 & 21.60 & 7.80 \\
+event\_only & 0.000 & 0.000 & 0.000 & 31.20 & 7.80 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -201,16 +201,16 @@ We evaluated the audit service on eight hand-constructed Vurvey-style persona ca
 
 \begin{table}[h]
 \centering
-\caption{Facet faithfulness audit service results. Prompt-only and facet-list evidence are insufficient for reliable diagnosis. Adding weights improves diagnosis, and full AEF evidence, including prompt provenance and counterfactual probes, recovers all injected failures in this fixture suite. SNR is the ratio between target-facet intervention signal and paraphrase/noise sensitivity.}
+\caption{Facet faithfulness audit service results. Prompt-only and facet-list evidence are insufficient for reliable diagnosis. Adding weights improves diagnosis, and full AEF evidence, including prompt provenance and counterfactual probes, recovers all eight handcrafted fixture labels. These are fixture labels rather than external deployment labels.}
 \label{tab:facet-audit-service-results}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-Condition & Accuracy & Faithfulness & Marker cov. & Counterfact. & Calibration & SNR \\
+Condition & Accuracy & Faithfulness & Marker cov. & Counterfact. & Calibration \\
 \midrule
-prompt\_only & 0.125 & 0.162 & 0.000 & 0.500 & 0.125 & 0.17 \\
-facet\_list & 0.125 & 0.382 & 0.000 & 0.500 & 0.125 & 0.83 \\
-facet\_weights & 0.750 & 0.526 & 0.281 & 0.500 & 0.406 & 2.20 \\
-full\_aef & 1.000 & 0.536 & 0.281 & 0.660 & 0.406 & 4.11 \\
+prompt\_only & 0.125 & 0.162 & 0.000 & 0.500 & 0.125 \\
+facet\_list & 0.125 & 0.382 & 0.000 & 0.500 & 0.125 \\
+facet\_weights & 0.750 & 0.526 & 0.281 & 0.500 & 0.406 \\
+full\_aef & 1.000 & 0.536 & 0.281 & 0.660 & 0.406 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -252,7 +252,7 @@ The qualitative outputs were informative. One staging persona responded: ``A mon
 The main finding is that real counterfactual sensitivity is measurable, but marker coverage is currently the limiting factor. The audit service correctly avoided overclaiming faithfulness: all three live cases were diagnosed as \texttt{facet\_selection\_gap} because the expected marker catalog did not cover enough of the real facet semantics and because removing one facet did not remove all related behavioral constraints from the biography and adjacent facets. This is a useful failure mode. It shows that the product improvement should be richer facet-level marker metadata, interaction-aware expectations, and persisted construction manifests. The implementation now records such manifests at persona initialization time and uses them at survey-simulation runtime, closing the main traceability gap identified by the live counterfactual experiment.
 
 \section{Discussion}
-The generic benchmark shows that structured epistemic traces can recover simple injected failures when the trace contains the relevant fields. The facet benchmark is more realistic and harder. Full traces recover many failures, but not all. This is useful: persona faithfulness cannot be reduced to checking that a prompt contains the right words. It requires tracing facet selection, prompt rendering, frame composition, expected behavioral markers, response content, and sometimes counterfactual or latent evidence.
+The generic benchmark shows that structured epistemic traces can expose simple injected failures when the trace contains the relevant fields. The facet benchmark is more realistic and harder. Full traces recover many failures, but not all. This is useful: persona faithfulness cannot be reduced to checking that a prompt contains the right words. It requires tracing facet selection, prompt rendering, frame composition, expected behavioral markers, response content, and sometimes counterfactual or latent evidence.
 
 For Vurvey-style synthetic personas, \method{} suggests several concrete audit hooks:
 \begin{enumerate}[leftmargin=*]
@@ -265,12 +265,12 @@ For Vurvey-style synthetic personas, \method{} suggests several concrete audit h
 \end{enumerate}
 
 \section{Limitations}
-The benchmarks use controlled synthetic failures with known labels. They establish that the implementation can generate useful diagnostic traces, not that all synthetic personas are valid or predictive in deployment. The facet benchmark uses deterministic heuristics for diagnosis and should be extended with noisy traces, human debugging studies, live product prompt paths, and held-out response data.
+The benchmarks use controlled synthetic failures with known labels and deterministic heuristic evaluators. They establish that the implementation can carry and expose useful diagnostic fields, not that all synthetic personas are valid or predictive in deployment, and not that the reported synthetic accuracies estimate real-world performance. The facet benchmark should be extended with noisy traces, hidden labels, independent evaluators, human debugging studies, live product prompt paths, and held-out response data.
 
 The framework also depends on the quality of facet definitions, prompt fragments, weights, and constraints. If the facet graph itself encodes weak theory or biased assumptions, \method{} will make those assumptions more visible but will not make them correct. Detailed observer logs can expose sensitive persona or respondent data, so production use requires careful retention, access control, and redaction policy.
 
 \section{Code and Data Availability}
-The reference implementation is available at \url{https://github.com/jroell/agentic-epistemology-framework} under the MIT license. The implementation includes \texttt{FacetFaithfulnessAuditService}, the generic root-cause benchmark, the facet-frame benchmark, the facet audit service experiment, and public benchmark documentation. Generated outputs are written under the repository's results directory. A Vurvey API branch named \texttt{AEF-implementation} contains the product-facing adapter that maps PM facet values and construction-manifest weights into the audit input shape, attaches AEF audit summaries during survey simulation, and includes the live Vurvey counterfactual generation runner. A Vurvey Python branch named \texttt{AEF-implementation} persists AEF construction manifests into \texttt{ai\_personas.facetConfigs} during mold-based persona generation.
+The reference implementation is available at \url{https://github.com/jroell/agentic-epistemology-framework} under the MIT license. The implementation includes \texttt{FacetFaithfulnessAuditService}, the generic root-cause benchmark, the facet-frame benchmark, the facet audit service experiment,, public benchmark documentation, and a Vurvey construction-manifest/runtime-audit integration. Generated outputs are written under the repository's results directory. A Vurvey API branch named \texttt{AEF-implementation} contains the product-facing adapter that maps PM facet values and construction-manifest weights into the audit input shape, attaches AEF audit summaries during survey simulation, and includes the live Vurvey counterfactual generation runner. A Vurvey Python branch named \texttt{AEF-implementation} persists AEF construction manifests into \texttt{ai\_personas.facetConfigs} during mold-based persona generation.
 
 \section{Conclusion}
 The Agentic Epistemology Framework provides an audit architecture for autonomous agents and synthetic personas. By making beliefs, confidence, justifications, frames, facets, and observer events first-class constructs, \method{} supports debugging not only what an agent said, but why the system should have expected that behavior from its configured epistemic state. The facet extension connects this audit layer to synthetic human simulation: facets become inspectable contributors to frame composition, and persona faithfulness becomes a measurable, diagnosable property rather than a matter of surface plausibility.

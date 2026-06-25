@@ -14,14 +14,14 @@
   <line x1="80" y1="40" x2="80" y2="340" stroke="#333" />
   <line x1="80" y1="340" x2="690" y2="340" stroke="#333" />
   <text transform="translate(22,190) rotate(-90)" text-anchor="middle" font-size="14">Accuracy</text>
-  <rect x="108.975" y="140.5" width="94.55" height="199.5" fill="#0072B2" />
-<text x="156.25" y="132.5" text-anchor="middle" font-size="14">0.67</text>
+  <rect x="108.975" y="80.5" width="94.55" height="259.5" fill="#0072B2" />
+<text x="156.25" y="72.5" text-anchor="middle" font-size="14">0.86</text>
 <text transform="translate(156.25,385) rotate(-25)" text-anchor="end" font-size="13">full</text>
-<rect x="261.475" y="200.5" width="94.55" height="139.5" fill="#E69F00" />
-<text x="308.75" y="192.5" text-anchor="middle" font-size="14">0.47</text>
+<rect x="261.475" y="140.5" width="94.55" height="199.5" fill="#E69F00" />
+<text x="308.75" y="132.5" text-anchor="middle" font-size="14">0.67</text>
 <text transform="translate(308.75,385) rotate(-25)" text-anchor="end" font-size="13">no_facet_weights</text>
-<rect x="413.975" y="280" width="94.55" height="60" fill="#009E73" />
-<text x="461.25" y="272" text-anchor="middle" font-size="14">0.20</text>
+<rect x="413.975" y="220" width="94.55" height="120" fill="#009E73" />
+<text x="461.25" y="212" text-anchor="middle" font-size="14">0.40</text>
 <text transform="translate(461.25,385) rotate(-25)" text-anchor="end" font-size="13">no_facet_prompts</text>
 <rect x="566.475" y="340" width="94.55" height="0" fill="#CC79A7" />
 <text x="613.75" y="332" text-anchor="middle" font-size="14">0.00</text>

@@ -28,7 +28,6 @@ interface MetricRow {
   meanMarkerCoverage: number;
   meanCounterfactualSensitivity: number;
   meanCalibrationScore: number;
-  signalToNoiseRatio: number;
 }
 
 const service = new FacetFaithfulnessAuditService();
@@ -235,11 +234,6 @@ function round(value: number): number {
   return Math.round(value * 1000) / 1000;
 }
 
-function signalToNoiseRatio(condition: Condition): number {
-  const targetSwapDelta = condition === 'full_aef' ? 0.74 : condition === 'facet_weights' ? 0.44 : condition === 'facet_list' ? 0.2 : 0.05;
-  const paraphraseNoise = condition === 'full_aef' ? 0.18 : condition === 'facet_weights' ? 0.2 : condition === 'facet_list' ? 0.24 : 0.3;
-  return round(targetSwapDelta / paraphraseNoise);
-}
 
 function run(): void {
   const cases = scenarios();
@@ -258,7 +252,6 @@ function run(): void {
       meanMarkerCoverage: round(mean(results.map(({ audit }) => audit.markerCoverage.coverage))),
       meanCounterfactualSensitivity: round(mean(results.map(({ audit }) => audit.counterfactualSensitivity))),
       meanCalibrationScore: round(mean(results.map(({ audit }) => audit.calibrationScore))),
-      signalToNoiseRatio: signalToNoiseRatio(condition),
     };
   });
 
@@ -268,11 +261,11 @@ function run(): void {
   fs.writeFileSync(path.join(outDir, 'cases.json'), JSON.stringify(cases, null, 2));
   fs.writeFileSync(path.join(outDir, 'audits.json'), JSON.stringify(cases.map((item) => ({ id: item.id, expectedFailure: item.expectedFailure, audit: service.audit(item.input) })), null, 2));
   fs.writeFileSync(path.join(outDir, 'metrics-table.tex'), [
-    '\\begin{tabular}{lrrrrrr}',
+    '\\begin{tabular}{lrrrrr}',
     '\\toprule',
-    'Condition & Accuracy & Faithfulness & Marker cov. & Counterfact. & Calibration & SNR \\\\',
+    'Condition & Accuracy & Faithfulness & Marker cov. & Counterfact. & Calibration \\\\',
     '\\midrule',
-    ...metrics.map((row) => `${row.condition.replace(/_/g, '\\_')} & ${row.diagnosisAccuracy.toFixed(3)} & ${row.meanFaithfulnessScore.toFixed(3)} & ${row.meanMarkerCoverage.toFixed(3)} & ${row.meanCounterfactualSensitivity.toFixed(3)} & ${row.meanCalibrationScore.toFixed(3)} & ${row.signalToNoiseRatio.toFixed(2)} \\\\`),
+    ...metrics.map((row) => `${row.condition.replace(/_/g, '\\_')} & ${row.diagnosisAccuracy.toFixed(3)} & ${row.meanFaithfulnessScore.toFixed(3)} & ${row.meanMarkerCoverage.toFixed(3)} & ${row.meanCounterfactualSensitivity.toFixed(3)} & ${row.meanCalibrationScore.toFixed(3)} \\\\`),
     '\\bottomrule',
     '\\end{tabular}',
     '',

@@ -179,7 +179,8 @@ function buildScenario(rootCause: RootCause, index: number, rng: SeededRandom): 
 
   if (rootCause === 'facet_omission') {
     scenario.omittedFacet = 'financial_outlook';
-    scenario.observedFrame = composedFrame(facets.filter((facet) => facet.code !== scenario.omittedFacet));
+    scenario.facets = facets.filter((facet) => facet.code !== scenario.omittedFacet);
+    scenario.observedFrame = composedFrame(scenario.facets);
     scenario.observedResponse = 'The persona ignores affordability and evaluates only feature novelty.';
   }
 

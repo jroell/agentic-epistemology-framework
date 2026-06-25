@@ -2,29 +2,29 @@
   {
     "condition": "full",
     "cases": 200,
-    "accuracy": 0.665,
-    "macroF1": 0.68,
-    "coverage": 0.725,
-    "avgEventsInspected": 24.8,
-    "avgTraceEvents": 8
+    "accuracy": 0.865,
+    "macroF1": 0.8981,
+    "coverage": 0.865,
+    "avgEventsInspected": 18.6,
+    "avgTraceEvents": 7.8
   },
   {
     "condition": "no_facet_weights",
     "cases": 200,
-    "accuracy": 0.465,
-    "macroF1": 0.4658,
-    "coverage": 0.595,
-    "avgEventsInspected": 29,
-    "avgTraceEvents": 8
+    "accuracy": 0.665,
+    "macroF1": 0.6776,
+    "coverage": 0.735,
+    "avgEventsInspected": 22.8,
+    "avgTraceEvents": 7.8
   },
   {
     "condition": "no_facet_prompts",
     "cases": 200,
-    "accuracy": 0.2,
-    "macroF1": 0.2,
-    "coverage": 0.2,
-    "avgEventsInspected": 27.8,
-    "avgTraceEvents": 8
+    "accuracy": 0.4,
+    "macroF1": 0.4,
+    "coverage": 0.4,
+    "avgEventsInspected": 21.6,
+    "avgTraceEvents": 7.8
   },
   {
     "condition": "event_only",
@@ -32,7 +32,7 @@
     "accuracy": 0,
     "macroF1": 0,
     "coverage": 0,
-    "avgEventsInspected": 32,
-    "avgTraceEvents": 8
+    "avgEventsInspected": 31.2,
+    "avgTraceEvents": 7.8
   }
 ]

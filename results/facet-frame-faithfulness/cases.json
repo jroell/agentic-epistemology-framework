@@ -21,14 +21,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "institutional_authority",
         "domain": "psychographic",
@@ -336,14 +328,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -658,14 +642,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -976,14 +952,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -1285,14 +1253,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -1603,14 +1563,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -1919,14 +1871,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -2233,14 +2177,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -2552,14 +2488,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -2874,14 +2802,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -3186,14 +3106,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -3504,14 +3416,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -3819,14 +3723,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -4140,14 +4036,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -4451,14 +4339,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -4765,14 +4645,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -5084,14 +4956,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -5399,14 +5263,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -5721,14 +5577,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -6034,14 +5882,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -6357,14 +6197,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "institutional_authority",
         "domain": "psychographic",
@@ -6673,14 +6505,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -6984,14 +6808,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -7305,14 +7121,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -7618,14 +7426,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -7938,14 +7738,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -8256,14 +8048,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -8569,14 +8353,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -8890,14 +8666,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "institutional_authority",
         "domain": "psychographic",
@@ -9207,14 +8975,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -9522,14 +9282,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -9845,14 +9597,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -10159,14 +9903,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -10481,14 +10217,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "crisis_flow",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "institutional_authority",
         "domain": "psychographic",
@@ -10801,14 +10529,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -11117,14 +10837,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -11436,14 +11148,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "peer_to_peer",
         "domain": "psychographic",
@@ -11746,14 +11450,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "stable",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",
@@ -12065,14 +11761,6 @@
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
       },
       {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
-      },
-      {
         "code": "source_trust",
         "value": "independent_verification",
         "domain": "psychographic",
@@ -12380,14 +12068,6 @@
         "weight": 0.78,
         "expectedWeight": 0.78,
         "prompt": "Constrain willingness to evaluate complex offerings by available time bandwidth."
-      },
-      {
-        "code": "financial_outlook",
-        "value": "abundance",
-        "domain": "socio_ecological",
-        "weight": 0.82,
-        "expectedWeight": 0.82,
-        "prompt": "Constrain purchase intent and perceived behavioral control by financial outlook."
       },
       {
         "code": "source_trust",

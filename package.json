@@ -22,7 +22,7 @@
     "multi-agent",
     "frame"
   ],
-  "author": "Your Name",
+  "author": "Jason Roell",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.0",

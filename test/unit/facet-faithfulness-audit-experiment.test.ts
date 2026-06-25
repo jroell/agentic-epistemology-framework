@@ -5,7 +5,6 @@ import { join } from 'path';
 interface MetricRow {
   condition: string;
   diagnosisAccuracy: number;
-  signalToNoiseRatio: number;
   meanCounterfactualSensitivity: number;
 }
 
@@ -22,11 +21,9 @@ describe('facet faithfulness audit experiment', () => {
     const byCondition = new Map(metrics.map((row) => [row.condition, row]));
     const full = byCondition.get('full_aef')!;
     const facetList = byCondition.get('facet_list')!;
-    const promptOnly = byCondition.get('prompt_only')!;
     const facetWeights = byCondition.get('facet_weights')!;
 
     expect(full.diagnosisAccuracy).toBeGreaterThan(facetList.diagnosisAccuracy);
-    expect(full.signalToNoiseRatio).toBeGreaterThan(promptOnly.signalToNoiseRatio);
     expect(full.meanCounterfactualSensitivity).toBeGreaterThan(facetWeights.meanCounterfactualSensitivity);
   });
 });
